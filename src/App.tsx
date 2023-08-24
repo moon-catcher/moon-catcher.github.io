@@ -162,12 +162,8 @@ const App = () => {
         }
       >
         <Route path="/" element={<LazyLoadDemo />}>
-          <Route path="/list" element={<StoryList />} />
-          <Route path="/gantt" element={<Gantt />} />
-          <Route path="/manhour" element={<Manhour />} />
-
           <Route
-            index
+            path="/list"
             loader={async ({ request }) => {
               const params = new URL(request.url).searchParams;
               const code = params.get("code");
@@ -176,8 +172,12 @@ const App = () => {
               }
               return null;
             }}
-            element={<Navigate to={"/list"} />}
+            element={<StoryList />}
           />
+          <Route path="/gantt" element={<Gantt />} />
+          <Route path="/manhour" element={<Manhour />} />
+
+          <Route index element={<Navigate to={"/list"} />} />
         </Route>
         <Route
           path="/auth"

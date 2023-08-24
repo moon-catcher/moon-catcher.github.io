@@ -1,6 +1,6 @@
 import { useAuth } from "@/providers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import "./Home.less";
 import { type UserInfo } from "@/types";
@@ -11,7 +11,7 @@ import { Button, Card, Col, Input, Row, Select, Space, Spin } from "antd";
 import { useTheme } from "@/providers/ThemeProvider";
 import { useProject } from "@/providers/ProjectProvider";
 import ProjectList from "../ProjectList";
-import { getAuthorize } from "@/api/github";
+import { randomString } from "@/api/github";
 
 const postUserInfo = async () => {
   return await new Promise<boolean>((resolve) => {
@@ -104,6 +104,24 @@ const Home = () => {
       isPending ? "pending" : isActive ? "active" : "",
     []
   );
+
+  const authorizeUrl = useMemo(() => {
+    const params = {
+      client_id: "230d10a766b329d1d0ce",
+      login: "Mysetsuna",
+      scope: "repo,user", // write:repo_hook,
+      state: randomString(Math.floor(Math.random() * 100 + 32)),
+      redirect_uri: import.meta.env.DEV
+        ? "https://127.0.0.1:5173/auth"
+        : "https://mysetsuna.github.io/auth",
+    };
+    return `https://github.com/login/oauth/authorize?${Object.entries(params)
+      .map(([key, value]) => `${key}=${value}`)
+      .join("&")}`;
+  }, []);
+
+  console.log(import.meta.env.MODE);
+
   return (
     <div>
       首页 用户:{userInfo?.name}
@@ -111,7 +129,9 @@ const Home = () => {
         <NavLink className={navLinkClass} to="/">
           <Button>to React Lazy Demo</Button>
         </NavLink>
-        <Button onClick={() => getAuthorize()}>登录github</Button>
+        <a href={authorizeUrl}>
+          <Button>dev登录github</Button>
+        </a>
         <Row gutter={18} style={{ marginTop: 20 }}>
           <Col span={7}>
             <Space wrap>

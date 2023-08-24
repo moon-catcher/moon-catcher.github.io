@@ -9,8 +9,9 @@ import {
 } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { UserInfo } from "@/types";
-import { getUserInfo } from "@/api/user";
+// import { getUserInfo } from "@/api/user";
 import { USER_INFO } from "@/constant/api";
+import { getUserInfo } from "@/api/github";
 
 type Props = {
   children: ReactNode;
@@ -37,18 +38,16 @@ const AuthProvider = (props: Props) => {
     setUserId("Jack");
   }, []);
 
-  const {
-    data: userInfo = { name: userId },
-    isLoading,
-    isError,
-  } = useQuery([USER_INFO, userId], () => getUserInfo(userId), {
-    enabled: !!userId,
-  });
+  const userResponse = useQuery([USER_INFO], () => getUserInfo());
+  const { isLoading, isError } = userResponse;
+  const userInfo = userResponse?.data?.data ?? {};
 
   const login = useCallback(() => {}, []);
   const changeUser = useCallback((userName: string) => {
     setUserId(userName);
   }, []);
+
+  console.log(userInfo, "userInfo");
 
   const contextValue = useMemo(() => {
     return { login, changeUser, userInfo, isLoading, isError };

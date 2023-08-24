@@ -166,7 +166,18 @@ const App = () => {
           <Route path="/gantt" element={<Gantt />} />
           <Route path="/manhour" element={<Manhour />} />
 
-          <Route index element={<Navigate to={"/list"} />} />
+          <Route
+            index
+            loader={async ({ request }) => {
+              const params = new URL(request.url).searchParams;
+              const code = params.get("code");
+              if (code) {
+                return redirect(`/auth`);
+              }
+              return null;
+            }}
+            element={<Navigate to={"/list"} />}
+          />
         </Route>
         <Route
           path="/auth"

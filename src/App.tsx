@@ -1,5 +1,4 @@
 import {
-  createBrowserRouter,
   createHashRouter,
   createRoutesFromElements,
   Navigate,
@@ -142,21 +141,10 @@ const App = () => {
   const { userInfo, isLoading } = useAuth();
   // 不要结构使用mobx的action
 
-  const myRouter = import.meta.env.DEV ? createBrowserRouter : createHashRouter;
-  const router = myRouter(
+  const router = createHashRouter(
     createRoutesFromElements(
       <Route
         path="/"
-        loader={async ({ request }) => {
-          console.log(request, "request");
-
-          const params = new URL(request.url).searchParams;
-          const code = params.get("code");
-          if (code) {
-            return redirect(`/auth`);
-          }
-          return null;
-        }}
         errorElement={
           <>
             404 <NavLink to="/">返回首页</NavLink>
@@ -164,31 +152,31 @@ const App = () => {
         }
       >
         <Route path="/" element={<LazyLoadDemo />}>
-          <Route
-            path="/list"
-            loader={({ request }) => {
-              console.log(request, "request");
+          <Route path="/list" element={<StoryList />} />
+          <Route path="/gantt" element={<Gantt />} />
+          <Route path="/manhour" element={<Manhour />} />
 
-              const params = new URL(request.url).searchParams;
+          <Route
+            index
+            loader={() => {
+              const params = new URL(window.location.href).searchParams;
               const code = params.get("code");
               if (code) {
                 return redirect(`/auth`);
               }
+              console.log(code, "code");
+
               return null;
             }}
-            element={<StoryList />}
+            element={<Navigate to={"/list"} />}
           />
-          <Route path="/gantt" element={<Gantt />} />
-          <Route path="/manhour" element={<Manhour />} />
-
-          <Route index element={<Navigate to={"/list"} />} />
         </Route>
         <Route
           path="/auth"
-          loader={({ request }) => {
-            console.log(request, "request");
-            const code = new URL(request.url).searchParams.get("code");
-            console.log(code, "code", request);
+          loader={() => {
+            const params = new URL(window.location.href).searchParams;
+            const code = params.get("code");
+            console.log(code, "code");
             return code;
           }}
           element={<Auth />}

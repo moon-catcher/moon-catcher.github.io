@@ -8,11 +8,7 @@ redirect_uri=https://mysetsuna.github.io/save-money
 client_secret:e526d845d9ccf0acce71cfe93d91ac26fc90f171
  */
 export const getAccessToken = async (code: string) => {
-  const isDev = import.meta.env.DEV;
-  let url = "https://github.com/login/oauth/access_token";
-  if (isDev) {
-    url = "login/oauth/access_token";
-  }
+  const url = "https://github.com/login/oauth/access_token";
   return await apiClient.post(
     url,
     {
@@ -34,13 +30,7 @@ export const getUserInfo = async () => {
     apiClient.defaults.headers["Authorization"],
     'apiClient.defaults.headers["Authorization"]'
   );
-
-  const isDev = import.meta.env.DEV;
-  if (isDev) {
-    return await apiClient.get(`/api/user`);
-  } else {
-    return await apiClient.get(`https://api.github.com/user`);
-  }
+  return await apiClient.get(`https://api.github.com/user`);
 };
 
 export function randomString(length: number) {

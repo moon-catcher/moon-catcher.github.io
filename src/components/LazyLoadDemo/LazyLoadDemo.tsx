@@ -15,8 +15,6 @@ const navLinkClass = ({
   isActive: boolean;
   isPending: boolean;
 }) => {
-  console.log(isPending, "isPending");
-
   return isPending ? "pending" : isActive ? "active" : "";
 };
 const items: MenuProps["items"] = [

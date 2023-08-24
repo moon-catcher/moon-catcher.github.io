@@ -16,19 +16,19 @@ export default defineConfig({
     headers: {
       Accept: "application/vnd.github.v3+json",
     },
-    proxy: {
-      hostname: "0.0.0.0",
-      port: "9999",
-      "/login": {
-        target: "https://github.com/",
-        changeOrigin: true,
-      },
-      "/api": {
-        target: "https://api.github.com/",
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
-      },
-    },
+    // proxy: {
+    //   hostname: "0.0.0.0",
+    //   port: "9999",
+    //   "/login": {
+    //     target: "https://github.com/",
+    //     changeOrigin: true,
+    //   },
+    //   "/api": {
+    //     target: "https://api.github.com/",
+    //     changeOrigin: true,
+    //     rewrite: (path) => path.replace(/^\/api/, ""),
+    //   },
+    // },
   },
 
   preview: {

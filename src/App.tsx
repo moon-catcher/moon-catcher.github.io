@@ -143,11 +143,13 @@ const App = () => {
   // 不要结构使用mobx的action
 
   const myRouter = import.meta.env.DEV ? createBrowserRouter : createHashRouter;
-  const router = createHashRouter(
+  const router = myRouter(
     createRoutesFromElements(
       <Route
         path="/"
         loader={async ({ request }) => {
+          console.log(request, "request");
+
           const params = new URL(request.url).searchParams;
           const code = params.get("code");
           if (code) {
@@ -164,7 +166,7 @@ const App = () => {
         <Route path="/" element={<LazyLoadDemo />}>
           <Route
             path="/list"
-            loader={async ({ request }) => {
+            loader={({ request }) => {
               console.log(request, "request");
 
               const params = new URL(request.url).searchParams;
@@ -183,7 +185,8 @@ const App = () => {
         </Route>
         <Route
           path="/auth"
-          loader={async ({ request }) => {
+          loader={({ request }) => {
+            console.log(request, "request");
             const code = new URL(request.url).searchParams.get("code");
             console.log(code, "code", request);
             return code;

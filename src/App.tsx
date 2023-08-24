@@ -165,6 +165,8 @@ const App = () => {
           <Route
             path="/list"
             loader={async ({ request }) => {
+              console.log(request, "request");
+
               const params = new URL(request.url).searchParams;
               const code = params.get("code");
               if (code) {

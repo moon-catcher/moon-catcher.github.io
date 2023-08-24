@@ -113,7 +113,7 @@ const Home = () => {
       state: randomString(Math.floor(Math.random() * 100 + 32)),
       redirect_uri: import.meta.env.DEV
         ? "https://127.0.0.1:5173/auth"
-        : "https://mysetsuna.github.io/auth",
+        : "https://mysetsuna.github.io/#/auth",
     };
     return `https://github.com/login/oauth/authorize?${Object.entries(params)
       .map(([key, value]) => `${key}=${value}`)

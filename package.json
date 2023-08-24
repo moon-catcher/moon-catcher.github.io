@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "build:dev": "vite build",
+    "build": "vite build",
+    "build:test": "vite build --mode test",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0 --fix",
     "preview": "vite preview -m DEV"
   },
@@ -38,8 +38,11 @@
     "path": "^0.12.7",
     "prettier": "^2.8.8",
     "react-window": "^1.8.9",
+    "rollup-plugin-visualizer": "^5.9.2",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
+    "vite-plugin-chunk-split": "^0.4.7",
+    "vite-plugin-imp": "^2.4.0",
     "vite-plugin-mkcert": "^1.16.0"
   }
 }

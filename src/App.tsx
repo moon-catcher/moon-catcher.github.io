@@ -1,8 +1,10 @@
 import {
   createBrowserRouter,
+  createHashRouter,
   createRoutesFromElements,
   Navigate,
   NavLink,
+  redirect,
   Route,
   RouterProvider,
   useLoaderData,
@@ -17,7 +19,6 @@ import { Spin } from "antd";
 import { getAccessToken } from "./api/github";
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "./api/apiClient";
-import { use } from "echarts";
 
 const LazyLoadDemo = React.lazy(() => import("./components/LazyLoadDemo"));
 
@@ -140,10 +141,20 @@ const App = () => {
   // 在这里使用context里的数据
   const { userInfo, isLoading } = useAuth();
   // 不要结构使用mobx的action
-  const router = createBrowserRouter(
+
+  const myRouter = import.meta.env.DEV ? createBrowserRouter : createHashRouter;
+  const router = createHashRouter(
     createRoutesFromElements(
       <Route
         path="/"
+        loader={async ({ request }) => {
+          const params = new URL(request.url).searchParams;
+          const code = params.get("code");
+          if (code) {
+            return redirect(`/auth`);
+          }
+          return null;
+        }}
         errorElement={
           <>
             404 <NavLink to="/">返回首页</NavLink>

@@ -1,5 +1,5 @@
 import {
-  createHashRouter,
+  createBrowserRouter,
   createRoutesFromElements,
   Navigate,
   NavLink,
@@ -49,7 +49,7 @@ const ErrorBoundary = () => {
 };
 
 type AccessToken = {
-  access_token: string;
+  token: string;
   token_type: string;
   scope: string;
 };
@@ -72,13 +72,13 @@ const Auth = () => {
   console.log(data, "datadatadatadata");
 
   useEffect(() => {
-    if (data?.access_token) {
+    if (data?.token) {
       codeSetRef.current.add(code);
-      document.cookie = `Authorization=${data.token_type} ${data?.access_token};`;
+      document.cookie = `Authorization=Bearer ${data?.token};`;
       setExpires(false);
       apiClient.defaults.headers[
         "Authorization"
-      ] = `Bearer ${data?.access_token}`;
+      ] = `Bearer ${data?.token}`;
     }
   }, [data]);
 
@@ -113,7 +113,7 @@ const Auth = () => {
     <>
       {authResponse.isError && "登录失败,点击"}
       {authResponse.isFetching && "登录中..."}
-      {data?.access_token
+      {data?.token
         ? "登录成功,即将自动跳转...点击"
         : isLogined
         ? "已登录"
@@ -141,7 +141,7 @@ const App = () => {
   const { userInfo, isLoading } = useAuth();
   // 不要结构使用mobx的action
 
-  const router = createHashRouter(
+  const router = createBrowserRouter(
     createRoutesFromElements(
       <Route
         path="/"

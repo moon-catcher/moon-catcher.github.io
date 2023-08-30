@@ -8,20 +8,22 @@ redirect_uri=https://mysetsuna.github.io/save-money
 client_secret:e526d845d9ccf0acce71cfe93d91ac26fc90f171
  */
 export const getAccessToken = async (code: string) => {
-  const url = "https://github.com/login/oauth/access_token";
-  return await apiClient.post(
-    url,
-    {
-      client_id: "230d10a766b329d1d0ce",
-      client_secret: "e526d845d9ccf0acce71cfe93d91ac26fc90f171",
-      code,
-    },
-    {
-      headers: {
-        Accept: "application/json",
-      },
-    }
-  );
+  // const url = "http://localhost:3000/login/oauth/access_token";
+  //   return await apiClient.post(
+  //     url,
+  //     {
+  //       client_id: "230d10a766b329d1d0ce",
+  //       client_secret: "e526d845d9ccf0acce71cfe93d91ac26fc90f171",
+  //       code,
+  //     },
+  //     {
+  //       headers: {
+  //         Accept: "application/json",
+  //       },
+  //     }
+  //   );
+  const url = `http://localhost:3000/authenticate/${code}`;
+  return await apiClient.get(url);
 };
 //github.com/login/oauth/access_token
 
@@ -30,7 +32,7 @@ export const getUserInfo = async () => {
     apiClient.defaults.headers["Authorization"],
     'apiClient.defaults.headers["Authorization"]'
   );
-  return await apiClient.get(`https://api.github.com/user`);
+  return await apiClient.get(`http://localhost:3000/api/user`);
 };
 
 export function randomString(length: number) {

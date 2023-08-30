@@ -2,7 +2,7 @@ import axios from "axios";
 
 const apiClient = axios.create({
   timeout: 1000,
-  withCredentials: true,
+  // withCredentials: true,
   headers: {
     Accept: "application/vnd.github.v3+json",
   },

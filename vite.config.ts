@@ -16,6 +16,10 @@ export default defineConfig({
     headers: {
       Accept: "application/vnd.github.v3+json",
     },
+    // hmr: {
+    //   protocol: 'ws',
+    //   host: '127.0.0.1'
+    // }
     // proxy: {
     //   hostname: "0.0.0.0",
     //   port: "9999",
@@ -102,6 +106,7 @@ export default defineConfig({
       },
     },
   },
+  envPrefix: ["vite_"],
 });
 
 // 手动分包策略

@@ -7,6 +7,7 @@ import {
   Route,
   RouterProvider,
   useLoaderData,
+  useNavigate,
   useRouteError,
 } from "react-router-dom";
 import { useAuth } from "./providers";
@@ -16,7 +17,6 @@ import React, { memo, Suspense, useEffect, useRef, useState } from "react";
 import { ProjectProvider } from "./providers/ProjectProvider";
 import { Spin } from "antd";
 import { getAccessToken } from "./api/github";
-import { useQuery } from "@tanstack/react-query";
 import apiClient from "./api/apiClient";
 
 const LazyLoadDemo = React.lazy(() => import("./components/LazyLoadDemo"));
@@ -48,58 +48,91 @@ const ErrorBoundary = () => {
   return <>{error.message}</>;
 };
 
-type AccessToken = {
+export type AccessToken = {
   token: string;
   token_type: string;
   scope: string;
+  error?: Error;
 };
 const Auth = () => {
   const code = useLoaderData() as string;
-  const codeSetRef = useRef(new Set());
   const cookieMapRef = useRef(new Map());
-  const [expires, setExpires] = useState(false);
+  const navigate = useNavigate();
+  const [status, setStatus] = useState("正在校验登录状态...");
 
-  const authResponse = useQuery<{ data: AccessToken }>(
-    ["auth-code", code],
-    async () => await getAccessToken(code),
-    {
-      enabled: !!code && expires,
-      staleTime: 60000 * 24 * 3,
-    }
-  );
-
-  const data = authResponse?.data?.data;
-  console.log(data, "datadatadatadata");
+  useEffect(() => {}, [code]);
 
   useEffect(() => {
-    if (data?.token) {
-      codeSetRef.current.add(code);
-      document.cookie = `Authorization=Bearer ${data?.token};`;
-      setExpires(false);
-      apiClient.defaults.headers[
-        "Authorization"
-      ] = `Bearer ${data?.token}`;
-    }
-  }, [data]);
+    document.cookie.split(";").forEach((cookie) => {
+      const [key, value] = cookie.split("=");
+      cookieMapRef.current.set(String(key).trim(), value);
+    });
+    console.log(cookieMapRef.current, "cookieMapRef.current");
 
-  useEffect(() => {
-    if (!codeSetRef.current.has(code)) {
-      setExpires(true);
+    const authCode = cookieMapRef.current.get("AuthCode");
+    console.log(
+      "cookieCode:",
+      authCode,
+      "code",
+      code,
+      !!code,
+      code !== "undefined",
+      code.toString(),
+      "=============="
+    );
+
+    if (!!code && authCode !== code) {
+      setStatus("登录中...");
+      getAccessToken(code)
+        .then(({ data }: { data: AccessToken }) => {
+          console.log(data, "datadatadatadata");
+          if (data.error) {
+            return Promise.reject(data.error);
+          } else {
+            document.cookie = `Authorization=Bearer ${data?.token}`;
+            document.cookie = `AuthCode=${code}`;
+            apiClient.defaults.headers[
+              "Authorization"
+            ] = `Bearer ${data?.token}`;
+            setStatus("登录成功,3s即将自动跳转...点击立即跳转");
+          }
+        })
+        .catch((error) => {
+          console.log(error, "error");
+
+          setStatus("登录失败,点击重试");
+        });
+    } else {
+      const authorization = cookieMapRef.current.get("Authorization");
+      console.log(authorization, "authorization", cookieMapRef.current);
+
+      if (authorization) {
+        apiClient.defaults.headers["Authorization"] = authorization;
+        setStatus("已登录");
+      }
     }
   }, [code]);
 
   useEffect(() => {
-    document.cookie.split("; ").forEach((cookie) => {
-      const [key, value] = cookie.split("=");
-      cookieMapRef.current.set(key, value);
-    });
-    const authorization = cookieMapRef.current.get("Authorization");
-    if (authorization) {
-      apiClient.defaults.headers["Authorization"] = authorization;
-    } else {
-      setExpires(true);
+    if (status === "登录成功,3s即将自动跳转...点击立即跳转") {
+      setTimeout(() => {
+        setStatus(`登录成功,2s即将自动跳转...点击立即跳转`);
+      }, 1000);
     }
-  }, []);
+    if (status === "登录成功,2s即将自动跳转...点击立即跳转") {
+      setTimeout(() => {
+        setStatus(`登录成功,1s即将自动跳转...点击立即跳转`);
+      }, 1000);
+    }
+    if (status === "登录成功,1s即将自动跳转...点击立即跳转") {
+      setTimeout(() => {
+        setStatus(`登录成功,0s即将自动跳转...点击立即跳转`);
+      }, 1000);
+    }
+    if (status === "登录成功,0s即将自动跳转...点击立即跳转") {
+      navigate("/home");
+    }
+  }, [status]);
 
   console.log(
     apiClient.defaults.headers["Authorization"],
@@ -107,17 +140,10 @@ const Auth = () => {
     "Authorization"
   ]`
   );
-  const isLogined = !!apiClient.defaults.headers["Authorization"];
 
   return (
     <>
-      {authResponse.isError && "登录失败,点击"}
-      {authResponse.isFetching && "登录中..."}
-      {data?.token
-        ? "登录成功,即将自动跳转...点击"
-        : isLogined
-        ? "已登录"
-        : "正在校验登录状态..."}
+      <span>{status}</span>
       <NavLink to={"/home"}>返回首页</NavLink>
     </>
   );

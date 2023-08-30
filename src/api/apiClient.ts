@@ -6,6 +6,7 @@ const apiClient = axios.create({
   headers: {
     Accept: "application/vnd.github.v3+json",
   },
+  baseURL: import.meta.env.vite_github_caller,
 });
 // b8a58a36ef2ebb6ca56c13eca24dfcb72280de4b
 

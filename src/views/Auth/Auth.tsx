@@ -6,7 +6,9 @@ import {
   LOGIN_TEXT_LOADING,
   LOGIN_TEXT_LOGINED,
 } from "@/constant/auth";
+import { useAuth } from "@/providers/AuthProvider";
 import { AccessToken } from "@/types";
+import dayjs from "dayjs";
 import { memo, useEffect, useRef, useState } from "react";
 import { NavLink, useLoaderData, useNavigate } from "react-router-dom";
 
@@ -15,6 +17,7 @@ const Auth = () => {
   const cookieMapRef = useRef(new Map());
   const navigate = useNavigate();
   const timer = useRef<NodeJS.Timeout>();
+  const { setToken } = useAuth();
   const [status, setStatus] = useState(LOGIN_TEXT_CHECKING);
 
   const timesText = (times: number) =>
@@ -27,20 +30,21 @@ const Auth = () => {
     });
 
     const authCode = cookieMapRef.current.get("AuthCode");
-    console.log("authCode", authCode, "code", code);
 
     if (!!code && authCode !== code) {
       document.cookie = `AuthCode=${code}`;
       setStatus(LOGIN_TEXT_LOADING);
       getAccessToken(code)
         .then(({ data }: { data: AccessToken }) => {
-          if (data.error) {
-            return Promise.reject(data.error);
+          if (!data || data.error) {
+            return Promise.reject(data?.error ?? "token请求失败");
           } else {
-            document.cookie = `Authorization=Bearer ${data?.token}`;
+            const expires = dayjs().add(10000, "second").toDate().toUTCString();
+            document.cookie = `Authorization=Bearer ${data.token}; expires=${expires}`;
             apiClient.defaults.headers[
               "Authorization"
-            ] = `Bearer ${data?.token}`;
+            ] = `Bearer ${data.token}`;
+            setToken(data.token);
             setStatus(timesText(3));
           }
         })

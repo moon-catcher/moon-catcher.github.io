@@ -13,3 +13,5 @@ Browserify 使浏览器执行 node 模块
 api https://api.github.com/
 
 auth https://github.com/prose/gatekeeper
+
+github api https://octokit.github.io/rest.js/v20#authentication

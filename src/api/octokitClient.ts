@@ -11,11 +11,13 @@ let octokit = new Octokit({
 /**
  * update octokit token
  */
-const updateOctokitToken = () => {
-  const authToken = getCookie(COOKIE_KEY_TOKEN);
-  octokit = new Octokit({
-    auth: authToken,
-  });
+const updateOctokitToken = (token?: string) => {
+  const authToken = token ?? getCookie(COOKIE_KEY_TOKEN);
+  if (authToken) {
+    octokit = new Octokit({
+      auth: authToken,
+    });
+  }
 };
 
 export default octokit;

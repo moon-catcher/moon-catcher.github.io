@@ -1,9 +1,8 @@
 import { RouterProvider } from "react-router-dom";
-import { memo, Suspense, useEffect, useRef } from "react";
+import { memo, Suspense } from "react";
 import { CounterProvider } from "@/providers/CounterProvider";
 import { ProjectProvider } from "@/providers/ProjectProvider";
 import { Spin } from "antd";
-import apiClient from "@/api/apiClient";
 import createRootRouter from "@/router/router";
 import "./App.less";
 

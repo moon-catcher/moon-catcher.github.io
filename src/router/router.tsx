@@ -1,5 +1,6 @@
 import {
   createBrowserRouter,
+  createHashRouter,
   createRoutesFromElements,
   Navigate,
   NavLink,
@@ -31,7 +32,9 @@ const Manhour = lazy(
 const createRootRouter = () => {
   // 在这里使用context里的数据
   const { userInfo, isLoading } = useAuth();
-  const router = createBrowserRouter(
+  const createMyRouter =
+    import.meta.env.MODE === "gh" ? createHashRouter : createBrowserRouter;
+  const router = createMyRouter(
     createRoutesFromElements(
       <Route
         path="/"

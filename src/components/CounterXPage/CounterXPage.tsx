@@ -14,7 +14,6 @@ const CounterXPage = () => {
   const { counterNumber } = useParams();
   const counterStore = useCounter();
   useEffect(() => {
-    console.log(counterNumber, "counterNumber");
     runInAction(() => (counterStore.value = Number(counterNumber) || 0));
   }, [counterNumber]);
   return (

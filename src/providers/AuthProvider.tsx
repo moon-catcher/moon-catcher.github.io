@@ -47,8 +47,6 @@ const AuthProvider = (props: Props) => {
     setUserId(userName);
   }, []);
 
-  console.log(userInfo, "userInfo");
-
   const contextValue = useMemo(() => {
     return { login, changeUser, userInfo, isLoading, isError };
   }, [userInfo]);

@@ -35,13 +35,14 @@ const Auth = () => {
           if (!data || data.error) {
             return Promise.reject(data?.error ?? "token 请求失败");
           } else {
-            const a = updateOctokitToken();
-            const data = await a.request("GET /user", {
+            setCookie({ key: COOKIE_KEY_TOKEN, value: data.token });
+            updateOctokitToken();
+            const data2 = await octokit.request("GET /user", {
               headers: {
                 "X-GitHub-Api-Version": "2022-11-28",
               },
             });
-            console.log(data, octokit === a);
+            console.log(data2, octokit);
           }
         })
         .catch((error) => {

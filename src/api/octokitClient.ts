@@ -13,12 +13,9 @@ let octokit = new Octokit({
  */
 const updateOctokitToken = () => {
   const authToken = getCookie(COOKIE_KEY_TOKEN);
-  console.log(authToken, "authToken");
-
   octokit = new Octokit({
     auth: authToken,
   });
-  return octokit;
 };
 
 export default octokit;

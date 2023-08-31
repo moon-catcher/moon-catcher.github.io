@@ -16,6 +16,10 @@ import { UserInfo } from "@/types";
 import { USER_INFO } from "@/constant/api";
 import { getUserInfo } from "@/api/github";
 import apiClient from "@/api/apiClient";
+import { Octokit } from "octokit";
+import octokit from "@/api/octokitClient";
+import { getCookie } from "@/utils/cookieUtils";
+import { COOKIE_KEY_TOKEN } from "@/constant/auth";
 
 type Props = {
   children: ReactNode;
@@ -29,8 +33,6 @@ type AuthContextValue =
       userInfo: UserInfo;
       isLoading: boolean;
       isError: boolean;
-      token: string;
-      setToken: Dispatch<SetStateAction<string>>;
     }
   | undefined;
 
@@ -39,21 +41,8 @@ const AuthContext = createContext<AuthContextValue>(undefined);
 const AuthProvider = (props: Props) => {
   const cookieMapRef = useRef(new Map());
 
-  const [token, setToken] = useState("");
   // to set Defult User
   const [userId, setUserId] = useState<string>(props.defaultUser ?? "Jack");
-
-  useEffect(() => {
-    document.cookie.split("; ").forEach((cookie) => {
-      const [key, value] = cookie.split("=");
-      cookieMapRef.current.set(key, value);
-    });
-    const authorization = cookieMapRef.current.get("Authorization") as string;
-    if (authorization) {
-      apiClient.defaults.headers["Authorization"] = authorization;
-      setToken(authorization.split(" ")[1]);
-    }
-  }, []);
 
   const userResponse = useQuery([USER_INFO], () => getUserInfo());
   const { isLoading, isError } = userResponse;
@@ -65,8 +54,8 @@ const AuthProvider = (props: Props) => {
   }, []);
 
   const contextValue = useMemo(() => {
-    return { login, changeUser, userInfo, isLoading, isError, setToken, token };
-  }, [userInfo, token]);
+    return { login, changeUser, userInfo, isLoading, isError };
+  }, [userInfo]);
   return (
     <AuthContext.Provider value={contextValue}>
       {props.children}

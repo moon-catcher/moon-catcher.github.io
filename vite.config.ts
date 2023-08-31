@@ -9,7 +9,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    host: "127.0.0.1",
+    host: "localhost",
     https: true, // 需要开启https服务
     headers: {
       Accept: "application/vnd.github.v3+json",

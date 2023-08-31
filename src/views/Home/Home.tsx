@@ -107,13 +107,11 @@ const Home = () => {
 
   const authorizeUrl = useMemo(() => {
     const params = {
-      client_id: "230d10a766b329d1d0ce",
-      login: "Mysetsuna",
-      scope: "repo,user", // write:repo_hook,
+      client_id: import.meta.env.vite_client_id,
+      login: import.meta.env.vite_login,
+      scope: import.meta.env.vite_github_scope, // write:repo_hook,
       state: randomString(Math.floor(Math.random() * 100 + 32)),
-      redirect_uri: import.meta.env.DEV
-        ? "https://127.0.0.1:5173/auth"
-        : "https://mysetsuna.github.io/auth",
+      redirect_uri: import.meta.env.vite_github_auth_url,
     };
     return `https://github.com/login/oauth/authorize?${Object.entries(params)
       .map(([key, value]) => `${key}=${value}`)

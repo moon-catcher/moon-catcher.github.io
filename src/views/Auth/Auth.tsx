@@ -1,6 +1,9 @@
 import apiClient from "@/api/apiClient";
 import { getAccessToken } from "@/api/github";
+import octokit, { updateOctokitToken } from "@/api/octokitClient";
 import {
+  COOKIE_KEY_CODE,
+  COOKIE_KEY_TOKEN,
   LOGIN_TEXT_CHECKING,
   LOGIN_TEXT_FAILED,
   LOGIN_TEXT_LOADING,
@@ -8,44 +11,37 @@ import {
 } from "@/constant/auth";
 import { useAuth } from "@/providers/AuthProvider";
 import { AccessToken } from "@/types";
+import { getCookie, setCookie } from "@/utils/cookieUtils";
 import dayjs from "dayjs";
 import { memo, useEffect, useRef, useState } from "react";
 import { NavLink, useLoaderData, useNavigate } from "react-router-dom";
 
 const Auth = () => {
   const code = useLoaderData() as string;
-  const cookieMapRef = useRef(new Map());
   const navigate = useNavigate();
   const timer = useRef<NodeJS.Timeout>();
-  const { setToken } = useAuth();
   const [status, setStatus] = useState(LOGIN_TEXT_CHECKING);
 
   const timesText = (times: number) =>
     `登录成功,${times}s即将自动跳转...点击立即跳转`;
 
   useEffect(() => {
-    document.cookie.split(";").forEach((cookie) => {
-      const [key, value] = cookie.split("=");
-      cookieMapRef.current.set(String(key).trim(), value);
-    });
-
-    const authCode = cookieMapRef.current.get("AuthCode");
-
+    const authCode = getCookie(COOKIE_KEY_CODE);
     if (!!code && authCode !== code) {
-      document.cookie = `AuthCode=${code}`;
+      setCookie({ key: COOKIE_KEY_CODE, value: code });
       setStatus(LOGIN_TEXT_LOADING);
       getAccessToken(code)
-        .then(({ data }: { data: AccessToken }) => {
+        .then(async ({ data }: { data: AccessToken }) => {
           if (!data || data.error) {
-            return Promise.reject(data?.error ?? "token请求失败");
+            return Promise.reject(data?.error ?? "token 请求失败");
           } else {
-            const expires = dayjs().add(10000, "second").toDate().toUTCString();
-            document.cookie = `Authorization=Bearer ${data.token}; expires=${expires}`;
-            apiClient.defaults.headers[
-              "Authorization"
-            ] = `Bearer ${data.token}`;
-            setToken(data.token);
-            setStatus(timesText(3));
+            const a = updateOctokitToken();
+            const data = await a.request("GET /user", {
+              headers: {
+                "X-GitHub-Api-Version": "2022-11-28",
+              },
+            });
+            console.log(data, octokit === a);
           }
         })
         .catch((error) => {
@@ -53,10 +49,11 @@ const Auth = () => {
           setStatus(LOGIN_TEXT_FAILED);
         });
     } else {
-      const authorization = cookieMapRef.current.get("Authorization");
+      const authorization = getCookie(COOKIE_KEY_TOKEN);
       if (authorization) {
-        apiClient.defaults.headers["Authorization"] = authorization;
         setStatus(LOGIN_TEXT_LOGINED);
+      } else {
+        setStatus(LOGIN_TEXT_FAILED);
       }
     }
   }, [code]);

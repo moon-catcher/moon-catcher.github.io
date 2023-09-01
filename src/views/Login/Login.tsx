@@ -1,13 +1,14 @@
-import apiClient from "@/api/apiClient";
 import { getAccessToken } from "@/api/github";
-import octokit, { updateOctokitToken } from "@/api/octokitClient";
 import {
   COOKIE_KEY_CODE,
   COOKIE_KEY_TOKEN,
+  GITHUB_LOGIN_CANCEL,
+  LOGIN_TEXT_CANCEL,
   LOGIN_TEXT_CHECKING,
   LOGIN_TEXT_FAILED,
   LOGIN_TEXT_LOADING,
   LOGIN_TEXT_LOGINED,
+  LOGIN_TEXT_UNLOGINED,
 } from "@/constant/auth";
 import { useAuth } from "@/providers/AuthProvider";
 import { AccessToken } from "@/types";
@@ -31,9 +32,16 @@ const Auth = () => {
     `登录成功,${times}s即将自动跳转...点击立即跳转`;
 
   useEffect(() => {
-    setTimeout(() => {
-      window.close();
-    }, 1000);
+    if (error) {
+      if (error === GITHUB_LOGIN_CANCEL) {
+        setStatus(LOGIN_TEXT_CANCEL);
+      } else {
+        setStatus(LOGIN_TEXT_FAILED);
+      }
+      setTimeout(() => {
+        window.close();
+      }, 1000);
+    }
   }, [error]);
 
   useEffect(() => {
@@ -71,12 +79,12 @@ const Auth = () => {
             window.close();
           }, 1000);
         });
-    } else {
+    } else if (code) {
       const authorization = getCookie(COOKIE_KEY_TOKEN);
       if (authorization) {
         setStatus(LOGIN_TEXT_LOGINED);
       } else {
-        setStatus(LOGIN_TEXT_LOADING);
+        setStatus(LOGIN_TEXT_UNLOGINED);
       }
     }
   }, [code]);

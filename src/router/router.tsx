@@ -10,7 +10,7 @@ import {
 import { useAuth } from "@/providers/AuthProvider";
 import { lazy } from "react";
 
-const Auth = lazy(() => import("@/views/Auth/Auth"));
+const Auth = lazy(() => import("@/views/Login/Login"));
 const Home = lazy(() => import("@/views/Home/Home"));
 const LazyLoadDemo = lazy(() => import("@/views/LazyLoadDemo"));
 const ErrorBoundary = lazy(() => import("@/views/ErrorBoundary/ErrorBoundary"));
@@ -66,7 +66,9 @@ const createRootRouter = () => {
           loader={() => {
             const params = new URL(window.location.href).searchParams;
             const code = params.get("code");
-            return code;
+            const state = params.get("state");
+            const error = params.get("error");
+            return { code, state, error };
           }}
           element={<Auth />}
         />

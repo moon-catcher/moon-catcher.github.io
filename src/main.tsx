@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import octokit from "./api/octokitClient";
 import { getCookie } from "./utils/cookieUtils";
 import { COOKIE_KEY_TOKEN } from "./constant/auth";
+import { OctokitProvider } from "./providers/OctokitProvider";
 
 const queryClient = new QueryClient();
 
@@ -14,9 +15,11 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
+        <OctokitProvider>
+          <ThemeProvider>
+            <App />
+          </ThemeProvider>
+        </OctokitProvider>
       </AuthProvider>
     </QueryClientProvider>
   </React.StrictMode>

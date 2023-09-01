@@ -1,17 +1,34 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import "./Home.less";
 import { UserInfo } from "@/types";
 import { THEME_INFO, USER_INFO } from "@/constant/api";
 import { observer } from "mobx-react";
 import { useCounter } from "@/providers/CounterProvider";
-import { Button, Card, Col, Input, Row, Select, Space, Spin } from "antd";
+import {
+  Button,
+  Card,
+  Col,
+  Input,
+  InputRef,
+  Row,
+  Select,
+  Space,
+  Spin,
+} from "antd";
 import { useAuth } from "@/providers/AuthProvider";
 import { useTheme } from "@/providers/ThemeProvider";
 import { useProject } from "@/providers/ProjectProvider";
 import ProjectList from "../../components/ProjectList";
-import { randomString } from "@/api/github";
+import { randomString } from "@/utils/stringUtils";
 
 const postUserInfo = async () => {
   return await new Promise<boolean>((resolve) => {
@@ -30,8 +47,8 @@ const postTheme = async () => {
 };
 
 const Home = () => {
-  const { changeUser, userInfo } = useAuth();
-
+  const { changeUser, userInfo, login, logout, loading } = useAuth();
+  const [loginUser, setLoginUser] = useState("");
   const [counterNumber, setCounterNumber] = useState<number | string>("");
   const [counterXNumber, setCounterXNumber] = useState<number | string>("");
   const [toChangUserName, setToChangUserName] = useState(userInfo.name ?? "");
@@ -105,18 +122,7 @@ const Home = () => {
     []
   );
 
-  const authorizeUrl = useMemo(() => {
-    const params = {
-      client_id: import.meta.env.vite_client_id,
-      login: import.meta.env.vite_login,
-      scope: import.meta.env.vite_github_scope, // write:repo_hook,
-      state: randomString(Math.floor(Math.random() * 100 + 32)),
-      redirect_uri: import.meta.env.vite_github_auth_url,
-    };
-    return `https://github.com/login/oauth/authorize?${Object.entries(params)
-      .map(([key, value]) => `${key}=${value}`)
-      .join("&")}`;
-  }, []);
+  console.log(loading, "loading");
 
   return (
     <div>
@@ -125,9 +131,18 @@ const Home = () => {
         <NavLink className={navLinkClass} to="/">
           <Button>to React Lazy Demo</Button>
         </NavLink>
-        <a href={authorizeUrl}>
-          <Button>dev登录github</Button>
-        </a>
+        <Input
+          value={loginUser}
+          onChange={(event) => setLoginUser(event.target.value)}
+        />
+        <span>
+          {/* <a href={authorizeUrl}> */}
+          <Button onClick={() => login(loginUser)} loading={loading}>
+            dev登录github
+          </Button>
+          {/* </a> */}
+        </span>
+        <Button onClick={() => logout()}>退出登录</Button>
         <Row gutter={18} style={{ marginTop: 20 }}>
           <Col span={7}>
             <Space wrap>

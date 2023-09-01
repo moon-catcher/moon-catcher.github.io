@@ -17,13 +17,24 @@ import { memo, useEffect, useRef, useState } from "react";
 import { NavLink, useLoaderData, useNavigate } from "react-router-dom";
 
 const Auth = () => {
-  const code = useLoaderData() as string;
+  const { code, state, error } = useLoaderData() as {
+    code: string;
+    state: string;
+    error: string;
+  };
   const navigate = useNavigate();
+  const { setToken } = useAuth();
   const timer = useRef<NodeJS.Timeout>();
   const [status, setStatus] = useState(LOGIN_TEXT_CHECKING);
 
   const timesText = (times: number) =>
     `登录成功,${times}s即将自动跳转...点击立即跳转`;
+
+  useEffect(() => {
+    setTimeout(() => {
+      window.close();
+    }, 1000);
+  }, [error]);
 
   useEffect(() => {
     const authCode = getCookie(COOKIE_KEY_CODE);
@@ -32,29 +43,40 @@ const Auth = () => {
       setStatus(LOGIN_TEXT_LOADING);
       getAccessToken(code)
         .then(async ({ data }: { data: AccessToken }) => {
-          if (!data || data.error) {
-            return Promise.reject(data?.error ?? "token 请求失败");
-          } else {
-            setCookie({ key: COOKIE_KEY_TOKEN, value: data.token });
-            updateOctokitToken();
-            const data2 = await octokit.request("GET /user", {
-              headers: {
-                "X-GitHub-Api-Version": "2022-11-28",
-              },
+          if (data?.token) {
+            setCookie({
+              key: COOKIE_KEY_TOKEN,
+              value: data.token,
+              exexpiresDay: dayjs().add(3, "day"),
             });
-            console.log(data2, octokit);
+            setToken(data.token);
+            setStatus(LOGIN_TEXT_LOGINED);
+            window.opener[`${state}`](data.token);
+            // updateOctokitToken();
+            // const data2 = await octokit.request("GET /user", {
+            //   headers: {
+            //     "X-GitHub-Api-Version": "2022-11-28",
+            //   },
+            // });
+            // console.log(data2, octokit);
+          } else {
+            setStatus(LOGIN_TEXT_FAILED);
           }
         })
         .catch((error) => {
+          alert(error);
           console.error(error);
           setStatus(LOGIN_TEXT_FAILED);
+          setTimeout(() => {
+            window.close();
+          }, 1000);
         });
     } else {
       const authorization = getCookie(COOKIE_KEY_TOKEN);
       if (authorization) {
         setStatus(LOGIN_TEXT_LOGINED);
       } else {
-        setStatus(LOGIN_TEXT_FAILED);
+        setStatus(LOGIN_TEXT_LOADING);
       }
     }
   }, [code]);

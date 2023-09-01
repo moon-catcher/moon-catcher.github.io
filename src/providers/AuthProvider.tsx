@@ -92,8 +92,9 @@ const AuthProvider = (props: Props) => {
         .map(([key, value]) => `${key}=${value}`)
         .join("&")}&tokfn=${state}`,
       "_blank",
-      "height=600, width=500, left=800,top=100"
+      "height=600, width=500, left=800,top=100, location=false"
     );
+
     window[`${state}`] = (token: string) => {
       clearInterval(childWindowColseTimer.current);
       setToken(token);

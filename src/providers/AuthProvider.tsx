@@ -7,17 +7,9 @@ import {
   useEffect,
   useRef,
   type ReactNode,
-  type Dispatch,
-  type SetStateAction,
 } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { UserInfo } from "@/types";
-// import { getUserInfo } from "@/api/user";
-import { USER_INFO } from "@/constant/api";
-import { getUserInfo } from "@/api/github";
-import apiClient from "@/api/apiClient";
 import { Octokit } from "octokit";
-import octokit from "@/api/octokitClient";
 import { getCookie, setCookie } from "@/utils/cookieUtils";
 import { COOKIE_KEY_TOKEN } from "@/constant/auth";
 import { randomString } from "@/utils/stringUtils";
@@ -40,6 +32,7 @@ const AuthProvider = (props: Props) => {
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState("");
+  const [octokit, setOctokit] = useState<Octokit | undefined>();
   const childWindowColseTimer = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
@@ -63,6 +56,7 @@ const AuthProvider = (props: Props) => {
         .then((res: any) => {
           setUserInfo(res.data);
         });
+      setOctokit(octokit);
     }
   }, [token]);
 
@@ -113,29 +107,19 @@ const AuthProvider = (props: Props) => {
       }, 1000);
     }
   }, []);
-  const changeUser = useCallback(() => {}, []);
 
   const contextValue = useMemo(() => {
     return {
-      login,
-      changeUser,
-      setUserInfo,
-      userInfo,
-      setToken,
       token,
+      octokit,
+      userInfo,
       loading,
+      login,
       logout,
+      setToken,
+      setUserInfo,
     };
-  }, [
-    login,
-    changeUser,
-    setUserInfo,
-    userInfo,
-    setToken,
-    token,
-    loading,
-    logout,
-  ]);
+  }, [userInfo, token, loading, octokit]);
   return (
     <AuthContext.Provider value={contextValue}>
       {props.children}

@@ -14,8 +14,8 @@ import { useAuth } from "@/providers/AuthProvider";
 import { AccessToken } from "@/types";
 import { getCookie, setCookie } from "@/utils/cookieUtils";
 import dayjs from "dayjs";
-import { memo, useEffect, useRef, useState } from "react";
-import { NavLink, useLoaderData, useNavigate } from "react-router-dom";
+import { memo, useEffect, useState } from "react";
+import { NavLink, useLoaderData } from "react-router-dom";
 
 const Auth = () => {
   const { code, state, error } = useLoaderData() as {
@@ -23,16 +23,12 @@ const Auth = () => {
     state: string;
     error: string;
   };
-  const navigate = useNavigate();
   const { setToken } = useAuth();
-  const timer = useRef<NodeJS.Timeout>();
   const [status, setStatus] = useState(LOGIN_TEXT_CHECKING);
-
-  const timesText = (times: number) =>
-    `登录成功,${times}s即将自动跳转...点击立即跳转`;
 
   useEffect(() => {
     if (error) {
+      window.opener = undefined;
       if (error === GITHUB_LOGIN_CANCEL) {
         setStatus(LOGIN_TEXT_CANCEL);
       } else {
@@ -60,14 +56,9 @@ const Auth = () => {
             setToken(data.token);
             setStatus(LOGIN_TEXT_LOGINED);
             window.opener[`${state}`](data.token);
-            // updateOctokitToken();
-            // const data2 = await octokit.request("GET /user", {
-            //   headers: {
-            //     "X-GitHub-Api-Version": "2022-11-28",
-            //   },
-            // });
-            // console.log(data2, octokit);
+            window.opener = undefined;
           } else {
+            window.opener = undefined;
             setStatus(LOGIN_TEXT_FAILED);
           }
         })
@@ -75,6 +66,7 @@ const Auth = () => {
           alert(error);
           console.error(error);
           setStatus(LOGIN_TEXT_FAILED);
+          window.opener = undefined;
           setTimeout(() => {
             window.close();
           }, 1000);
@@ -88,30 +80,6 @@ const Auth = () => {
       }
     }
   }, [code]);
-
-  useEffect(() => {
-    if (status === timesText(3)) {
-      timer.current = setTimeout(() => {
-        setStatus(timesText(2));
-      }, 1000);
-    }
-    if (status === timesText(2)) {
-      timer.current = setTimeout(() => {
-        setStatus(timesText(1));
-      }, 1000);
-    }
-    if (status === timesText(1)) {
-      timer.current = setTimeout(() => {
-        setStatus(timesText(0));
-      }, 1000);
-    }
-    if (status === timesText(0)) {
-      navigate("/home");
-    }
-    return () => {
-      clearTimeout(timer.current);
-    };
-  }, [status]);
 
   return (
     <>

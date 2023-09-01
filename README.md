@@ -8,10 +8,11 @@ Browserify 使浏览器执行 node 模块
 
 另一种思路，使用 github api 实现https://www.cnblogs.com/dev2007/p/13997791.html
 
-
 权限 https://github.com/settings/applications/2300145
 api https://api.github.com/
 
 auth https://github.com/prose/gatekeeper
 
 github api https://octokit.github.io/rest.js/v20#authentication
+
+参考：http://39.104.22.73:67/BlogDetail?_id=615aff3fb82b9a529f30427b&Title=%E5%A6%82%E4%BD%95%E8%87%AA%E5%AD%A6%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91&from=%E9%A6%96%E9%A1%B5

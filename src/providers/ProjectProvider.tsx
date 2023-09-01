@@ -112,7 +112,6 @@ const ProjectProvider = (props: Props) => {
   const {
     data: projectInfo = { id: projectId },
     isLoading,
-    fetchStatus,
   } = useQuery<Project>(
     ["project-info", projectId],
     () => getProjectInfo(projectId),

@@ -1,35 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  Suspense,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import "./Home.less";
 import { UserInfo } from "@/types";
 import { THEME_INFO, USER_INFO } from "@/constant/api";
 import { observer } from "mobx-react";
 import { useCounter } from "@/providers/CounterProvider";
-import {
-  Button,
-  Card,
-  Col,
-  Input,
-  InputRef,
-  Row,
-  Select,
-  Space,
-  Spin,
-} from "antd";
+import { Button, Card, Col, Input, Row, Select, Space, Spin } from "antd";
 import { useAuth } from "@/providers/AuthProvider";
 import { useTheme } from "@/providers/ThemeProvider";
 import { useProject } from "@/providers/ProjectProvider";
 import ProjectList from "../../components/ProjectList";
-import { randomString } from "@/utils/stringUtils";
-
 const postUserInfo = async () => {
   return await new Promise<boolean>((resolve) => {
     setTimeout(() => {

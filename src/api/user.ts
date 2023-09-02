@@ -1,4 +1,5 @@
 import { UserInfo } from "@/types";
+import apiClient from "./apiClient";
 
 export const getUserInfo = async (userId: string) => {
   return await new Promise<UserInfo>((resolve) => {
@@ -12,4 +13,8 @@ export const getUserInfo = async (userId: string) => {
       }
     }, 500);
   });
+};
+
+export const loginByAuth = async () => {
+  return await apiClient.get(`/login`);
 };

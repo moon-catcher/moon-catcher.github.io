@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "dev:gh": "vite --mode gh",
+    "dev:gh": "vite --mode ghlocal",
     "build": "vite build",
     "build:test": "vite build --mode test",
     "build:gh": "vite build --mode gh",
@@ -20,7 +20,6 @@
     "@tanstack/react-query": "^4.33.0",
     "antd": "^5.8.4",
     "axios": "^1.4.0",
-    "jsencrypt": "^3.3.2",
     "dayjs": "^1.11.9",
     "less": "^4.2.0",
     "mobx": "^6.10.0",
@@ -32,6 +31,7 @@
     "react-router-dom": "^6.15.0"
   },
   "devDependencies": {
+    "@types/crypto-js": "^4.1.1",
     "@types/node": "^20.5.4",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",

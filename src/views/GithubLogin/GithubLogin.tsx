@@ -1,7 +1,8 @@
-import { getAccessToken } from "@/api/github";
+import { getAccessToken, setCookie } from "@/api/github";
 import {
+  COOKIE_KEY_AUTH,
   COOKIE_KEY_CODE,
-  COOKIE_KEY_TOKEN,
+  COOKIE_KEY_STATE,
   GITHUB_LOGIN_CANCEL,
   LOGIN_TEXT_CANCEL,
   LOGIN_TEXT_CHECKING,
@@ -12,7 +13,7 @@ import {
 } from "@/constant/auth";
 import { useAuth } from "@/providers/AuthProvider";
 import { AccessToken } from "@/types";
-import { getCookie, setCookie } from "@/utils/cookieUtils";
+import { getCookie } from "@/utils/cookieUtils";
 import dayjs from "dayjs";
 import { memo, useEffect, useState } from "react";
 import { NavLink, useLoaderData } from "react-router-dom";
@@ -35,23 +36,25 @@ const Auth = () => {
         setStatus(LOGIN_TEXT_FAILED);
       }
       setTimeout(() => {
-        window.close();
+        // window.close();
       }, 1000);
     }
   }, [error]);
 
   useEffect(() => {
+    const authState = getCookie(COOKIE_KEY_STATE);
     const authCode = getCookie(COOKIE_KEY_CODE);
-    if (!!code && authCode !== code) {
-      setCookie({ key: COOKIE_KEY_CODE, value: code });
+    // url中的state和cookie中的相同，则进行登录操作
+    console.log(authState, "authState", state, "state");
+    if (!!code && authCode !== code && authState === state) {
+      setCookie({ [COOKIE_KEY_CODE]: code });
       setStatus(LOGIN_TEXT_LOADING);
-      getAccessToken(code)
-        .then(async ({ data }: { data: AccessToken }) => {
+      getAccessToken(code, state)
+        .then(({ data }: { data: AccessToken }) => {
           if (data?.token) {
             setCookie({
-              key: COOKIE_KEY_TOKEN,
-              value: data.token,
-              exexpiresDay: dayjs().add(3, "day"),
+              [COOKIE_KEY_AUTH]: data.authKey,
+              expires: dayjs().add(3, "day").toDate().toUTCString(),
             });
             setToken(data.token);
             setStatus(LOGIN_TEXT_LOGINED);
@@ -68,18 +71,20 @@ const Auth = () => {
           setStatus(LOGIN_TEXT_FAILED);
           window.opener = undefined;
           setTimeout(() => {
-            window.close();
+            // window.close();
           }, 1000);
         });
-    } else if (code) {
-      const authorization = getCookie(COOKIE_KEY_TOKEN);
-      if (authorization) {
+
+      // cookie中的
+    } else if (code && code === authCode && authState === state) {
+      const authkey = getCookie(COOKIE_KEY_AUTH);
+      if (authkey) {
         setStatus(LOGIN_TEXT_LOGINED);
       } else {
         setStatus(LOGIN_TEXT_UNLOGINED);
       }
     }
-  }, [code]);
+  }, [code, state]);
 
   return (
     <>

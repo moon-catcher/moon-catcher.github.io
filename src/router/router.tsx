@@ -32,8 +32,9 @@ const Manhour = lazy(
 const createRootRouter = () => {
   // 在这里使用context里的数据
   const { userInfo, isLoading } = useAuth();
-  const createMyRouter =
-    import.meta.env.MODE === "gh" ? createHashRouter : createBrowserRouter;
+  const createMyRouter = import.meta.env.MODE.includes("gh")
+    ? createHashRouter
+    : createBrowserRouter;
   const router = createMyRouter(
     createRoutesFromElements(
       <Route

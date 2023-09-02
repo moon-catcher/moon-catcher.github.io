@@ -9,36 +9,46 @@ import {
   type ReactNode,
 } from "react";
 import { UserInfo } from "@/types";
-import { Octokit } from "octokit";
-import { getCookie, setCookie } from "@/utils/cookieUtils";
-import { COOKIE_KEY_TOKEN } from "@/constant/auth";
+import { getCookie } from "@/utils/cookieUtils";
+import {
+  COOKIE_KEY_AUTH,
+  COOKIE_KEY_CODE,
+  COOKIE_KEY_STATE,
+} from "@/constant/auth";
 import { randomString } from "@/utils/stringUtils";
-import dayjs from "dayjs";
-
+import { Octokit } from "octokit";
+import { loginByAuth } from "@/api/user";
+import { setCookie } from "@/api/github";
 type Props = {
   children: ReactNode;
   defaultUser?: string;
 };
 
 type AuthContextValue =
-  | {
+  | ({
       userInfo: UserInfo;
       token: string;
-    } & any;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } & { [props: string]: any })
+  | undefined;
 
 const AuthContext = createContext<AuthContextValue>(undefined);
 
 const AuthProvider = (props: Props) => {
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(false);
-  const [userInfo, setUserInfo] = useState("");
+  const [userInfo, setUserInfo] = useState({});
   const [octokit, setOctokit] = useState<Octokit | undefined>();
   const childWindowColseTimer = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    const token = getCookie(COOKIE_KEY_TOKEN);
-    if (token) {
-      setToken(token);
+    const authky = getCookie(COOKIE_KEY_AUTH);
+    if (authky) {
+      loginByAuth().then((data) => {
+        console.log(data, "data", "从后台获取");
+        const token = "从后台获取";
+        setToken(token);
+      });
     }
   }, []);
 
@@ -53,7 +63,7 @@ const AuthProvider = (props: Props) => {
             "X-GitHub-Api-Version": "2022-11-28",
           },
         })
-        .then((res: any) => {
+        .then((res: { data: object }) => {
           setUserInfo(res.data);
         });
       setOctokit(octokit);
@@ -62,16 +72,18 @@ const AuthProvider = (props: Props) => {
 
   const logout = useCallback(() => {
     setCookie({
-      key: COOKIE_KEY_TOKEN,
-      value: "",
-      exexpiresDay: dayjs().add(-1, "day"),
+      [COOKIE_KEY_CODE]: "",
+      [COOKIE_KEY_STATE]: "",
+      [COOKIE_KEY_AUTH]: "",
     });
-    setToken("");
-    setUserInfo("");
+    setOctokit(undefined);
+    setUserInfo({});
   }, []);
 
   const login = useCallback((loginUser?: string) => {
     const state = randomString(Math.floor(Math.random() * 100 + 32));
+    // 发起登录请求之前，保存state 到cookie
+    setCookie({ [COOKIE_KEY_STATE]: state });
     const params = {
       client_id: import.meta.env.vite_client_id,
       login: loginUser ?? "",
@@ -94,7 +106,7 @@ const AuthProvider = (props: Props) => {
       setToken(token);
       setLoading(false);
       delete window[`${state}`];
-      childWindow?.close();
+      // childWindow?.close();
     };
 
     if (childWindow) {

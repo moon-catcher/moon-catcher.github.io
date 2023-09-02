@@ -11,6 +11,7 @@ import { useAuth } from "@/providers/AuthProvider";
 import { useTheme } from "@/providers/ThemeProvider";
 import { useProject } from "@/providers/ProjectProvider";
 import ProjectList from "../../components/ProjectList";
+import { getAccessToken } from "@/api/github";
 const postUserInfo = async () => {
   return await new Promise<boolean>((resolve) => {
     setTimeout(() => {
@@ -120,6 +121,13 @@ const Home = () => {
           {/* <a href={authorizeUrl}> */}
           <Button onClick={() => login(loginUser)} loading={loading}>
             dev登录github
+          </Button>
+          <Button
+            onClick={() => {
+              getAccessToken("2222222", "333333");
+            }}
+          >
+            请求
           </Button>
           {/* </a> */}
         </span>

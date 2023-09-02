@@ -1,8 +1,7 @@
-import { getAccessToken, setCookie } from "@/api/github";
+import { getAccessToken, putCookie } from "@/api/github";
 import {
   COOKIE_KEY_AUTH,
   COOKIE_KEY_CODE,
-  COOKIE_KEY_STATE,
   GITHUB_LOGIN_CANCEL,
   LOGIN_TEXT_CANCEL,
   LOGIN_TEXT_CHECKING,
@@ -36,47 +35,43 @@ const Auth = () => {
         setStatus(LOGIN_TEXT_FAILED);
       }
       setTimeout(() => {
-        // window.close();
+        window.close();
       }, 1000);
     }
   }, [error]);
 
   useEffect(() => {
-    const authState = getCookie(COOKIE_KEY_STATE);
     const authCode = getCookie(COOKIE_KEY_CODE);
+    const expires = dayjs().add(3, "day").toDate().toUTCString();
     // url中的state和cookie中的相同，则进行登录操作
-    console.log(authState, "authState", state, "state");
-    if (!!code && authCode !== code && authState === state) {
-      setCookie({ [COOKIE_KEY_CODE]: code });
+
+    if (!!code && authCode !== code) {
       setStatus(LOGIN_TEXT_LOADING);
       getAccessToken(code, state)
-        .then(({ data }: { data: AccessToken }) => {
+        .then(async ({ data }: { data: AccessToken }) => {
           if (data?.token) {
-            setCookie({
-              [COOKIE_KEY_AUTH]: data.authKey,
-              expires: dayjs().add(3, "day").toDate().toUTCString(),
+            await putCookie({
+              [COOKIE_KEY_CODE]: code,
+              expires,
             });
             setToken(data.token);
             setStatus(LOGIN_TEXT_LOGINED);
             window.opener[`${state}`](data.token);
             window.opener = undefined;
-          } else {
-            window.opener = undefined;
-            setStatus(LOGIN_TEXT_FAILED);
           }
         })
-        .catch((error) => {
-          alert(error);
-          console.error(error);
+        .catch((error: Error) => {
+          if (error.message === "Request aborted") return;
+          console.error(error.message);
           setStatus(LOGIN_TEXT_FAILED);
           window.opener = undefined;
           setTimeout(() => {
-            // window.close();
+            window.close();
           }, 1000);
         });
 
       // cookie中的
-    } else if (code && code === authCode && authState === state) {
+    } else if (code && code === authCode) {
       const authkey = getCookie(COOKIE_KEY_AUTH);
       if (authkey) {
         setStatus(LOGIN_TEXT_LOGINED);

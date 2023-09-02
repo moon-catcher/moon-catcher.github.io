@@ -18,7 +18,8 @@ import {
 import { randomString } from "@/utils/stringUtils";
 import { Octokit } from "octokit";
 import { loginByAuth } from "@/api/user";
-import { setCookie } from "@/api/github";
+import { putCookie } from "@/api/github";
+import dayjs from "dayjs";
 type Props = {
   children: ReactNode;
   defaultUser?: string;
@@ -43,6 +44,8 @@ const AuthProvider = (props: Props) => {
 
   useEffect(() => {
     const authky = getCookie(COOKIE_KEY_AUTH);
+    console.log(authky, "authkyauthkyauthky");
+
     if (authky) {
       loginByAuth().then((data) => {
         console.log(data, "data", "从后台获取");
@@ -71,10 +74,11 @@ const AuthProvider = (props: Props) => {
   }, [token]);
 
   const logout = useCallback(() => {
-    setCookie({
+    putCookie({
       [COOKIE_KEY_CODE]: "",
       [COOKIE_KEY_STATE]: "",
       [COOKIE_KEY_AUTH]: "",
+      expires: dayjs().add(-1, "day").toDate().toUTCString(),
     });
     setOctokit(undefined);
     setUserInfo({});
@@ -83,41 +87,45 @@ const AuthProvider = (props: Props) => {
   const login = useCallback((loginUser?: string) => {
     const state = randomString(Math.floor(Math.random() * 100 + 32));
     // 发起登录请求之前，保存state 到cookie
-    setCookie({ [COOKIE_KEY_STATE]: state });
-    const params = {
-      client_id: import.meta.env.vite_client_id,
-      login: loginUser ?? "",
-      scope: import.meta.env.vite_github_scope, // write:repo_hook,
-      state,
-      redirect_uri: import.meta.env.vite_github_auth_url,
-    };
+    putCookie({
+      [COOKIE_KEY_STATE]: state,
+      [COOKIE_KEY_AUTH]: "",
+    }).then(() => {
+      const params = {
+        client_id: import.meta.env.vite_client_id,
+        login: loginUser ?? "",
+        scope: import.meta.env.vite_github_scope, // write:repo_hook,
+        state,
+        redirect_uri: import.meta.env.vite_github_auth_url,
+      };
 
-    setLoading(true);
-    const childWindow = window.open(
-      `https://github.com/login/oauth/authorize?${Object.entries(params)
-        .map(([key, value]) => `${key}=${value}`)
-        .join("&")}&tokfn=${state}`,
-      "_blank",
-      "height=600, width=500, left=800,top=100, location=false"
-    );
+      setLoading(true);
+      const childWindow = window.open(
+        `https://github.com/login/oauth/authorize?${Object.entries(params)
+          .map(([key, value]) => `${key}=${value}`)
+          .join("&")}&tokfn=${state}`,
+        "_blank",
+        "height=600, width=500, left=800,top=100, location=false"
+      );
 
-    window[`${state}`] = (token: string) => {
-      clearInterval(childWindowColseTimer.current);
-      setToken(token);
-      setLoading(false);
-      delete window[`${state}`];
-      // childWindow?.close();
-    };
+      window[`${state}`] = (token: string) => {
+        clearInterval(childWindowColseTimer.current);
+        setToken(token);
+        setLoading(false);
+        delete window[`${state}`];
+        childWindow?.close();
+      };
 
-    if (childWindow) {
-      childWindowColseTimer.current = setInterval(function () {
-        if (childWindow?.closed) {
-          clearInterval(childWindowColseTimer.current);
-          setLoading(false);
-          delete window[`${state}`];
-        }
-      }, 1000);
-    }
+      if (childWindow) {
+        childWindowColseTimer.current = setInterval(function () {
+          if (childWindow?.closed) {
+            clearInterval(childWindowColseTimer.current);
+            setLoading(false);
+            delete window[`${state}`];
+          }
+        }, 1000);
+      }
+    });
   }, []);
 
   const contextValue = useMemo(() => {

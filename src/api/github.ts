@@ -13,13 +13,24 @@ export const getAccessToken = async (
   state: string
 ): Promise<{ data: AccessToken }> => {
   const url = `/authenticate/${code}/${state}`;
-  console.log(document.cookie, "3333333333333");
   return await apiClient.get(url, { withCredentials: true });
 };
 
-export const setCookie = async (cookies: object) => {
-  return await apiClient.put("/cookie", {
-    params: cookies,
-    withCredentials: true,
-  });
+export const putCookie = async (
+  cookies: { [prop: string]: string } & { expires?: string }
+) => {
+  const { expires } = cookies;
+  return await Promise.all(
+    Object.entries(cookies)
+      .filter(([key]) => key !== "expires")
+      .map(([name, value]) =>
+        apiClient.put(
+          "/cookie",
+          { name, value, expires },
+          {
+            withCredentials: true,
+          }
+        )
+      )
+  );
 };

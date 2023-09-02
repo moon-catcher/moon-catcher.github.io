@@ -74,8 +74,6 @@ const mockProjectList = () =>
       ];
 
 export const getProjectInfo = (projectId: number) => {
-  console.log("请求Project*****************", projectId);
-
   return new Promise<Project>((resolve) => {
     setTimeout(() => {
       const project = mockProjectList().find(({ id }) => id === projectId);
@@ -114,7 +112,6 @@ const ProjectProvider = (props: Props) => {
   const {
     data: projectInfo = { id: projectId },
     isLoading,
-    fetchStatus,
   } = useQuery<Project>(
     ["project-info", projectId],
     () => getProjectInfo(projectId),
@@ -126,22 +123,16 @@ const ProjectProvider = (props: Props) => {
     }
   );
 
-  console.log(fetchStatus, "fetchStatus");
-
   useEffect(() => {
-    console.log(projectList, "projectList", projectInfo);
 
     if (!isLoading) {
       // case1 : 设置的项目ID不存在
       if (projectInfo.id && !projectInfo.name && projectList?.length) {
-        console.log("进入ProjectProvider");
-
         setProjectId(projectList[0].id);
       }
 
       // case2: 没有设置默认项目ID
       if (!props.defaultProject && projectList?.length && !projectInfo.name) {
-        console.log("进入ProjectProvider2");
         setProjectId(projectList[0].id);
       }
     }

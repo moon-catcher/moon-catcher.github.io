@@ -16,7 +16,6 @@ const CounterPage = () => {
   const counterStore: Counter = useLocalObservable(() => createCounter(0));
 
   useEffect(() => {
-    console.log(counterNumber, "counterNumber");
     runInAction(() => (counterStore.value = Number(counterNumber) || 0));
   }, [counterNumber]);
   return (

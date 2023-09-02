@@ -6,12 +6,10 @@ import { chunkSplitPlugin } from "vite-plugin-chunk-split";
 import vitePluginImp from "vite-plugin-imp";
 import { visualizer } from "rollup-plugin-visualizer";
 
-console.log(process.env.VITE_GITHUB_TOKEN, "process.env.VITE_GITHUB_TOKEN");
-
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    host: "0.0.0.0",
+    host: "localhost",
     https: true, // 需要开启https服务
     headers: {
       Accept: "application/vnd.github.v3+json",

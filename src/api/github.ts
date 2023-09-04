@@ -19,18 +19,10 @@ export const getAccessToken = async (
 export const putCookie = async (
   cookies: { [prop: string]: string } & { expires?: string }
 ) => {
-  const { expires } = cookies;
-  return await Promise.all(
-    Object.entries(cookies)
-      .filter(([key]) => key !== "expires")
-      .map(([name, value]) =>
-        apiClient.put(
-          "/cookie",
-          { name, value, expires },
-          {
-            withCredentials: true,
-          }
-        )
-      )
+  const { expires, ...rest } = cookies;
+  return await apiClient.put(
+    "/cookie",
+    { cookies: rest, expires },
+    { withCredentials: true }
   );
 };

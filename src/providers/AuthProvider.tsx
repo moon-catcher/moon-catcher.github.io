@@ -47,11 +47,11 @@ const AuthProvider = (props: Props) => {
     console.log(authky, "authkyauthkyauthky");
 
     if (authky) {
-      loginByAuth().then((data) => {
-        console.log(data, "data", "从后台获取");
-        const token = "从后台获取";
-        setToken(token);
-      });
+      loginByAuth().then(
+        (res: { data: { status: number; msg: string; token: string } }) => {
+          setToken(res.data.token);
+        }
+      );
     }
   }, []);
 

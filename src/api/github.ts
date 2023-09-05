@@ -17,12 +17,12 @@ export const getAccessToken = async (
 };
 
 export const putCookie = async (
-  cookies: { [prop: string]: string } & { expires?: string }
+  cookies: { [prop: string]: string } & { expires?: string; httpOnly?: boolean }
 ) => {
-  const { expires, ...rest } = cookies;
+  const { expires, httpOnly = false, ...rest } = cookies;
   return await apiClient.put(
     "/cookie",
-    { cookies: rest, expires },
+    { cookies: rest, expires, httpOnly },
     { withCredentials: true }
   );
 };

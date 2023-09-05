@@ -7,3 +7,20 @@ export const getCookie = (cookieKey: string) => {
     }
   }
 };
+
+export const setCookie = (
+  cookieKey: string,
+  value: string,
+  options?: { [prop: string]: string }
+) => {
+  if (options) {
+    const optionStr = Object.entries(options)
+      .map(([name, value]) => `${name}=${value}`)
+      .join("; ");
+    document.cookie = `${cookieKey}=${value}; ${optionStr}; domain=${
+      options.domain ?? import.meta.env.vite_domain
+    }`;
+  } else {
+    document.cookie = `${cookieKey}=${value}`;
+  }
+};

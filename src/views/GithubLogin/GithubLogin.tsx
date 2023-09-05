@@ -1,4 +1,4 @@
-import { getAccessToken, putCookie } from "@/api/github";
+import { getAccessToken } from "@/api/github";
 import {
   COOKIE_KEY_AUTH,
   COOKIE_KEY_CODE,
@@ -12,7 +12,7 @@ import {
 } from "@/constant/auth";
 import { useAuth } from "@/providers/AuthProvider";
 import { AccessToken } from "@/types";
-import { getCookie } from "@/utils/cookieUtils";
+import { getCookie, setCookie } from "@/utils/cookieUtils";
 import dayjs from "dayjs";
 import { memo, useEffect, useState } from "react";
 import { NavLink, useLoaderData } from "react-router-dom";
@@ -35,7 +35,7 @@ const Auth = () => {
         setStatus(LOGIN_TEXT_FAILED);
       }
       setTimeout(() => {
-        window.close();
+        // window.close();
       }, 1000);
     }
   }, [error]);
@@ -50,8 +50,7 @@ const Auth = () => {
       getAccessToken(code, state)
         .then(async ({ data }: { data: AccessToken }) => {
           if (data?.token) {
-            await putCookie({
-              [COOKIE_KEY_CODE]: code,
+            setCookie(COOKIE_KEY_CODE, code, {
               expires,
             });
             setToken(data.token);
@@ -64,9 +63,9 @@ const Auth = () => {
           if (error.message === "Request aborted") return;
           console.error(error.message);
           setStatus(LOGIN_TEXT_FAILED);
-          window.opener = undefined;
+          // window.opener = undefined;
           setTimeout(() => {
-            window.close();
+            // window.close();
           }, 1000);
         });
 

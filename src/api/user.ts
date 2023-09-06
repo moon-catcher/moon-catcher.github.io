@@ -15,6 +15,10 @@ export const getUserInfo = async (userId: string) => {
   });
 };
 
-export const loginByAuth = async () => {
-  return await apiClient.get(`/login`, { withCredentials: true });
+export const loginByAuth = async (data: {
+  code: string;
+  state: string;
+  authkey: string;
+}) => {
+  return await apiClient.post(`/login`, data, { withCredentials: true });
 };

@@ -42,11 +42,15 @@ const AuthProvider = (props: Props) => {
   const childWindowColseTimer = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
-    const authky = getCookie(COOKIE_KEY_AUTH);
-    console.log(authky, "authkyauthkyauthky");
-
-    if (authky) {
-      loginByAuth().then(
+    const code = getCookie(COOKIE_KEY_CODE);
+    const state = getCookie(COOKIE_KEY_STATE);
+    const authkey = localStorage.getItem(COOKIE_KEY_AUTH);
+    if (authkey && code && state) {
+      loginByAuth({
+        code,
+        state,
+        authkey: JSON.parse(authkey),
+      }).then(
         (res: { data: { status: number; msg: string; token: string } }) => {
           setToken(res.data.token);
         }
@@ -87,7 +91,7 @@ const AuthProvider = (props: Props) => {
   }, []);
 
   const login = useCallback((loginUser?: string) => {
-    const state = randomString(Math.floor(Math.random() * 100 + 32));
+    const state = randomString(Math.floor(Math.random() * 10 + 12));
     // 发起登录请求之前，保存state 到cookie
     setCookie(COOKIE_KEY_STATE, state);
     setCookie(COOKIE_KEY_AUTH, "");

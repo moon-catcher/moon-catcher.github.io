@@ -6,7 +6,7 @@ export type UserInfo = {
 
 export type AccessToken = {
   token: string;
-  authKey: string;
+  authkey: string;
   token_type: string;
   scope: string;
   error?: Error;

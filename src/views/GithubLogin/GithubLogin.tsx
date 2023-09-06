@@ -2,6 +2,7 @@ import { getAccessToken } from "@/api/github";
 import {
   COOKIE_KEY_AUTH,
   COOKIE_KEY_CODE,
+  COOKIE_KEY_STATE,
   GITHUB_LOGIN_CANCEL,
   LOGIN_TEXT_CANCEL,
   LOGIN_TEXT_CHECKING,
@@ -42,17 +43,25 @@ const Auth = () => {
 
   useEffect(() => {
     const authCode = getCookie(COOKIE_KEY_CODE);
+    const authState = getCookie(COOKIE_KEY_STATE);
+
     const expires = dayjs().add(3, "day").toDate().toUTCString();
     // url中的state和cookie中的相同，则进行登录操作
 
-    if (!!code && authCode !== code) {
+    if (!!code && authCode !== code && authState === state) {
       setStatus(LOGIN_TEXT_LOADING);
       getAccessToken(code, state)
         .then(async ({ data }: { data: AccessToken }) => {
+          console.log(data, "data");
+
           if (data?.token) {
             setCookie(COOKIE_KEY_CODE, code, {
               expires,
             });
+            setCookie(COOKIE_KEY_STATE, state, {
+              expires,
+            });
+            localStorage.setItem(COOKIE_KEY_AUTH, JSON.stringify(data.authkey));
             setToken(data.token);
             setStatus(LOGIN_TEXT_LOGINED);
             window.opener[`${state}`](data.token);

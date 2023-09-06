@@ -108,7 +108,7 @@ const Home = () => {
 
   return (
     <div>
-      首页 用户:{userInfo?.name}
+      首页 用户:{userInfo?.name ?? '正在校验登录状态...'}
       <Card bodyStyle={{ background, color: "white" }}>
         <NavLink className={navLinkClass} to="/">
           <Button>to React Lazy Demo</Button>

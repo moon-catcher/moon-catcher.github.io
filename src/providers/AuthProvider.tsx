@@ -46,6 +46,7 @@ const AuthProvider = (props: Props) => {
     const state = getCookie(COOKIE_KEY_STATE);
     const authkey = localStorage.getItem(COOKIE_KEY_AUTH);
     if (authkey && code && state) {
+      setLoading(true);
       loginByAuth({
         code,
         state,
@@ -54,7 +55,9 @@ const AuthProvider = (props: Props) => {
         (res: { data: { status: number; msg: string; token: string } }) => {
           setToken(res.data.token);
         }
-      );
+      ).finally(()=>{
+        setLoading(false);
+      });
     }
   }, []);
 
@@ -94,7 +97,7 @@ const AuthProvider = (props: Props) => {
     const state = randomString(Math.floor(Math.random() * 10 + 12));
     // 发起登录请求之前，保存state 到cookie
     setCookie(COOKIE_KEY_STATE, state);
-    setCookie(COOKIE_KEY_AUTH, "");
+    setCookie(COOKIE_KEY_CODE, "");
     const params = {
       client_id: import.meta.env.vite_client_id,
       login: loginUser ?? "",

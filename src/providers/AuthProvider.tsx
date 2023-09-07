@@ -51,13 +51,15 @@ const AuthProvider = (props: Props) => {
         code,
         state,
         authkey: JSON.parse(authkey),
-      }).then(
-        (res: { data: { status: number; msg: string; token: string } }) => {
-          setToken(res.data.token);
-        }
-      ).finally(()=>{
-        setLoading(false);
-      });
+      })
+        .then(
+          (res: { data: { status: number; msg: string; token: string } }) => {
+            setToken(res.data.token);
+          }
+        )
+        .finally(() => {
+          setLoading(false);
+        });
     }
   }, []);
 
@@ -96,8 +98,9 @@ const AuthProvider = (props: Props) => {
   const login = useCallback((loginUser?: string) => {
     const state = randomString(Math.floor(Math.random() * 10 + 12));
     // 发起登录请求之前，保存state 到cookie
-    setCookie(COOKIE_KEY_STATE, state);
-    setCookie(COOKIE_KEY_CODE, "");
+    setCookie(COOKIE_KEY_STATE, state, {
+      expires: dayjs().add(1, "day").toDate().toUTCString(),
+    });
     const params = {
       client_id: import.meta.env.vite_client_id,
       login: loginUser ?? "",

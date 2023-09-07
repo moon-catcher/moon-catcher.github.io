@@ -58,9 +58,6 @@ const Auth = () => {
             setCookie(COOKIE_KEY_CODE, code, {
               expires,
             });
-            setCookie(COOKIE_KEY_STATE, state, {
-              expires,
-            });
             localStorage.setItem(COOKIE_KEY_AUTH, JSON.stringify(data.authkey));
             setToken(data.token);
             setStatus(LOGIN_TEXT_LOGINED);

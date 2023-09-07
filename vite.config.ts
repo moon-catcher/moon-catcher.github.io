@@ -5,6 +5,7 @@ import mkcert from "vite-plugin-mkcert";
 import { chunkSplitPlugin } from "vite-plugin-chunk-split";
 import vitePluginImp from "vite-plugin-imp";
 import { visualizer } from "rollup-plugin-visualizer";
+import { ssr } from "vite-plugin-ssr/plugin";
 
 // https://vitejs.dev/config/
 export default defineConfig({

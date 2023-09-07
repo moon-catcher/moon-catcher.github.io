@@ -17,8 +17,9 @@ github api https://octokit.github.io/rest.js/v20#authentication
 
 参考：http://39.104.22.73:67/BlogDetail?_id=615aff3fb82b9a529f30427b&Title=%E5%A6%82%E4%BD%95%E8%87%AA%E5%AD%A6%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91&from=%E9%A6%96%E9%A1%B5
 
+设置了 httpOnly 会使 cookie 在前端不可获取
 
-设置了httpOnly会使cookie在前端不可获取
+res.setHeader('Set-Cookie', 这样设置 cookie 只能一个个设置
 
-
-res.setHeader('Set-Cookie',  这样设置cookie只能一个个设置
+vite 预渲染 https://cn.vite-plugin-ssr.com/pre-rendering
+https://www.jianshu.com/p/6130e1c8e60b

@@ -36,7 +36,7 @@ const Auth = () => {
         setStatus(LOGIN_TEXT_FAILED);
       }
       setTimeout(() => {
-        // window.close();
+        window.close();
       }, 1000);
     }
   }, [error]);
@@ -71,7 +71,7 @@ const Auth = () => {
           setStatus(LOGIN_TEXT_FAILED);
           // window.opener = undefined;
           setTimeout(() => {
-            // window.close();
+            window.close();
           }, 1000);
         });
 

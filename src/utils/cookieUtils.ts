@@ -21,6 +21,8 @@ export const setCookie = (
       options.domain ?? import.meta.env.vite_domain
     }`;
   } else {
-    document.cookie = `${cookieKey}=${value}`;
+    document.cookie = `${cookieKey}=${value}; domain=${
+      import.meta.env.vite_domain
+    }`;
   }
 };

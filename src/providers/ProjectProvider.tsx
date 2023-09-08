@@ -28,10 +28,11 @@ type ContextValue = {
   infoLoading: boolean;
   clearMembers: () => void;
 };
-
-window.clear = false;
+if (!import.meta.env.SSR) {
+  window.clear = false;
+}
 const mockProjectList = () =>
-  !window.clear
+  !import.meta.env.SSR && !window.clear
     ? [
         {
           id: 1,
@@ -109,22 +110,19 @@ const ProjectProvider = (props: Props) => {
     projectId,
   ])?.isInvalidated;
 
-  const {
-    data: projectInfo = { id: projectId },
-    isLoading,
-  } = useQuery<Project>(
-    ["project-info", projectId],
-    () => getProjectInfo(projectId),
-    {
-      enabled:
-        (!!projectId &&
-          !queryClient.getQueryState(["project-info", projectId])?.data) ||
-        infoIsInvalidated === true,
-    }
-  );
+  const { data: projectInfo = { id: projectId }, isLoading } =
+    useQuery<Project>(
+      ["project-info", projectId],
+      () => getProjectInfo(projectId),
+      {
+        enabled:
+          (!!projectId &&
+            !queryClient.getQueryState(["project-info", projectId])?.data) ||
+          infoIsInvalidated === true,
+      }
+    );
 
   useEffect(() => {
-
     if (!isLoading) {
       // case1 : 设置的项目ID不存在
       if (projectInfo.id && !projectInfo.name && projectList?.length) {
@@ -147,7 +145,7 @@ const ProjectProvider = (props: Props) => {
     onSuccess: () => {
       // 错误处理和刷新
       // 从后台获取
-      window.clear = !window.clear;
+      if (!import.meta.env.SSR) window.clear = !window.clear;
       queryClient.invalidateQueries(["project-list"]);
       projectList.forEach(({ id }) => {
         queryClient.invalidateQueries(["project-info", id]);

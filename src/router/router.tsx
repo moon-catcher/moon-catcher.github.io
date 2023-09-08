@@ -2,17 +2,15 @@ import {
   createBrowserRouter,
   createHashRouter,
   createRoutesFromElements,
-  Navigate,
   NavLink,
-  redirect,
   Route,
+  Navigate,
 } from "react-router-dom";
 import { useAuth } from "@/providers/AuthProvider";
 import { lazy } from "react";
 
 const GithubLogin = lazy(() => import("@/views/GithubLogin/GithubLogin"));
 const Home = lazy(() => import("@/views/Home/Home"));
-const LazyLoadDemo = lazy(() => import("@/views/LazyLoadDemo"));
 const ErrorBoundary = lazy(() => import("@/views/ErrorBoundary/ErrorBoundary"));
 const Dashboard = lazy(() => import("@/components/Dashboard"));
 const CounterPage = lazy(() => import("@/components/CounterPage"));
@@ -20,13 +18,6 @@ const CounterXPage = lazy(() => import("@/components/CounterXPage"));
 const ProjectDetail = lazy(() => import("@/components/ProjectDetail"));
 const ProjectDetailMobx = lazy(
   () => import("@/components/ProjectDetail/ProjectDetailMobx")
-);
-const StoryList = lazy(
-  () => import("@/views/LazyLoadDemo/components/StoryList/StoryList")
-);
-const Gantt = lazy(() => import("@/views/LazyLoadDemo/components/Gantt/Gantt"));
-const Manhour = lazy(
-  () => import("@/views/LazyLoadDemo/components/Manhour/Manhour")
 );
 
 const createRootRouter = () => {
@@ -44,24 +35,8 @@ const createRootRouter = () => {
             404 <NavLink to="/">返回首页</NavLink>
           </>
         }
+        element={<Navigate to={"/home"} />}
       >
-        <Route path="/" element={<LazyLoadDemo />}>
-          <Route path="/list" element={<StoryList />} />
-          <Route path="/gantt" element={<Gantt />} />
-          <Route path="/manhour" element={<Manhour />} />
-          <Route
-            index
-            loader={() => {
-              const params = new URL(window.location.href).searchParams;
-              const code = params.get("code");
-              if (code) {
-                return redirect(`/auth`);
-              }
-              return null;
-            }}
-            element={<Navigate to={"/list"} />}
-          />
-        </Route>
         <Route
           path="/auth"
           loader={() => {

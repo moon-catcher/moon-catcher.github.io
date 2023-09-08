@@ -2,7 +2,6 @@ import { RouterProvider } from "react-router-dom";
 import { memo, Suspense } from "react";
 import { CounterProvider } from "@/providers/CounterProvider";
 import { ProjectProvider } from "@/providers/ProjectProvider";
-import { Spin } from "antd";
 import createRootRouter from "@/router/router";
 import "./App.less";
 
@@ -12,7 +11,7 @@ const App = () => {
     <div style={{ height: "100vh", padding: 16 }}>
       <CounterProvider>
         <ProjectProvider defaultProject={4}>
-          <Suspense fallback={<Spin />}>
+          <Suspense fallback={'loading...'}>
             <RouterProvider router={router} />
           </Suspense>
         </ProjectProvider>

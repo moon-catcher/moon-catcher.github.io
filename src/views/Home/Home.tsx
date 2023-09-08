@@ -6,7 +6,6 @@ import { UserInfo } from "@/types";
 import { THEME_INFO, USER_INFO } from "@/constant/api";
 import { observer } from "mobx-react";
 import { useCounter } from "@/providers/CounterProvider";
-import { Button, Card, Col, Input, Row, Select, Space, Spin } from "antd";
 import { useAuth } from "@/providers/AuthProvider";
 import { useTheme } from "@/providers/ThemeProvider";
 import { useProject } from "@/providers/ProjectProvider";
@@ -109,62 +108,62 @@ const Home = () => {
   return (
     <div>
       首页 用户:{userInfo?.name ?? (loading && "正在校验登录状态...")}
-      <Card bodyStyle={{ background, color: "white" }}>
+      <div style={{ background }}>
         <NavLink className={navLinkClass} to="/">
-          <Button>to React Lazy Demo</Button>
+          <button>to React Lazy Demo</button>
         </NavLink>
-        <Input
+        <input
           value={loginUser}
           onChange={(event) => setLoginUser(event.target.value)}
         />
         <span>
           {/* <a href={authorizeUrl}> */}
-          <Button onClick={() => login(loginUser)} loading={loading}>
-            dev登录github
-          </Button>
-          <Button
+          <button onClick={() => login(loginUser)}>dev登录github</button>
+          <button
             onClick={() => {
               getAccessToken("2222222", "333333");
             }}
           >
             请求
-          </Button>
+          </button>
           {/* </a> */}
         </span>
-        <Button onClick={() => logout()}>退出登录</Button>
-        <Row gutter={18} style={{ marginTop: 20 }}>
-          <Col span={7}>
-            <Space wrap>
+        <button onClick={() => logout()}>退出登录</button>
+        <div style={{ marginTop: 20 }}>
+          <div>
+            <div>
               <NavLink className={navLinkClass} to="/home/dashboard/1">
-                <Button>dashboard1</Button>
+                <button>dashboard1</button>
               </NavLink>
               <br />
               <NavLink className={navLinkClass} to="/home/dashboard/2">
-                <Button>dashboard2</Button>
+                <button>dashboard2</button>
               </NavLink>
               <br />
               <NavLink className={navLinkClass} to="/home">
-                <Button>返回</Button>
+                <button>返回</button>
               </NavLink>
-            </Space>
-            <Card style={{ marginTop: 10 }}>
+            </div>
+            <div style={{ marginTop: 10 }}>
               项目选择 :
-              <Select
+              <select
                 value={projectInfo.id ? projectInfo.id : undefined}
-                options={projectList.map((p) => ({
-                  value: p.id,
-                  label: p.name,
-                }))}
-                onChange={changeProject}
-              />
-            </Card>
-          </Col>
-          <Col span={7}>
-            <Space wrap>
+                onChange={(event) => changeProject(Number(event.target.value))}
+              >
+                {projectList.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+          <div>
+            <div>
               <div>
                 变更背景色
                 <input
-                  type="color"
+                  type="divor"
                   onChange={(e) => {
                     themeMutation.mutate({ background: e.target.value });
                   }}
@@ -172,7 +171,7 @@ const Home = () => {
               </div>
               <div>
                 变更用户 :
-                <Input
+                <input
                   placeholder="用户Id..."
                   value={toChangUserName}
                   onChange={(e) => setToChangUserName(e.target.value)}
@@ -182,13 +181,13 @@ const Home = () => {
                     }
                   }}
                 />
-                <Button onClick={() => changeUser(toChangUserName)}>
+                <button onClick={() => changeUser(toChangUserName)}>
                   确认
-                </Button>
+                </button>
               </div>
               <div>
                 变更Dashboard权限 :
-                <Input
+                <input
                   placeholder="权限Id,用','隔开"
                   value={toChangeUserDashboard}
                   onChange={(e) => setToChangeDashboard(e.target.value)}
@@ -204,7 +203,7 @@ const Home = () => {
                     }
                   }}
                 />
-                <Button
+                <button
                   onClick={() =>
                     mutation.mutate({
                       dashboard:
@@ -216,15 +215,15 @@ const Home = () => {
                   }
                 >
                   确认
-                </Button>
+                </button>
               </div>
-            </Space>
-          </Col>
-          <Col span={7}>
-            <Space wrap>
+            </div>
+          </div>
+          <div>
+            <div>
               <div>
                 <span>跳转CounterPage(组件内mobx) : </span>
-                <Input
+                <input
                   type="number"
                   value={counterNumber}
                   onChange={(e) => {
@@ -242,12 +241,12 @@ const Home = () => {
                   className={navLinkClass}
                   to={`/home/counter/${counterNumber}`}
                 >
-                  <Button>跳转</Button>
+                  <button>跳转</button>
                 </NavLink>
               </div>
               <div>
                 <span>跳转CounterXPage(领域/全局mobx) : </span>
-                <Input
+                <input
                   type="number"
                   value={counterXNumber}
                   onChange={(e) => {
@@ -265,21 +264,21 @@ const Home = () => {
                   className={navLinkClass}
                   to={`/home/counterX/${counterXNumber}`}
                 >
-                  <Button>跳转</Button>
+                  <button>跳转</button>
                 </NavLink>
               </div>
-            </Space>
-          </Col>
-        </Row>
-      </Card>
-      <Card bodyStyle={{ background, color: "pink" }} style={{ marginTop: 20 }}>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style={{ background, marginTop: 20 }}>
         <ProjectList />
-      </Card>
-      <Card bodyStyle={{ background, color: "pink" }} style={{ marginTop: 20 }}>
-        <Suspense fallback={<Spin />}>
+      </div>
+      <div style={{ background, marginTop: 20 }}>
+        <Suspense fallback="loading...">
           <Outlet />
         </Suspense>
-      </Card>
+      </div>
     </div>
   );
 };

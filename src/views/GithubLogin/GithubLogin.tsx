@@ -28,7 +28,7 @@ const Auth = () => {
   const [status, setStatus] = useState(LOGIN_TEXT_CHECKING);
 
   useEffect(() => {
-    if (error) {
+    if (error && !import.meta.env.SSR) {
       window.opener = undefined;
       if (error === GITHUB_LOGIN_CANCEL) {
         setStatus(LOGIN_TEXT_CANCEL);
@@ -61,8 +61,10 @@ const Auth = () => {
             localStorage.setItem(COOKIE_KEY_AUTH, JSON.stringify(data.authkey));
             setToken(data.token);
             setStatus(LOGIN_TEXT_LOGINED);
-            window.opener[`${state}`](data.token);
-            window.opener = undefined;
+            if (!import.meta.env.SSR) {
+              window.opener[`${state}`](data.token);
+              window.opener = undefined;
+            }
           }
         })
         .catch((error: Error) => {
@@ -70,9 +72,11 @@ const Auth = () => {
           console.error(error.message);
           setStatus(LOGIN_TEXT_FAILED);
           // window.opener = undefined;
-          setTimeout(() => {
-            window.close();
-          }, 1000);
+          if (!import.meta.env.SSR) {
+            setTimeout(() => {
+              window.close();
+            }, 1000);
+          }
         });
 
       // cookie中的

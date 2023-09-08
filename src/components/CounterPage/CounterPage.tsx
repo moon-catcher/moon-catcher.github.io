@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useParams } from "react-router";
 import { observer, useLocalObservable } from "mobx-react";
 import { Counter } from "@/providers/CounterProvider";
-import { Button } from "antd";
 
 // const counterStore = createCounter(0)
 /**
@@ -22,9 +21,9 @@ const CounterPage = () => {
     <>
       <div>CounterPage</div>
       <div style={{ fontSize: 100, textAlign: "center", color: "wheat" }}>
-        <Button onClick={() => counterStore.decreases()}>-</Button>
+        <button onClick={() => counterStore.decreases()}>-</button>
         <span>{counterStore.value}</span>
-        <Button onClick={() => counterStore.increment()}>+</Button>
+        <button onClick={() => counterStore.increment()}>+</button>
       </div>
     </>
   );

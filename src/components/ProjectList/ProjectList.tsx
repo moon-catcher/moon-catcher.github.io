@@ -1,5 +1,4 @@
 import { Project, useProject } from "@/providers/ProjectProvider";
-import { Button } from "antd";
 import { useLocation, useNavigate } from "react-router";
 
 const ProjectList = () => {
@@ -37,7 +36,7 @@ const ProjectList = () => {
           </div>
         );
       })}
-      <Button onClick={() => clearMembers()}>清空/重置所有项目成员</Button>
+      <button onClick={() => clearMembers()}>清空/重置所有项目成员</button>
       <div style={{ display: "flex", gap: 15 }}>
         mobx 管理:
         {projectList.map((project: Project) => {

@@ -110,30 +110,32 @@ const AuthProvider = (props: Props) => {
     };
 
     setLoading(true);
-    const childWindow = window.open(
-      `https://github.com/login/oauth/authorize?${Object.entries(params)
-        .map(([key, value]) => `${key}=${value}`)
-        .join("&")}&tokfn=${state}`,
-      "_blank",
-      "height=600, width=500, left=800,top=100, location=false"
-    );
+    if (!import.meta.env.SSR) {
+      const childWindow = window.open(
+        `https://github.com/login/oauth/authorize?${Object.entries(params)
+          .map(([key, value]) => `${key}=${value}`)
+          .join("&")}&tokfn=${state}`,
+        "_blank",
+        "height=600, width=500, left=800,top=100, location=false"
+      );
 
-    window[`${state}`] = (token: string) => {
-      clearInterval(childWindowColseTimer.current);
-      setToken(token);
-      setLoading(false);
-      delete window[`${state}`];
-      childWindow?.close();
-    };
+      window[`${state}`] = (token: string) => {
+        clearInterval(childWindowColseTimer.current);
+        setToken(token);
+        setLoading(false);
+        delete window[`${state}`];
+        childWindow?.close();
+      };
 
-    if (childWindow) {
-      childWindowColseTimer.current = setInterval(function () {
-        if (childWindow?.closed) {
-          clearInterval(childWindowColseTimer.current);
-          setLoading(false);
-          delete window[`${state}`];
-        }
-      }, 1000);
+      if (childWindow) {
+        childWindowColseTimer.current = setInterval(function () {
+          if (childWindow?.closed) {
+            clearInterval(childWindowColseTimer.current);
+            setLoading(false);
+            delete window[`${state}`];
+          }
+        }, 1000);
+      }
     }
   }, []);
 

@@ -14,13 +14,14 @@ module.exports = {
     sourceType: "module",
     ecmaVersion: 2021,
   },
-  plugins: ["@typescript-eslint"],
+  plugins: ["@typescript-eslint", "react-refresh"],
   extends: [
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:react/jsx-runtime",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:react-hooks/recommended",
   ],
   rules: {
     "@typescript-eslint/ban-ts-comment": [
@@ -38,6 +39,7 @@ module.exports = {
     "@typescript-eslint/no-var-requires": "off",
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "error",
+    "react-refresh/only-export-components": "off",
   },
   overrides: [
     {

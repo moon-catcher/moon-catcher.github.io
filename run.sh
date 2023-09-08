@@ -1,1 +1,0 @@
-curl -u "Mysetsuna" https://api.github.com

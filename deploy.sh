@@ -10,7 +10,7 @@ yarn run rimraf dist
 # yarn run coverage
 
 # 构建
-yarn run build:gh
+yarn run build
 
 # 进入构建文件夹
 cd dist

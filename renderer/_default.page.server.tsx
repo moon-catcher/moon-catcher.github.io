@@ -3,6 +3,7 @@ export { render };
 export const passToClient = ["pageProps", "urlPathname"];
 
 import ReactDOMServer from "react-dom/server";
+import logo from "@public/mooncatcher.png";
 import { PageShell } from "./PageShell";
 import { escapeInject, dangerouslySkipEscape } from "vite-plugin-ssr/server";
 import type { PageContextServer } from "./types";
@@ -34,7 +35,7 @@ async function render(pageContext: PageContextServer) {
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
-        <link rel="icon" href="./mooncatcher.png" />
+        <link rel="icon" href=${logo} />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="${desc}" />
         <title>${title}</title>

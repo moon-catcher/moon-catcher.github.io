@@ -4,11 +4,11 @@
   }
 }
 @keyframes shooting-str {
-  20% {
-    transform: rotate(-30deg) translate(-200vw, 0);
+  40% {
+    transform: rotate(-30deg) translate(calc(-100vw - 100vh), 0);
   }
   100% {
-    transform: rotate(-30deg) translate(-200vw, 0);
+    transform: rotate(-30deg) translate(calc(-100vw - 100vh), 0);
   }
 }
 @keyframes twinkle {
@@ -57,11 +57,12 @@
   transform: rotate(20deg);
 }
 .land {
-  height: 5em;
-  width: 28.12em;
+  height: 7em;
+  width: 79.12em;
   background-color: #041524;
   position: absolute;
-  bottom: -0.31em;
+  bottom: -4.31em;
+  left: -2em;
   transform: rotate(5deg);
 }
 .moon {
@@ -102,8 +103,8 @@
   border-left: 0.15em solid transparent;
   border-right: 0.15em solid transparent;
   position: absolute;
-  right: 12.5em;
-  bottom: 4.87em;
+  right: 58.5em;
+  bottom: 6.87em;
 }
 .windmill:after {
   position: absolute;
@@ -269,7 +270,7 @@
   border-left: 0.37em solid transparent;
   border-right: 0.37em solid transparent;
   position: absolute;
-  bottom: 4.87em;
+  bottom: 6.87em;
   left: 3.12em;
 }
 .tree:before {

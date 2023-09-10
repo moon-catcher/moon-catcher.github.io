@@ -17,6 +17,7 @@ const config: UserConfig = {
   resolve: {
     alias: {
       "@components": resolve("components"),
+      "@public": resolve("public"),
     },
   },
 };

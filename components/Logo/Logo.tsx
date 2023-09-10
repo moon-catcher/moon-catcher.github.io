@@ -1,3 +1,4 @@
+import logo from "@public/mooncatcher.png";
 export function Logo() {
   return (
     <div
@@ -7,7 +8,7 @@ export function Logo() {
       }}
     >
       <a href="/">
-        <img src={"./mooncatcher.png"} height={64} width={64} alt="logo" />
+        <img src={logo} height={64} width={64} alt="logo" />
       </a>
     </div>
   );

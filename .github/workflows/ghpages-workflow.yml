@@ -14,14 +14,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
 
-      - name: Install
-        run: pnpm install
-
-      - name: Build vite-plugin-ssr
-        run: pnpm run build
+      - name: Install and build
+        run: npm install && npm run build
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.4

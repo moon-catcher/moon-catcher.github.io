@@ -5,7 +5,7 @@ export default (pageContext: PageContext) => {
 
   if (
     !["auth", "code", "state"].every((param) =>
-      pageContext.urlPathname.includes(param)
+      pageContext.urlOriginal?.includes(param)
     )
   ) {
     return false;

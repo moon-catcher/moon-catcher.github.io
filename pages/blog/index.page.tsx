@@ -14,6 +14,7 @@ const articles = new Array(100).fill(0).map((_, index) => ({
 }));
 
 function Page() {
+
   return (
     <>
       <Author />

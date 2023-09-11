@@ -13,6 +13,11 @@
     "paths": {
       "@components/*": ["./components/*"],
       "@public/*": ["./public/*"],
+      "@type/*": ["./type/*"],
+      "@api/*": ["./api/*"],
+      "@constant/*": ["./constant/*"],
+      "@utils/*": ["./utils/*"],
+      "@providers/*": ["./providers/*"]
     }
   },
   "ts-node": {

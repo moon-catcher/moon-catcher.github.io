@@ -6,6 +6,7 @@ import { Link } from "./Link";
 import { Layout } from "@components/Layout";
 import { Content } from "@components/Content";
 import { LightSidebar } from "@components/LightSidebar";
+import { AuthProvider } from "../providers/AuthProvider";
 
 export { PageShell };
 
@@ -16,24 +17,28 @@ function PageShell({
   children: React.ReactNode;
   pageContext: PageContext;
 }) {
+  console.log(pageContext, "pageContext****************");
+
   return (
     <React.StrictMode>
-      <PageContextProvider pageContext={pageContext}>
-        <Layout>
-          <Content>{children}</Content>
-        </Layout>
-        <LightSidebar>
-          <Link className="navitem" href="/">
-            Home
-          </Link>
-          <Link className="navitem" href="/blog">
-            Blog
-          </Link>
-          <Link className="navitem" href="/about">
-            About
-          </Link>
-        </LightSidebar>
-      </PageContextProvider>
+      <AuthProvider>
+        <PageContextProvider pageContext={pageContext}>
+          <Layout>
+            <Content>{children}</Content>
+          </Layout>
+          <LightSidebar>
+            <Link className="navitem" href="/">
+              Home
+            </Link>
+            <Link className="navitem" href="/blog">
+              Blog
+            </Link>
+            <Link className="navitem" href="/about">
+              About
+            </Link>
+          </LightSidebar>
+        </PageContextProvider>
+      </AuthProvider>
     </React.StrictMode>
   );
 }

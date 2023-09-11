@@ -4,7 +4,7 @@ export function Author() {
   return (
     <div className="author">
       <a href="/">
-        <img src={logo} height={150} width={150} alt="author" />
+        <img src={logo} height={100} width={100} alt="author" />
       </a>
       <div className="detail">
         <div>name</div>

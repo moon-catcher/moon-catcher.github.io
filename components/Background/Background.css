@@ -33,7 +33,7 @@
   background-color: #144569;
   position: absolute;
   left: 1.9em;
-  bottom: -0.62em;
+  bottom: -2.62em;
   transform: rotate(-50deg);
 }
 .mountains:before {
@@ -61,13 +61,13 @@
   width: 79.12em;
   background-color: #041524;
   position: absolute;
-  bottom: -4em;
+  bottom: -6em;
   left: -2em;
   transform: rotate(5deg);
 }
 .moon {
-  height: 2.2em;
-  width: 2.2em;
+  height: 3.2em;
+  width: 3.2em;
   background-color: #ffffff;
   position: absolute;
   left: 3.5em;
@@ -103,7 +103,7 @@
   border-left: 0.15em solid transparent;
   border-right: 0.15em solid transparent;
   position: absolute;
-  right: 58.5em;
+  right: 61.5em;
   bottom: 6.87em;
 }
 .windmill:after {

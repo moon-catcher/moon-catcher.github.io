@@ -1,4 +1,4 @@
-import { Counter } from "@components/Counter";
+import "./index.less";
 
 export { Page };
 export const documentProps = {
@@ -9,14 +9,25 @@ export const documentProps = {
 function Page() {
   return (
     <>
-      <h1>Welcome</h1>
-      This page is:
-      <ul>
-        <li>Rendered to HTML.</li>
-        <li>
-          Interactive. <Counter />
-        </li>
-      </ul>
+      欢迎使用MoonCatcher,
+      <br />
+      这是一个个人博客快速搭建平台,依托于github,完全免费!
+      <br />
+      点击查看教程
+      <br />
+      <a href="/blog">效果展示</a>
+      <br />
+      <a
+        target="_blank"
+        href="https://github.com/moon-catcher/moon-catcher.github.io" rel="noreferrer"
+      >
+        查看github源码
+      </a>
+      <br />
+      如何支持我:
+      <br />
+      给我一个⭐
+      <br />或 给我买一杯咖啡!
     </>
   );
 }

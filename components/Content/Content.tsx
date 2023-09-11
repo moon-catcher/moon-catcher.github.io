@@ -4,8 +4,7 @@ export function Content({ children }: { children: React.ReactNode }) {
       style={{
         padding: 20,
         paddingBottom: 50,
-        borderLeft: "2px solid #eee",
-        minHeight: "100vh",
+        width: "100%",
       }}
     >
       {children}

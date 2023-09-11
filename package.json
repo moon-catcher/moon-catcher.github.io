@@ -2,7 +2,7 @@
   "name": "moon-catcher",
   "version": "0.0.0",
   "type": "module",
-  "author": "Jack",
+  "author": "Jack,moon-catcher",
   "license": "MIT",
   "description": "md-editor,note-book,blog,blog-cloud,note-cloud,base github,A note log your grow,A personal blog builder",
   "scripts": {

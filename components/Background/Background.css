@@ -80,7 +80,8 @@
     0 0 0 1.25em rgb(32 105 149 / 50%), 0 0 0 1.9em rgb(32 105 149 / 40%);
   transform: scale(1.3);
 }
-.moon:active {
+.moon:active,
+.moon:hover {
   box-shadow: 0 0 4px 0.8em rgb(32 105 149 / 60%),
     0 0 7px 1.6em rgb(32 105 149 / 50%), 0 0 8px 2.5em rgb(32 105 149 / 40%);
 }

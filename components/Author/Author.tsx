@@ -27,7 +27,7 @@ export function Author({ showDetail }: Props) {
 
   return (
     <div className="author" style={showDetail ? {} : { padding: 10 }}>
-      <div>
+      <div className="logo">
         {userInfo.avatar_url ? (
           <div className="login">
             <a
@@ -128,7 +128,10 @@ export function Author({ showDetail }: Props) {
         <div>博客文章</div>
         <div>博客文章</div>
       </div>
-      <div className="calendar">日历</div>
+      <div className="search">
+        <input placeholder="搜索文章" />
+        <button>搜索</button>
+      </div>
     </div>
   );
 }

@@ -1,1 +1,0 @@
-import{R as s,r,j as n}from"./chunk-9a4f56c2.js";const a=s.createContext(void 0);function i({pageContext:t,children:e}){return n.jsx(a.Provider,{value:t,children:e})}function x(){return r.useContext(a)}function u(t){const e=x(),o=[t.className,e.urlPathname===t.href&&"is-active"].filter(Boolean).join(" ");return n.jsx("a",{...t,className:o})}export{u as L,i as P,x as u};

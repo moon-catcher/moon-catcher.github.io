@@ -17,16 +17,24 @@ import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { Link } from "../../renderer/Link";
 import { useAuth } from "@providers/AuthProvider";
-import { usePageContext } from "../../renderer/usePageContext";
 export { Page };
 function Page() {
-  const pageContext = usePageContext();
-  console.log(pageContext.routeParams, "pageContext");
-  const { code, state, error } = pageContext.routeParams ?? {};
-  console.log(code, state, error, "code, state, error");
-
   const { setToken } = useAuth();
+  const [code, setCode] = useState("");
+  const [state, setState] = useState("");
+  const [error, setError] = useState("");
   const [status, setStatus] = useState(LOGIN_TEXT_CHECKING);
+
+  useEffect(() => {
+    const params = new URL(window.location.href).searchParams;
+    const code = params.get("code");
+    const state = params.get("state");
+    const error = params.get("error");
+    setCode(code ?? "");
+    setState(state ?? "");
+    setError(error ?? "");
+    console.log(code, state, error, "code, state, error");
+  }, []);
 
   useEffect(() => {
     if (error) {

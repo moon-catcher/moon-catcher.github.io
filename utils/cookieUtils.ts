@@ -19,10 +19,10 @@ export const setCookie = (
       .join("; ");
     document.cookie = `${cookieKey}=${value}; ${optionStr}; domain=${
       options.domain ?? import.meta.env.vite_domain
-    }`;
+    }; path=/; `;
   } else {
     document.cookie = `${cookieKey}=${value}; domain=${
       import.meta.env.vite_domain
-    }`;
+    }; path=/; `;
   }
 };

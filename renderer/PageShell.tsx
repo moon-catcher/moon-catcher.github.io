@@ -36,6 +36,9 @@ function PageShell({
             <Link className="navitem" href="/about">
               About
             </Link>
+            <Link className="navitem" href="/write">
+              Write
+            </Link>
           </LightSidebar>
         </PageContextProvider>
       </AuthProvider>

@@ -16,9 +16,10 @@ a {
 
 .navitem {
   padding: 3px 10px;
+  color: rgba(255, 255, 255, 0.644);
 }
 .navitem.is-active {
-  background-color: #eee;
+  background-color: #eeeeee81;
 }
 /* 1040 px 最小显示导航栏的宽度 */
 /* 1440 px 最小显示tags 和评论的宽度 */

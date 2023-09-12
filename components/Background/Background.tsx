@@ -18,7 +18,7 @@ export function Background({
   }, [htmlStr]);
   return (
     <div ref={backgroundRef} className={["background", className].join(" ")}>
-      <a href="/edit">
+      <a href="/write">
         <div className="moon"></div>
       </a>
       <div className="container">

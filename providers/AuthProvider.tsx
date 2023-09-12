@@ -36,6 +36,7 @@ const AuthContext = createContext<AuthContextValue>(undefined);
 
 const AuthProvider = (props: Props) => {
   const [token, setToken] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({});
   const [octokit, setOctokit] = useState<Octokit | undefined>();
@@ -57,9 +58,11 @@ const AuthProvider = (props: Props) => {
             setToken(res.data.token);
           }
         )
-        .finally(() => {
-          setLoading(false);
+        .catch((error) => {
+          setError(error.message);
         });
+    } else {
+      setError("未登录");
     }
   }, []);
 
@@ -76,6 +79,11 @@ const AuthProvider = (props: Props) => {
         })
         .then((res: { data: object }) => {
           setUserInfo(res.data);
+          setLoading(false);
+          setError("");
+        })
+        .catch((error) => {
+          setError(error.message);
         });
       setOctokit(octokit);
     }
@@ -122,6 +130,7 @@ const AuthProvider = (props: Props) => {
       clearInterval(childWindowColseTimer.current);
       setToken(token);
       setLoading(false);
+      setError("");
       delete window[`${state}`];
       childWindow?.close();
     };
@@ -145,10 +154,11 @@ const AuthProvider = (props: Props) => {
       loading,
       login,
       logout,
+      error,
       setToken,
       setUserInfo,
     };
-  }, [token, octokit, userInfo, loading, login, logout]);
+  }, [token, octokit, userInfo, loading, login, logout, error]);
   return (
     <AuthContext.Provider value={contextValue}>
       {props.children}

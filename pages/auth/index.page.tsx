@@ -33,7 +33,6 @@ function Page() {
     setCode(code ?? "");
     setState(state ?? "");
     setError(error ?? "");
-    console.log(code, state, error, "code, state, error");
   }, []);
 
   useEffect(() => {
@@ -63,7 +62,6 @@ function Page() {
       setStatus(LOGIN_TEXT_LOADING);
       getAccessToken(code, state)
         .then(async ({ data }: { data: AccessToken }) => {
-          console.log(data, "data");
 
           if (data?.token) {
             setCookie(COOKIE_KEY_CODE, code, {
@@ -78,7 +76,6 @@ function Page() {
         })
         .catch((error: Error) => {
           if (error.message === "Request aborted") return;
-          console.error(error.message);
           setStatus(LOGIN_TEXT_FAILED);
           // window.opener = undefined;
           setTimeout(() => {

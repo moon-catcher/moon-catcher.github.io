@@ -1,6 +1,6 @@
 import { Author } from "@components/Author/Author";
+import { useState } from "react";
 import { Counter } from "@components/Counter";
-import { HorizontalBox } from "@components/HorizontalBox";
 import "./index.less";
 
 export { Page };
@@ -14,11 +14,26 @@ const articles = new Array(100).fill(0).map((_, index) => ({
 }));
 
 function Page() {
+  const [showAuthorDetail, setShowAuthorDetail] = useState(true);
+  const hanleWheel = (
+    event: React.UIEvent<HTMLDivElement> & { deltaY: number }
+  ) => {
+    console.log(event.deltaY);
+    setShowAuthorDetail(event.deltaY < 0);
+  };
 
   return (
     <>
-      <Author />
-      <HorizontalBox>
+      <Author showDetail={showAuthorDetail} />
+      <div
+        className="article-list"
+        onWheel={hanleWheel}
+        style={{
+          height: `calc(100vh - ${
+            showAuthorDetail ? "174px" : "60px"
+          } - 40px) `,
+        }}
+      >
         <div className="article-box">
           <h1>Welcome</h1>
           This page is:
@@ -37,8 +52,8 @@ function Page() {
             </div>
           );
         })}
-      </HorizontalBox>
-      <div className="footer">
+      </div>
+      {/* <div className="footer">
         <div className="hot-article">
           <div>热门文章</div>
           <div>热门文章</div>
@@ -49,7 +64,7 @@ function Page() {
           <div>分类一</div>
           <div>分类一</div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 }

@@ -1,19 +1,23 @@
 import logo from "/mooncatcher.png?url";
 import "./Author.less";
 import { useAuth } from "@providers/AuthProvider";
-export function Author() {
+type Props = { showDetail: boolean };
+export function Author({ showDetail }: Props) {
   const { userInfo, login, loading } = useAuth();
   console.log(userInfo, "userInfo");
 
   return (
-    <div className="author">
+    <div className="author" style={showDetail ? {} : { padding: 10 }}>
       <div>
         <a href="/">
           <img
             src={(userInfo.avatar_url as string) ?? logo}
-            height={100}
-            width={100}
             alt="login"
+            style={
+              showDetail
+                ? { height: 100, width: 100 }
+                : { height: 40, width: 40 }
+            }
           />
         </a>
         <button onClick={() => login()} hidden={!!userInfo.name}>
@@ -22,11 +26,53 @@ export function Author() {
       </div>
       <div className="detail">
         <div>{userInfo.name}</div>
-        <div>{userInfo.bio as string}</div>
-        <div>link</div>
-        <div>connect</div>
+        <div
+          style={
+            showDetail
+              ? {}
+              : {
+                  position: "absolute",
+                  height: 0,
+                  opacity: 0,
+                  overflow: "hidden",
+                }
+          }
+        >
+          {userInfo.bio as string}
+        </div>
+        <div
+          style={
+            showDetail
+              ? {}
+              : {
+                  position: "absolute",
+                  height: 0,
+                  opacity: 0,
+                  overflow: "hidden",
+                }
+          }
+        >
+          link
+        </div>
+        <div
+          style={
+            showDetail
+              ? {}
+              : {
+                  position: "absolute",
+                  height: 0,
+                  opacity: 0,
+                  overflow: "hidden",
+                }
+          }
+        >
+          connect
+        </div>
       </div>
-      <div className="dashboard">
+      <div
+        className="dashboard"
+        style={showDetail ? {} : { opacity: 0, height: 0, overflow: "hidden" }}
+      >
         <div>博客文章</div>
         <div>博客文章</div>
         <div>博客文章</div>

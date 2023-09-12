@@ -20,3 +20,5 @@ a {
 .navitem.is-active {
   background-color: #eee;
 }
+/* 1040 px 最小显示导航栏的宽度 */
+/* 1440 px 最小显示tags 和评论的宽度 */

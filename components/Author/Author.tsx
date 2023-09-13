@@ -129,6 +129,7 @@ export function Author({ showDetail }: Props) {
             ? { rowGap: "1vh" }
             : {
                 justifyContent: "right",
+                marginRight: 70,
               }
         }
       >

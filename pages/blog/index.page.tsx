@@ -19,7 +19,6 @@ function Page() {
   const handleWheel = (
     event: React.UIEvent<HTMLDivElement> & { deltaY: number }
   ) => {
-    console.log(event.deltaY);
     setShowAuthorDetail(event.deltaY < 0);
   };
 

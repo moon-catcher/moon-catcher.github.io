@@ -17,6 +17,8 @@ a {
 .navitem {
   padding: 3px 10px;
   color: rgba(255, 255, 255, 0.644);
+  width: 100%;
+  text-align: center;
 }
 .navitem.is-active {
   background-color: #eeeeee81;

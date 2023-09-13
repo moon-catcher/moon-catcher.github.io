@@ -29,6 +29,9 @@ const initialValue: (Descendant & { type: string })[] = [
 
 const RichEditor = () => {
   const [editor] = useState(() => withReact(createEditor()));
+  const [title, setTitle] = useState("标题");
+
+  console.log(title, "title");
 
   const renderElement = useCallback((props: RenderElementProps) => {
     switch (props.element.type) {
@@ -38,13 +41,24 @@ const RichEditor = () => {
         return <DefaultElement {...props} />;
     }
   }, []);
+
+  const handleTitleChange = (
+    event: React.FormEvent<HTMLDivElement> & { target: HTMLInputElement }
+  ) => {
+    setTitle(event.target.innerText);
+  };
   return (
     <div className="editor">
-      <h1>
-        <div className="title" contentEditable>
+      <h2>
+        <div
+          className="title"
+          contentEditable
+          onInput={handleTitleChange}
+          suppressContentEditableWarning
+        >
           标题
         </div>
-      </h1>
+      </h2>
       <Slate editor={editor} initialValue={initialValue}>
         <Editable
           className="editable"

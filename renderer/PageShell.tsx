@@ -17,8 +17,6 @@ function PageShell({
   children: React.ReactNode;
   pageContext: PageContext;
 }) {
-  console.log(pageContext, "pageContext****************");
-
   return (
     <React.StrictMode>
       <AuthProvider>

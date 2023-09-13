@@ -122,7 +122,16 @@ export function Author({ showDetail }: Props) {
           connect
         </div>
       </div>
-      <div className="blog-info" style={showDetail ? { rowGap: "1vh" } : {}}>
+      <div
+        className="blog-info"
+        style={
+          showDetail
+            ? { rowGap: "1vh" }
+            : {
+                justifyContent: "right",
+              }
+        }
+      >
         <div
           className="dashboard"
           style={

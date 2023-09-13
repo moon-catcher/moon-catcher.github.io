@@ -2,10 +2,12 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  width: 100%;
+  width: min(95vw, 100%);
   overflow: auto;
-  transition: all 0.3s linear;
+  transition: all 0.2s linear;
   z-index: 4;
+  border-top: solid snow 1px;
+  box-sizing: border-box;
 }
 .article-box {
   // width: calc((100vw - 13 * 20px) / 5);
@@ -13,6 +15,7 @@
   height: 150px;
   flex-shrink: 0;
   border: solid 1px white;
+  backdrop-filter: blur(3px) brightness(86%);
 }
 .footer {
   padding: 20px;

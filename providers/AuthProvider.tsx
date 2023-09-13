@@ -118,6 +118,7 @@ const AuthProvider = (props: Props) => {
     };
 
     setLoading(true);
+    setError("");
     const childWindow = window.open(
       `https://github.com/login/oauth/authorize?${Object.entries(params)
         .map(([key, value]) => `${key}=${value}`)
@@ -140,6 +141,7 @@ const AuthProvider = (props: Props) => {
         if (childWindow?.closed) {
           clearInterval(childWindowColseTimer.current);
           setLoading(false);
+          setError("取消登录");
           delete window[`${state}`];
         }
       }, 1000);

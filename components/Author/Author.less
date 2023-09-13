@@ -4,12 +4,12 @@
   display: flex;
   align-items: center;
   padding: 20px;
-  gap: 20px;
   position: relative;
   z-index: 3;
+  gap: 15px;
   padding-top: 48px;
+  padding-left: 38px;
   transition: all 0.3s ease-out;
-  border-bottom: solid snow 1px;
   justify-content: space-between;
   div {
     transition: all 0.2s linear;
@@ -31,14 +31,33 @@
   padding-left: 8px;
 }
 
+.blog-info {
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap-reverse;
+  flex-shrink: 0;
+  flex-grow: 1;
+  flex-basis: 220px;
+  align-items: center;
+}
+
 .detail {
-  min-width: 150px;
+  width: 150px;
   word-wrap: break-word;
   overflow: hidden;
 }
 
 .dashboard {
-  min-width: 150px;
+  flex: auto;
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 3vw;
+  align-items: center;
+  flex-shrink: 1;
+  flex-grow: 1;
+  flex-basis: 20vw;
+  row-gap: 0.5vw;
 }
 
 .login {

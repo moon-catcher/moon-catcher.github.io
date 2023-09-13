@@ -1,5 +1,5 @@
 import { Author } from "@components/Author/Author";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Counter } from "@components/Counter";
 import "./index.less";
 
@@ -15,19 +15,37 @@ const articles = new Array(100).fill(0).map((_, index) => ({
 
 function Page() {
   const [showAuthorDetail, setShowAuthorDetail] = useState(true);
-  const hanleWheel = (
-    event: React.UIEvent<HTMLDivElement> & { deltaY: number }
-  ) => {
-    console.log(event.deltaY);
-    setShowAuthorDetail(event.deltaY < 0);
-  };
+  const [scrollTop, setScrollTop] = useState(0);
+  const timer = useRef<NodeJS.Timeout | undefined>(undefined);
+
+  const handleScroll = useCallback(
+    (
+      event: React.UIEvent<HTMLDivElement> & { target: { scrollTop: number } }
+    ) => {
+      clearTimeout(timer.current);
+      console.log(event);
+
+      setShowAuthorDetail(scrollTop > event.target.scrollTop);
+      timer.current = setTimeout(() => {
+        setScrollTop(event.target.scrollTop);
+      }, 0);
+    },
+    [scrollTop]
+  );
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(timer.current);
+    };
+  }, []);
 
   return (
     <>
       <Author showDetail={showAuthorDetail} />
       <div
         className="article-list"
-        onWheel={hanleWheel}
+        // onWheel={handleWheel}
+        onScroll={handleScroll}
         style={{
           height: `calc(100vh - ${
             showAuthorDetail ? "174px" : "60px"

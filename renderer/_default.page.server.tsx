@@ -3,7 +3,7 @@ export { render };
 export const passToClient = ["pageProps", "urlPathname"];
 
 import ReactDOMServer from "react-dom/server";
-import logo from "/mooncatcher.png?url";
+import logo from "/moon-catcher.png?url";
 import { PageShell } from "./PageShell";
 import { escapeInject, dangerouslySkipEscape } from "vite-plugin-ssr/server";
 import type { PageContextServer } from "./types";

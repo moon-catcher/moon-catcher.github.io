@@ -28,7 +28,7 @@ function Page() {
       setShowAuthorDetail(scrollTop > event.target.scrollTop);
       timer.current = setTimeout(() => {
         setScrollTop(event.target.scrollTop);
-      }, 0);
+      }, 100);
     },
     [scrollTop]
   );

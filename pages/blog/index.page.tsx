@@ -1,5 +1,5 @@
 import { Author } from "@components/Author/Author";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { Counter } from "@components/Counter";
 import "./index.less";
 
@@ -15,37 +15,33 @@ const articles = new Array(100).fill(0).map((_, index) => ({
 
 function Page() {
   const [showAuthorDetail, setShowAuthorDetail] = useState(true);
-  const [scrollTop, setScrollTop] = useState(0);
-  const timer = useRef<NodeJS.Timeout | undefined>(undefined);
+  const [touchStart, setTouchStart] = useState(0);
+  const handleWheel = (
+    event: React.UIEvent<HTMLDivElement> & { deltaY: number }
+  ) => {
+    console.log(event.deltaY);
+    setShowAuthorDetail(event.deltaY < 0);
+  };
 
-  const handleScroll = useCallback(
-    (
-      event: React.UIEvent<HTMLDivElement> & { target: { scrollTop: number } }
-    ) => {
-      clearTimeout(timer.current);
+  const handleTouchMove = useCallback(
+    (event: React.TouchEvent<HTMLDivElement>) => {
       console.log(event);
-
-      setShowAuthorDetail(scrollTop > event.target.scrollTop);
-      timer.current = setTimeout(() => {
-        setScrollTop(event.target.scrollTop);
-      }, 100);
+      setShowAuthorDetail(event.touches[0].clientY > touchStart);
     },
-    [scrollTop]
+    [touchStart]
   );
-
-  useEffect(() => {
-    return () => {
-      clearTimeout(timer.current);
-    };
-  }, []);
+  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    setTouchStart(event.touches[0].clientY);
+  };
 
   return (
     <>
       <Author showDetail={showAuthorDetail} />
       <div
         className="article-list"
-        // onWheel={handleWheel}
-        onScroll={handleScroll}
+        onWheel={handleWheel}
+        onTouchMove={handleTouchMove}
+        onTouchStart={handleTouchStart}
         style={{
           height: `calc(100vh - ${
             showAuthorDetail ? "174px" : "60px"

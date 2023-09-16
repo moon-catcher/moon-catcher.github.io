@@ -123,13 +123,12 @@ export function Author({ showDetail }: Props) {
         </div>
       </div>
       <div
-        className="blog-info"
+        className={["blog-info", !showDetail && "fixed-search"].join(" ")}
         style={
           showDetail
             ? { rowGap: "1vh" }
             : {
                 justifyContent: "right",
-                marginRight: 70,
               }
         }
       >

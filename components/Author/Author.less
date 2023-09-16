@@ -42,16 +42,23 @@
   justify-content: space-between;
 }
 
+@media only screen and (max-width: 450px) {
+  .detail {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 1010px) {
+  .fixed-search {
+    position: relative;
+    right: 50px;
+  }
+}
+
 .detail {
   width: 150px;
   word-wrap: break-word;
   overflow: hidden;
-}
-
-@media only screen and (max-width: 168px) {
-  .detail {
-      display: none;
-  }
 }
 
 .dashboard {

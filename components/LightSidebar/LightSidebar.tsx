@@ -1,6 +1,8 @@
-import { useEffect, useState, Children } from "react";
+import React, { useEffect, useState, Children } from "react";
 import "./LightSidebar.less";
 import { MIN_SHOW_NAV } from "@constant/ui";
+
+export const LightSidebarContext = React.createContext(false);
 
 export function LightSidebar({ children }: { children: React.ReactNode }) {
   /**
@@ -8,11 +10,17 @@ export function LightSidebar({ children }: { children: React.ReactNode }) {
    */
   const [sidebarType, setSidebarType] = useState(0);
   const [showMenu, setShowMenu] = useState(false);
-  console.log(sidebarType, "sidebarType");
   const chidrenCount = Children.count(children);
-  console.log(chidrenCount, "chidrenCount");
 
   useEffect(() => {
+    if (location.search.includes("menu")) {
+      setShowMenu(true);
+      const menuCheckbox = document.querySelector("#toggle");
+      if (menuCheckbox && menuCheckbox instanceof HTMLInputElement) {
+        menuCheckbox.checked = true;
+      }
+    }
+
     if (window.innerWidth > MIN_SHOW_NAV) {
       setSidebarType(0);
     } else {
@@ -26,6 +34,7 @@ export function LightSidebar({ children }: { children: React.ReactNode }) {
         setSidebarType(1);
       }
     };
+
     window.addEventListener("resize", handleWindowResize);
     return () => {
       window.removeEventListener("resize", handleWindowResize);
@@ -34,10 +43,11 @@ export function LightSidebar({ children }: { children: React.ReactNode }) {
 
   const handleMenuCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      console.log(event, "event");
       setShowMenu(true);
+      history.pushState(null, "menu", "?menu"); //第一二参数可忽略设置为null
     } else {
       setShowMenu(false);
+      window.history.replaceState(null, "menu", location.pathname);
     }
   };
   return (
@@ -52,7 +62,9 @@ export function LightSidebar({ children }: { children: React.ReactNode }) {
           height: sidebarType === 0 || showMenu ? chidrenCount * 35 : 0,
         }}
       >
-        {children}
+        <LightSidebarContext.Provider value={showMenu}>
+          {children}
+        </LightSidebarContext.Provider>
       </div>
       <div
         className={[

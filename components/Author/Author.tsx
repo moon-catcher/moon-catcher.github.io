@@ -1,29 +1,10 @@
 import logo from "/moon-catcher.png?url";
 import "./Author.less";
 import { useAuth } from "@providers/AuthProvider";
-import { useEffect, useState } from "react";
-import { UserInfo } from "@type/user";
 type Props = { showDetail: boolean };
 export function Author({ showDetail }: Props) {
-  const { userInfo: remoteUserInfo, login, loading, error } = useAuth();
-  const [userInfo, setUserInfo] = useState<UserInfo>({});
+  const { userInfo, login, loading, error } = useAuth();
   console.log(userInfo, error, "userInfo");
-
-  useEffect(() => {
-    const userInfoStr = localStorage.getItem("LOCAL_USERINFO");
-    console.log(userInfoStr, "userInfoStr");
-    if (userInfoStr) setUserInfo(JSON.parse(userInfoStr) as UserInfo);
-  }, []);
-
-  useEffect(() => {
-    if (remoteUserInfo.name && !error) {
-      setUserInfo(remoteUserInfo);
-      localStorage.setItem("LOCAL_USERINFO", JSON.stringify(remoteUserInfo));
-    } else if (error) {
-      setUserInfo({});
-      localStorage.setItem("LOCAL_USERINFO", "");
-    }
-  }, [remoteUserInfo, error]);
 
   return (
     <div className="author" style={showDetail ? {} : { padding: 10 }}>
@@ -51,11 +32,7 @@ export function Author({ showDetail }: Props) {
             </a>
           </div>
         ) : (
-          <div
-            className="login"
-            title="点击登录"
-            onClick={() => (!loading || error) && login()}
-          >
+          <div className="login" title="点击登录" onClick={() => login()}>
             <div
               className="login-text"
               style={showDetail ? { fontSize: 16 } : { fontSize: 8 }}
@@ -77,7 +54,7 @@ export function Author({ showDetail }: Props) {
           </div>
         )}
       </div>
-      <div className="detail">
+      <div className={["detail", showDetail ? "detail-hidden" : ""].join(" ")}>
         <div>{userInfo.name}</div>
         <div
           style={
@@ -122,36 +99,17 @@ export function Author({ showDetail }: Props) {
           connect
         </div>
       </div>
+
       <div
-        className={["blog-info", !showDetail && "fixed-search"].join(" ")}
-        style={
-          showDetail
-            ? { rowGap: "1vh" }
-            : {
-                justifyContent: "right",
-              }
-        }
+        className="dashboard"
+        style={showDetail ? {} : { opacity: 0, height: 0, overflow: "hidden" }}
       >
-        <div
-          className="dashboard"
-          style={
-            showDetail ? {} : { opacity: 0, height: 0, overflow: "hidden" }
-          }
-        >
-          <div>博客文章</div>
-          <div>博客文章</div>
-          <div>博客文章</div>
-          <div>博客文章</div>
-          <div>博客文章</div>
-          <div>博客文章</div>
-          <div>博客文章</div>
-          <div>博客文章</div>
-          <div>博客文章</div>
-        </div>
-        <div className="search">
-          <input placeholder="搜索文章" />
-          <button>搜索</button>
-        </div>
+        <div>博客文章</div>
+        <div>博客文章</div>
+        <div>博客文章</div>
+        <div>博客文章</div>
+        <div>博客文章</div>
+        <div>博客文章</div>
       </div>
     </div>
   );

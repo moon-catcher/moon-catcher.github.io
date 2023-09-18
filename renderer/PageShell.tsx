@@ -7,6 +7,8 @@ import { Layout } from "@components/Layout";
 import { Content } from "@components/Content";
 import { LightSidebar } from "@components/LightSidebar";
 import { AuthProvider } from "../providers/AuthProvider";
+import SearchButton from "@components/SearchButton/SearchButton";
+import WriteButton from "@components/WriteButton/WriteButton";
 
 export { PageShell };
 
@@ -24,6 +26,8 @@ function PageShell({
           <Layout>
             <Content>{children}</Content>
           </Layout>
+          <WriteButton />
+          <SearchButton />
           <LightSidebar>
             <Link className="navitem" href="/">
               Home

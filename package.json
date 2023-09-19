@@ -51,6 +51,7 @@
     "vite-plugin-ssr": "^0.4.140"
   },
   "devDependencies": {
+    "escape-html": "^1.0.3",
     "less": "^4.2.0"
   }
 }

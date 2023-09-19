@@ -1,19 +1,40 @@
-import React, { useEffect, useState, Children } from "react";
+import React, {
+  useEffect,
+  useState,
+  Children,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import "./LightSidebar.less";
 import { MIN_SHOW_NAV } from "@constant/ui";
 import WriteButton from "@components/Buttons/WriteButton/WriteButton";
 import SearchButton from "@components/Buttons/SearchButton/SearchButton";
 import SaveButton from "@components/Buttons/SaveButton/SaveButton";
+import SubmitButton from "@components/Buttons/SubmitButton/SubmitButton";
 
 export const LightSidebarContext = React.createContext(false);
 
-export function LightSidebar({ children }: { children: React.ReactNode }) {
+const LightSidebar = forwardRef<
+  { setSaveFc: (_fc: () => void) => void; saveFc?: () => void },
+  { children: React.ReactNode }
+>(function LightSidebar(
+  { children }: { children: React.ReactNode },
+  ref: React.Ref<{ setSaveFc: unknown }>
+) {
   /**
    * type: 默认状态 0 宽屏 ; 1 窄屏
    */
   const [sidebarType, setSidebarType] = useState(0);
   const [showMenu, setShowMenu] = useState(false);
+  const [saveFc, setSaveFc] = useState<() => void | null>();
   const chidrenCount = Children.count(children);
+
+  useImperativeHandle(ref, () => {
+    return {
+      setSaveFc,
+      saveFc,
+    };
+  });
 
   useEffect(() => {
     if (location.search.includes("menu")) {
@@ -53,6 +74,8 @@ export function LightSidebar({ children }: { children: React.ReactNode }) {
       window.history.replaceState(null, "menu", location.pathname);
     }
   };
+  console.log(saveFc, "saveFc");
+
   return (
     <div className="lightSidebar">
       <div
@@ -61,7 +84,8 @@ export function LightSidebar({ children }: { children: React.ReactNode }) {
       >
         <WriteButton />
         <SearchButton />
-        <SaveButton />
+        <SaveButton onClick={() => saveFc?.()} />
+        <SubmitButton onClick={() => saveFc?.()} />
       </div>
       <div
         className={[
@@ -102,4 +126,5 @@ export function LightSidebar({ children }: { children: React.ReactNode }) {
       </div>
     </div>
   );
-}
+});
+export { LightSidebar };

@@ -4,7 +4,7 @@ import "./SearchButton.less";
 const SearchButton = () => {
   return (
     <LinkButton className="searchButton" hiddenPath={"write"}>
-      🔍
+      🔎
     </LinkButton>
   );
 };

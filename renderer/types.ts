@@ -2,6 +2,7 @@ export type { PageContextServer };
 export type { PageContextClient };
 export type { PageContext };
 export type { PageProps };
+import type { MutableRefObject } from "react";
 
 import type {
   PageContextBuiltInServer,
@@ -33,4 +34,8 @@ export type PageContextCustom = {
 type PageContextServer = PageContextBuiltInServer<Page> & PageContextCustom;
 type PageContextClient = PageContextBuiltInClient<Page> & PageContextCustom;
 
-type PageContext = PageContextClient | PageContextServer;
+type PageContext = (PageContextClient | PageContextServer) & {
+  sidebarRef?: MutableRefObject<{
+    setSaveFc: (_fc: () => void) => void;
+  } | null>;
+};

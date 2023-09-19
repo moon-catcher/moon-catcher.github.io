@@ -41,7 +41,11 @@ const LinkButton = (props: Props = { children: "🚀", hiddenPath: [] }) => {
     return <></>;
   }
 
-  return <div className={props.className}>{props.children}</div>;
+  return (
+    <div className={["action-button", props.className].join(" ")}>
+      {props.children}
+    </div>
+  );
 };
 
 export default LinkButton;

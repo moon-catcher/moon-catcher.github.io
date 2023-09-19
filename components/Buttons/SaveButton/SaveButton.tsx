@@ -1,10 +1,12 @@
 import LinkButton from "../LinkButton/LinkButton";
 import "./SaveButton.less";
 
-const SaveButton = () => {
+type Props = { onClick: () => void };
+
+const SaveButton = (props: Props) => {
   return (
     <LinkButton className="saveButton" showPath={"write"}>
-      <a href="javascript:void(0)">📌</a>
+      <span onClick={props.onClick}>📌</span>
     </LinkButton>
   );
 };

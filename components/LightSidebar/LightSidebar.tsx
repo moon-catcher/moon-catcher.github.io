@@ -1,6 +1,9 @@
 import React, { useEffect, useState, Children } from "react";
 import "./LightSidebar.less";
 import { MIN_SHOW_NAV } from "@constant/ui";
+import WriteButton from "@components/Buttons/WriteButton/WriteButton";
+import SearchButton from "@components/Buttons/SearchButton/SearchButton";
+import SaveButton from "@components/Buttons/SaveButton/SaveButton";
 
 export const LightSidebarContext = React.createContext(false);
 
@@ -52,6 +55,14 @@ export function LightSidebar({ children }: { children: React.ReactNode }) {
   };
   return (
     <div className="lightSidebar">
+      <div
+        className="active-links"
+        style={{ right: sidebarType === 0 || showMenu ? "calc(103%)" : 65 }}
+      >
+        <WriteButton />
+        <SearchButton />
+        <SaveButton />
+      </div>
       <div
         className={[
           "right-sidebar",

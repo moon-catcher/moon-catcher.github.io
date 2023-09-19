@@ -55,7 +55,11 @@ const AuthProvider = (props: Props) => {
       })
         .then(
           (res: { data: { status: number; msg: string; token: string } }) => {
-            setToken(res.data.token);
+            if (!res.data.status) {
+              setToken(res.data.token);
+            } else {
+              setError(res.data.msg);
+            }
           }
         )
         .catch((error) => {

@@ -1,7 +1,8 @@
 import { Author } from "@components/Author/Author";
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { Counter } from "@components/Counter";
 import "./index.less";
+import { usePageContext } from "../../renderer/usePageContext";
 
 export { Page };
 export const documentProps = {
@@ -16,6 +17,9 @@ const articles = new Array(100).fill(0).map((_, index) => ({
 function Page() {
   const [showAuthorDetail, setShowAuthorDetail] = useState(true);
   const [touchStart, setTouchStart] = useState(0);
+
+  const { setLinkBntAction } = usePageContext();
+
   const handleWheel = (
     event: React.UIEvent<HTMLDivElement> & { deltaY: number }
   ) => {
@@ -32,6 +36,16 @@ function Page() {
   const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
     setTouchStart(event.touches[0].clientY);
   };
+
+  const handleSearch = useCallback((searchValue: string) => {
+    console.log("search", searchValue, "searchValue");
+  }, []);
+
+  useEffect(() => {
+    if (typeof setLinkBntAction === "function") {
+      setLinkBntAction<string>("search", handleSearch);
+    }
+  }, [setLinkBntAction, handleSearch]);
 
   return (
     <>

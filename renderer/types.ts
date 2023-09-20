@@ -2,7 +2,7 @@ export type { PageContextServer };
 export type { PageContextClient };
 export type { PageContext };
 export type { PageProps };
-import type { MutableRefObject } from "react";
+import { LinkButtonAtion, LinkButtonFunction } from "@type/linkButton";
 
 import type {
   PageContextBuiltInServer,
@@ -35,7 +35,8 @@ type PageContextServer = PageContextBuiltInServer<Page> & PageContextCustom;
 type PageContextClient = PageContextBuiltInClient<Page> & PageContextCustom;
 
 type PageContext = (PageContextClient | PageContextServer) & {
-  sidebarRef?: MutableRefObject<{
-    setSaveFc: (_fc: () => void) => void;
-  } | null>;
+  setLinkBntAction?: <T>(
+    key: LinkButtonAtion,
+    fc: LinkButtonFunction<T>
+  ) => void;
 };

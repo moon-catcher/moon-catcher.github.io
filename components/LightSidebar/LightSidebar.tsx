@@ -4,6 +4,8 @@ import React, {
   Children,
   useImperativeHandle,
   forwardRef,
+  useCallback,
+  useRef,
 } from "react";
 import "./LightSidebar.less";
 import { MIN_SHOW_NAV } from "@constant/ui";
@@ -11,30 +13,43 @@ import WriteButton from "@components/Buttons/WriteButton/WriteButton";
 import SearchButton from "@components/Buttons/SearchButton/SearchButton";
 import SaveButton from "@components/Buttons/SaveButton/SaveButton";
 import SubmitButton from "@components/Buttons/SubmitButton/SubmitButton";
+import { LinkButtonAtion, LinkButtonFunction } from "@type/linkButton";
 
 export const LightSidebarContext = React.createContext(false);
 
 const LightSidebar = forwardRef<
-  { setSaveFc: (_fc: () => void) => void; saveFc?: () => void },
+  { functionMap: Map<LinkButtonAtion, LinkButtonFunction> },
   { children: React.ReactNode }
->(function LightSidebar(
-  { children }: { children: React.ReactNode },
-  ref: React.Ref<{ setSaveFc: unknown }>
-) {
+>(function LightSidebar({ children }, ref) {
   /**
    * type: 默认状态 0 宽屏 ; 1 窄屏
    */
   const [sidebarType, setSidebarType] = useState(0);
   const [showMenu, setShowMenu] = useState(false);
-  const [saveFc, setSaveFc] = useState<() => void | null>();
   const chidrenCount = Children.count(children);
+  const functionMap = useRef(new Map<LinkButtonAtion, LinkButtonFunction>());
 
-  useImperativeHandle(ref, () => {
-    return {
-      setSaveFc,
-      saveFc,
-    };
-  });
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        functionMap: functionMap.current,
+      };
+    },
+    []
+  );
+
+  const handleSearch = useCallback((searchValue: string) => {
+    functionMap.current.get("search")?.(searchValue);
+  }, []);
+
+  const handleSave = useCallback(() => {
+    functionMap.current.get("save")?.();
+  }, []);
+
+  const handleSubmit = useCallback(() => {
+    functionMap.current.get("submit")?.();
+  }, []);
 
   useEffect(() => {
     if (location.search.includes("menu")) {
@@ -74,7 +89,7 @@ const LightSidebar = forwardRef<
       window.history.replaceState(null, "menu", location.pathname);
     }
   };
-  console.log(saveFc, "saveFc");
+  console.log(functionMap.current, "functionMap.current");
 
   return (
     <div className="lightSidebar">
@@ -83,9 +98,9 @@ const LightSidebar = forwardRef<
         style={{ right: sidebarType === 0 || showMenu ? "calc(103%)" : 65 }}
       >
         <WriteButton />
-        <SearchButton />
-        <SaveButton onClick={() => saveFc?.()} />
-        <SubmitButton onClick={() => saveFc?.()} />
+        <SearchButton onClick={handleSearch} />
+        <SaveButton onClick={handleSave} />
+        <SubmitButton onClick={handleSubmit} />
       </div>
       <div
         className={[

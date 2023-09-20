@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef } from "react";
 import { PageContextProvider } from "./usePageContext";
 import type { PageContext } from "./types";
 import "./PageShell.css";
@@ -7,6 +7,7 @@ import { Layout } from "@components/Layout";
 import { Content } from "@components/Content";
 import { LightSidebar } from "@components/LightSidebar";
 import { AuthProvider } from "../providers/AuthProvider";
+import { LinkButtonAtion, LinkButtonFunction } from "@type/linkButton";
 
 export { PageShell };
 
@@ -18,18 +19,23 @@ function PageShell({
   pageContext: PageContext;
 }) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const sidebarRef = useRef<{ setSaveFc: (_fc: () => void) => void } | null>(
-    null
-  );
-  console.log(sidebarRef.current?.setSaveFc);
-  useEffect(() => {
-    sidebarRef.current?.setSaveFc(() => () => console.log(888888888));
-  }, []);
+  const sidebarRef = useRef<{
+    functionMap: Map<LinkButtonAtion, LinkButtonFunction>;
+  } | null>(null);
+
+  function setLinkBntAction<T>(
+    key: LinkButtonAtion,
+    fc: LinkButtonFunction<T>
+  ) {
+    console.log(key, fc, "key, fc");
+
+    sidebarRef.current?.functionMap.set(key, fc);
+  }
 
   return (
     <React.StrictMode>
       <AuthProvider>
-        <PageContextProvider pageContext={{ ...pageContext, sidebarRef }}>
+        <PageContextProvider pageContext={{ ...pageContext, setLinkBntAction }}>
           <Layout>
             <Content>{children}</Content>
           </Layout>

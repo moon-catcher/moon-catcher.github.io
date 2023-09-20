@@ -5,6 +5,7 @@ type Props = {
   hiddenPath?: string | string[];
   showPath?: string | string[];
   className?: string;
+  onClick?: () => void;
 };
 
 const LinkButton = (props: Props = { children: "🚀", hiddenPath: [] }) => {
@@ -42,7 +43,10 @@ const LinkButton = (props: Props = { children: "🚀", hiddenPath: [] }) => {
   }
 
   return (
-    <div className={["action-button", props.className].join(" ")}>
+    <div
+      className={["action-button", props.className].join(" ")}
+      onClick={props.onClick}
+    >
       {props.children}
     </div>
   );

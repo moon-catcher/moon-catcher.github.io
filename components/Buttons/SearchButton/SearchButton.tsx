@@ -1,9 +1,15 @@
 import LinkButton from "../LinkButton/LinkButton";
 import "./SearchButton.less";
 
-const SearchButton = () => {
+type Props = { onClick?: (searchValue: string) => void };
+
+const SearchButton = (props: Props) => {
   return (
-    <LinkButton className="searchButton" hiddenPath={"write"}>
+    <LinkButton
+      className="searchButton"
+      hiddenPath={"write"}
+      onClick={() => props.onClick?.("adf")}
+    >
       🔎
     </LinkButton>
   );

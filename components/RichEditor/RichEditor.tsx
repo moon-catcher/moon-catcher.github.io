@@ -50,7 +50,7 @@ const RichEditor = (props: Props) => {
   const [bold, setIsBold] = useState(false);
   const [content, setContent] = useState(props.content);
   const [initialValue, setInitialValue] = useState<Descendant[] | null>(null);
-  const { sidebarRef } = usePageContext();
+  const { setLinkBntAction } = usePageContext();
 
   const renderElement = useCallback((props: RenderElementProps) => {
     switch (props.element.type) {
@@ -81,14 +81,11 @@ const RichEditor = (props: Props) => {
   }, [content]);
 
   useEffect(() => {
-    if (sidebarRef?.current) {
-      console.log(sidebarRef.current, "sidebarRef.current");
-
-      sidebarRef.current.setSaveFc(() => handleSubmit);
-      // sidebarRef.current.setSaveFc(() => () => console.log("handleSubmit"));
-      console.log(sidebarRef, "sidebarRef");
+    if (typeof setLinkBntAction === "function") {
+      setLinkBntAction("save", handleSave);
+      setLinkBntAction("submit", handleSubmit);
     }
-  }, [handleSave, handleSubmit, sidebarRef]);
+  }, [handleSave, handleSubmit, setLinkBntAction]);
 
   useEffect(() => {
     let content;

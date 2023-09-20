@@ -96,7 +96,9 @@ const RichEditor = (props: Props) => {
     }
     let initialValue = DEFAULT_INITIALVALUE;
     try {
-      initialValue = JSON.parse(content);
+      if (content) {
+        initialValue = JSON.parse(content);
+      }
     } catch (error) {
       console.log(error);
     }

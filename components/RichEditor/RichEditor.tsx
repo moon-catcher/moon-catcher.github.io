@@ -12,13 +12,18 @@ import type { BaseEditor, Descendant } from "slate";
 import escapeHtml from "escape-html";
 import "./RichEditor.less";
 import {
+  ARTICLE_LIST_KEY,
+  CURRENT_ARTICLE_KEY,
   DEFAULT_INITIALVALUE,
   NEW_ARTICLE_KEY,
-  NEW_ARTICLE_TITLE_KEY,
 } from "@constant/article";
 import { usePageContext } from "../../renderer/usePageContext";
+import { useAuth } from "@providers/AuthProvider";
+import { DEFAULT_HEADER } from "@constant/auth";
+import { Article, CurrentArticle } from "@type/article";
 type Props = {
   content?: string;
+  title?: string;
 };
 
 const serialize = (node: Node) => {
@@ -49,8 +54,16 @@ const RichEditor = (props: Props) => {
   const [editor] = useState(() => withReact(createEditor()));
   const [bold, setIsBold] = useState(false);
   const [content, setContent] = useState(props.content);
+  const [currentArticle, setCurrentArticle] = useState<CurrentArticle | null>(
+    null
+  );
+  const [localArticles, setLocalArticles] = useState<Article[]>([]);
+  // const [remoteArticles, setRemoteArticles] = useState<Article[]>([]);
+  const [orginTitle, setOrginTitle] = useState("");
   const [initialValue, setInitialValue] = useState<Descendant[] | null>(null);
+
   const { setLinkBntAction } = usePageContext();
+  const { octokit, userInfo } = useAuth();
 
   const renderElement = useCallback((props: RenderElementProps) => {
     switch (props.element.type) {
@@ -65,19 +78,91 @@ const RichEditor = (props: Props) => {
     return <Leaf {...props} />;
   }, []);
 
-  const handleTitleChange = (
-    event: React.FormEvent<HTMLDivElement> & { target: HTMLInputElement }
-  ) => {
-    localStorage.setItem(NEW_ARTICLE_TITLE_KEY, event.target.innerText);
-  };
+  const handleTitleChange = useCallback(
+    (
+      event: React.FormEvent<HTMLInputElement> & { target: HTMLInputElement }
+    ) => {
+      let newlocalArticles = [...localArticles];
+      if (
+        event.target.value &&
+        newlocalArticles.some(({ title }) => title === event.target.value)
+      ) {
+        alert("标题不可重复,已重命名");
+        event.target.value += `(1)`;
+        return;
+      }
+      const newTitle = event.target.value;
+      const oldTitle = currentArticle?.title;
+      newlocalArticles = newlocalArticles.map((article) => {
+        if (article.title === oldTitle) {
+          return { ...article, title: newTitle };
+        }
+        return article;
+      });
+      localStorage.removeItem(`${NEW_ARTICLE_KEY}_${oldTitle}`);
+      console.log(content, "content", newlocalArticles);
+
+      console.log(
+        content,
+        "handleTitleChange -contentcontentcontentcontent",
+        newlocalArticles
+      );
+
+      if (content) {
+        localStorage.setItem(`${NEW_ARTICLE_KEY}_${newTitle}`, content);
+      }
+      const newCurrentArticle = {
+        title: newTitle,
+        remote: !!currentArticle?.remote,
+      };
+      // store CURRENT_ARTICLE_KEY
+      localStorage.setItem(
+        CURRENT_ARTICLE_KEY,
+        JSON.stringify(newCurrentArticle)
+      );
+      setCurrentArticle(newCurrentArticle);
+      // store ARTICLE_LIST_KEY
+      localStorage.setItem(ARTICLE_LIST_KEY, JSON.stringify(newlocalArticles));
+      setLocalArticles(newlocalArticles);
+    },
+
+    [localArticles, content, currentArticle]
+  );
 
   const handleSave = useCallback(() => {
-    console.log(content, "content");
-  }, [content]);
+    console.log(octokit, "content");
+    if (content && octokit && currentArticle?.title) {
+      const { login: owner, name, email } = userInfo;
+      octokit
+        .request("PUT /repos/{owner}/{repo}/contents/{path}", {
+          owner,
+          repo: `${owner}.github.io`,
+          path: `public/jsonStore/ttt/${currentArticle.title}.json`,
+          message: ` create or update draft article ${currentArticle.title}`,
+          committer: {
+            name,
+            email: email || "moon-catcher@gmail.com",
+          },
+          content: btoa(content),
+          headers: DEFAULT_HEADER,
+        })
+        .then((res: unknown) => {
+          console.log(res);
+        })
+        .catch((error: Error) => {
+          console.log(error, "error");
+          if (error.message) {
+            alert("同名文章已存在!");
+          } else {
+            alert(error.message);
+          }
+        });
+    }
+  }, [content, octokit, userInfo, currentArticle?.title]);
 
   const handleSubmit = useCallback(() => {
-    const nodes = JSON.parse(content!) as Node[];
-    console.log(nodes.map((node) => serialize(node)));
+    // const nodes = JSON.parse(content!) as Node[];
+    // console.log(nodes.map((node) => serialize(node)));
   }, [content]);
 
   useEffect(() => {
@@ -89,22 +174,71 @@ const RichEditor = (props: Props) => {
 
   useEffect(() => {
     let content;
-    if (!props.content) {
-      content = localStorage.getItem(NEW_ARTICLE_KEY) ?? "";
-    } else {
-      content = props.content;
+    if (orginTitle) {
+      if (!props.content) {
+        content =
+          localStorage.getItem(`${NEW_ARTICLE_KEY}_${orginTitle}`) ?? "";
+      } else {
+        content = props.content;
+      }
+      console.log(content, "content----------------------");
+
+      let initialValue = DEFAULT_INITIALVALUE;
+      try {
+        if (content) {
+          initialValue = JSON.parse(content);
+        } else {
+          content = JSON.stringify(DEFAULT_INITIALVALUE);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+      console.log(content, "contentcontentcontentcontent");
+
+      setInitialValue(initialValue);
+      setContent(content);
     }
-    let initialValue = DEFAULT_INITIALVALUE;
+  }, [props.content, orginTitle]);
+
+  useEffect(() => {
+    let localArticles: Article[] = [{ title: "标题" }];
+    let title = localArticles[0].title;
+    let newCurrentArticle = { title: "标题", remote: false };
+    if (!props.title) {
+      const currentArticleJSONStr =
+        localStorage.getItem(CURRENT_ARTICLE_KEY) ?? "";
+      try {
+        if (currentArticleJSONStr) {
+          const currentArticle = JSON.parse(
+            currentArticleJSONStr
+          ) as CurrentArticle;
+          if (currentArticle.title) {
+            title = currentArticle.title;
+            newCurrentArticle = currentArticle;
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      title = props.title;
+    }
+    const localArticlesJSONStr = localStorage.getItem(ARTICLE_LIST_KEY) ?? "";
     try {
-      if (content) {
-        initialValue = JSON.parse(content);
+      if (localArticlesJSONStr) {
+        const tempArr = JSON.parse(localArticlesJSONStr) as Article[];
+        if (tempArr.length) {
+          localArticles = tempArr;
+        }
       }
     } catch (error) {
       console.log(error);
     }
-    setInitialValue(initialValue);
-    setContent(content);
-  }, [props.content]);
+    localStorage.setItem(ARTICLE_LIST_KEY, JSON.stringify(localArticles));
+    setOrginTitle(title);
+    setLocalArticles(localArticles);
+    setCurrentArticle(newCurrentArticle);
+  }, [props.title]);
 
   useEffect(() => {
     if (editor) {
@@ -127,14 +261,12 @@ const RichEditor = (props: Props) => {
   return (
     <div className="editor">
       <h2>
-        <div
+        <input
           className="title"
-          contentEditable
           onInput={handleTitleChange}
           suppressContentEditableWarning
-        >
-          标题
-        </div>
+          value={currentArticle?.title}
+        />
       </h2>
       <Slate
         editor={editor}
@@ -146,7 +278,10 @@ const RichEditor = (props: Props) => {
           if (isAstChange) {
             // Save the value to Local Storage.
             const content = JSON.stringify(value);
-            localStorage.setItem(NEW_ARTICLE_KEY, content);
+            localStorage.setItem(
+              `${NEW_ARTICLE_KEY}_${currentArticle?.title}`,
+              content
+            );
             setContent(content);
           }
         }}
@@ -155,9 +290,6 @@ const RichEditor = (props: Props) => {
           <button
             onMouseDown={(event) => {
               event.preventDefault();
-              console.log(editor);
-
-              // CustomEditor.toggleBoldMark(editor, (bold) => setIsBold(bold));
               setIsBold((bold) => !bold);
             }}
             style={{ fontWeight: bold ? "bold" : "normal" }}
@@ -260,8 +392,6 @@ const Leaf = (props: RenderLeafProps) => {
 const CustomEditor = {
   isBoldMarkActive(editor: CustomEditor) {
     const marks = Editor.marks(editor);
-    console.log(marks, "marks");
-
     return marks ? marks.bold === true : false;
   },
 

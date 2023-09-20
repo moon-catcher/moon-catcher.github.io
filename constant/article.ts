@@ -3,6 +3,9 @@ import { Descendant } from "slate";
 
 export const NEW_ARTICLE_KEY = "mooncatcher-new-article";
 export const NEW_ARTICLE_TITLE_KEY = "mooncatcher-new-article-title";
+export const ARTICLE_LIST_KEY = "mooncatcher-local-articles-key";
+export const CURRENT_ARTICLE_KEY = "mooncatcher-current-article-key";
+
 const DEFAULT_INITIALVALUE_TEMP: (Descendant & { type: string })[] = [
   {
     type: "paragraph",
@@ -18,3 +21,5 @@ const DEFAULT_INITIALVALUE_TEMP: (Descendant & { type: string })[] = [
   },
 ];
 export const DEFAULT_INITIALVALUE = clone(DEFAULT_INITIALVALUE_TEMP);
+
+export const SAME_NAME_ERROR = `"sha" wasn't supplied.`;

@@ -4,6 +4,7 @@ import { hydrateRoot } from "react-dom/client";
 import { PageShell } from "./PageShell";
 import type { PageContextClient } from "./types";
 import { Background } from "@components/Background";
+import { AuthProvider } from "@providers/AuthProvider";
 
 // This render() hook only supports SSR, see https://vite-plugin-ssr.com/render-modes for how to modify render() to support SPA
 async function render(pageContext: PageContextClient) {
@@ -18,9 +19,11 @@ async function render(pageContext: PageContextClient) {
     throw new Error("DOM element #react-root not found");
   hydrateRoot(
     root,
-    <PageShell pageContext={pageContext}>
-      <Page {...pageProps} />
-    </PageShell>
+    <AuthProvider>
+      <PageShell pageContext={pageContext}>
+        <Page {...pageProps} />
+      </PageShell>
+    </AuthProvider>
   );
   hydrateRoot(background, <Background />);
 }

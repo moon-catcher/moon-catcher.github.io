@@ -3,6 +3,7 @@ export type { PageContextClient };
 export type { PageContext };
 export type { PageProps };
 import { LinkButtonAtion, LinkButtonFunction } from "@type/linkButton";
+import { UserInfo } from "@type/user";
 
 import type {
   PageContextBuiltInServer,
@@ -39,4 +40,5 @@ type PageContext = (PageContextClient | PageContextServer) & {
     key: LinkButtonAtion,
     fc: LinkButtonFunction<T>
   ) => void;
+  user?: UserInfo;
 };

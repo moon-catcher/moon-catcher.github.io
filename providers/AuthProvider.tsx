@@ -13,6 +13,7 @@ import {
   COOKIE_KEY_AUTH,
   COOKIE_KEY_CODE,
   COOKIE_KEY_STATE,
+  DEFAULT_HEADER,
 } from "@constant/auth";
 import { randomString } from "@utils/stringUtils";
 import { Octokit } from "octokit";
@@ -77,9 +78,7 @@ const AuthProvider = (props: Props) => {
       });
       octokit
         .request("GET /user", {
-          headers: {
-            "X-GitHub-Api-Version": "2022-11-28",
-          },
+          headers: DEFAULT_HEADER,
         })
         .then((res: { data: object }) => {
           setUserInfo(res.data);

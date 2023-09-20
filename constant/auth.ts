@@ -9,3 +9,7 @@ export const COOKIE_KEY_STATE = "mooncathcer_authstate";
 export const COOKIE_KEY_CODE = "mooncathcer_authcdoe";
 
 export const GITHUB_LOGIN_CANCEL = "access_denied";
+
+export const DEFAULT_HEADER = {
+  "X-GitHub-Api-Version": "2022-11-28",
+};

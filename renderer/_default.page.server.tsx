@@ -1,6 +1,11 @@
 export { render };
 // See https://vite-plugin-ssr.com/data-fetching
-export const passToClient = ["pageProps", "urlPathname", "setLinkBntAction"];
+export const passToClient = [
+  "pageProps",
+  "urlPathname",
+  "setLinkBntAction",
+  "user",
+];
 
 import ReactDOMServer from "react-dom/server";
 import logo from "/moon-catcher.png?url";
@@ -8,6 +13,7 @@ import { PageShell } from "./PageShell";
 import { escapeInject, dangerouslySkipEscape } from "vite-plugin-ssr/server";
 import type { PageContextServer } from "./types";
 import { Background } from "@components/Background";
+import { AuthProvider } from "@providers/AuthProvider";
 
 async function render(pageContext: PageContextServer) {
   const { Page, pageProps } = pageContext;
@@ -15,9 +21,11 @@ async function render(pageContext: PageContextServer) {
   if (!Page)
     throw new Error("My render() hook expects pageContext.Page to be defined");
   const pageHtml = ReactDOMServer.renderToString(
-    <PageShell pageContext={pageContext}>
-      <Page {...pageProps} />
-    </PageShell>
+    <AuthProvider>
+      <PageShell pageContext={pageContext}>
+        <Page {...pageProps} />
+      </PageShell>
+    </AuthProvider>
   );
 
   // See https://vite-plugin-ssr.com/head

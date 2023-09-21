@@ -4,6 +4,52 @@
   width: 100%;
   color: #fff;
 }
+
+.header {
+  margin-top: 25px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.draft-box {
+  white-space: nowrap;
+  display: flex;
+  background-color: chocolate;
+  padding: 5px 10px;
+  align-items: center;
+  gap: 6px;
+  height: 100%;
+}
+.expand-icon {
+  flex: auto;
+  transform: rotate(90deg);
+  display: flex;
+  transition: all 0.2s linear;
+  justify-content: center;
+  align-items: center;
+  height: 10px;
+  width: 10px;
+}
+.expand-icon.open {
+  transform: rotate(-90deg);
+}
+.draft-article-box {
+  position: absolute;
+  top: 100%;
+  height: calc(100%);
+  width: 100% !important;
+  background-color: chocolate;
+  z-index: 6;
+  transition: all 0.5s ease-in-out;
+  overflow: hidden;
+}
+.draft-article-box.draft-article-box-hidden {
+  height: 0;
+
+  transition: all 0.5s ease-in-out;
+}
+
 .title {
   background: #ffffff00;
   border: 0;

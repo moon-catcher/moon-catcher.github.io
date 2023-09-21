@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Slate,
   Editable,
@@ -22,7 +23,6 @@ import { useAuth } from "@providers/AuthProvider";
 import { DEFAULT_HEADER } from "@constant/auth";
 import { Article, ArticleSaveResponse } from "@type/article";
 type Props = {
-  content?: string;
   title?: string;
 };
 
@@ -53,11 +53,12 @@ const serialize = (node: Node) => {
 const RichEditor = (props: Props) => {
   const [editor] = useState(() => withReact(createEditor()));
   const [bold, setIsBold] = useState(false);
-  const [content, setContent] = useState(props.content);
+  const [content, setContent] = useState("");
   const [stashSave, setStashSave] = useState(false);
   const [currentArticle, setCurrentArticle] = useState<Article | null>(null);
   const [localArticles, setLocalArticles] = useState<Article[]>([]);
   // const [remoteArticles, setRemoteArticles] = useState<Article[]>([]);
+  const [draftOpen, setDraftOpen] = useState(false);
   const [orginTitle, setOrginTitle] = useState("");
   const [initialValue, setInitialValue] = useState<Descendant[] | null>(null);
 
@@ -197,8 +198,37 @@ const RichEditor = (props: Props) => {
     [localArticles, currentArticle, handleArticleChange]
   );
 
+  const handleDelelteRemoteArticle = useCallback(
+    ({
+      sha,
+      title,
+      owner,
+      name,
+      email,
+    }: {
+      sha: string;
+      title: string;
+      owner: any;
+      name: any;
+      email: any;
+    }) => {
+      octokit.request("DELETE /repos/{owner}/{repo}/contents/{path}", {
+        owner,
+        repo: `${owner}.github.io`,
+        sha,
+        path: `public/jsonStore/write/${title}.json`,
+        message: ` create or update draft article ${title}`,
+        committer: {
+          name,
+          email: email || "moon-catcher@gmail.com",
+        },
+        headers: DEFAULT_HEADER,
+      });
+    },
+    [octokit]
+  );
+
   const handleSave = useCallback(() => {
-    console.log(octokit, "content");
     if (content && octokit && currentArticle?.title) {
       const { login: owner, name, email } = userInfo;
       octokit
@@ -206,7 +236,7 @@ const RichEditor = (props: Props) => {
           owner,
           repo: `${owner}.github.io`,
           sha: currentArticle.sha,
-          path: `public/jsonStore/ttt/${currentArticle.title}.json`,
+          path: `public/jsonStore/write/${currentArticle.title}.json`,
           message: ` create or update draft article ${currentArticle.title}`,
           committer: {
             name,
@@ -217,6 +247,16 @@ const RichEditor = (props: Props) => {
         })
         .then((res: ArticleSaveResponse) => {
           console.log(res, "tetttttt");
+          if (currentArticle.sha && orginTitle !== currentArticle.title) {
+            handleDelelteRemoteArticle({
+              sha: currentArticle.sha,
+              title: orginTitle,
+              owner,
+              name,
+              email,
+            });
+            setOrginTitle(currentArticle.title);
+          }
           handleArticletoRemote(res.data);
         })
         .catch((error: Error) => {
@@ -235,17 +275,19 @@ const RichEditor = (props: Props) => {
       }
     }
   }, [
-    octokit,
     content,
+    octokit,
     currentArticle,
     userInfo,
+    orginTitle,
     handleArticletoRemote,
+    handleDelelteRemoteArticle,
     login,
   ]);
 
   const handleSubmit = useCallback(() => {
-    // const nodes = JSON.parse(content!) as Node[];
-    // console.log(nodes.map((node) => serialize(node)));
+    const nodes = JSON.parse(content!) as Node[];
+    console.log(nodes.map((node) => serialize(node)));
   }, [content]);
 
   useEffect(() => {
@@ -266,14 +308,7 @@ const RichEditor = (props: Props) => {
   useEffect(() => {
     let content;
     if (orginTitle) {
-      if (!props.content) {
-        content =
-          localStorage.getItem(`${NEW_ARTICLE_KEY}_${orginTitle}`) ?? "";
-      } else {
-        content = props.content;
-      }
-      console.log(content, "content----------------------");
-
+      content = localStorage.getItem(`${NEW_ARTICLE_KEY}_${orginTitle}`) ?? "";
       let initialValue = DEFAULT_INITIALVALUE;
       try {
         if (content) {
@@ -289,7 +324,7 @@ const RichEditor = (props: Props) => {
       setInitialValue(initialValue);
       setContent(content);
     }
-  }, [props.content, orginTitle]);
+  }, [orginTitle]);
 
   useEffect(() => {
     let localArticles: Article[] = [{ title: "标题", remote: false }];
@@ -349,14 +384,35 @@ const RichEditor = (props: Props) => {
 
   return (
     <div className="editor">
-      <h2>
+      <div className="header">
         <input
           className="title"
           onInput={handleTitleChange}
           suppressContentEditableWarning
           value={currentArticle?.title}
         />
-      </h2>
+        <div
+          className="draft-box"
+          onClick={() => setDraftOpen((draftOpen) => !draftOpen)}
+        >
+          <span>草稿箱</span>
+          <div className={["expand-icon", draftOpen ? "open" : ""].join(" ")}>
+            {">"}
+          </div>
+        </div>
+        <div
+          className={["draft-article-box", !draftOpen ? "draft-article-box-hidden" : ""].join(
+            " "
+          )}
+        >
+          {localArticles.map(({ title, remote }) => (
+            <div key={title}>
+              <div>{title}</div>
+              <div>{remote ? "remote" : "local"}</div>
+            </div>
+          ))}
+        </div>
+      </div>
       <Slate
         editor={editor}
         initialValue={initialValue}
@@ -385,7 +441,6 @@ const RichEditor = (props: Props) => {
           className="editable"
           renderElement={renderElement}
           renderLeaf={renderLeaf}
-          // autoSave=""
           autoFocus={true}
           onSelect={() => {
             setIsBold(CustomEditor.isBoldMarkActive(editor));

@@ -1,1 +1,0 @@
-import{j as r}from"../chunks/chunk-9a4f56c2.js";import{R as i}from"../chunks/chunk-95d07cbf.js";import"../chunks/chunk-ea45e243.js";import"../chunks/chunk-3c9561d0.js";function m(){return r.jsx("div",{className:"write-page",children:r.jsx(i,{})})}export{m as Page};

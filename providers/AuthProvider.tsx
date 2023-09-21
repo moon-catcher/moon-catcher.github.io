@@ -57,6 +57,8 @@ const AuthProvider = (props: Props) => {
         .then(
           (res: { data: { status: number; msg: string; token: string } }) => {
             if (!res.data.status) {
+              console.log(res.data.token, "res.data.token");
+
               setToken(res.data.token);
             } else {
               setError(res.data.msg);
@@ -72,7 +74,8 @@ const AuthProvider = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    if (token) {
+    console.log(88888888, token, loading);
+    if (token && loading) {
       const octokit = new Octokit({
         auth: token,
       });
@@ -90,7 +93,7 @@ const AuthProvider = (props: Props) => {
         });
       setOctokit(octokit);
     }
-  }, [token]);
+  }, [token, loading]);
 
   const logout = useCallback(() => {
     setCookie(COOKIE_KEY_CODE, "", {
@@ -133,7 +136,6 @@ const AuthProvider = (props: Props) => {
     window[`${state}`] = (token: string) => {
       clearInterval(childWindowColseTimer.current);
       setToken(token);
-      setLoading(false);
       setError("");
       delete window[`${state}`];
       childWindow?.close();
@@ -143,7 +145,6 @@ const AuthProvider = (props: Props) => {
       childWindowColseTimer.current = setInterval(function () {
         if (childWindow?.closed) {
           clearInterval(childWindowColseTimer.current);
-          setLoading(false);
           setError("取消登录");
           delete window[`${state}`];
         }

@@ -20,7 +20,7 @@ import {
 import { usePageContext } from "../../renderer/usePageContext";
 import { useAuth } from "@providers/AuthProvider";
 import { DEFAULT_HEADER } from "@constant/auth";
-import { Article, CurrentArticle } from "@type/article";
+import { Article, ArticleSaveResponse } from "@type/article";
 type Props = {
   content?: string;
   title?: string;
@@ -54,16 +54,15 @@ const RichEditor = (props: Props) => {
   const [editor] = useState(() => withReact(createEditor()));
   const [bold, setIsBold] = useState(false);
   const [content, setContent] = useState(props.content);
-  const [currentArticle, setCurrentArticle] = useState<CurrentArticle | null>(
-    null
-  );
+  const [stashSave, setStashSave] = useState(false);
+  const [currentArticle, setCurrentArticle] = useState<Article | null>(null);
   const [localArticles, setLocalArticles] = useState<Article[]>([]);
   // const [remoteArticles, setRemoteArticles] = useState<Article[]>([]);
   const [orginTitle, setOrginTitle] = useState("");
   const [initialValue, setInitialValue] = useState<Descendant[] | null>(null);
 
   const { setLinkBntAction } = usePageContext();
-  const { octokit, userInfo } = useAuth();
+  const { octokit, userInfo, login } = useAuth();
 
   const renderElement = useCallback((props: RenderElementProps) => {
     switch (props.element.type) {
@@ -78,11 +77,105 @@ const RichEditor = (props: Props) => {
     return <Leaf {...props} />;
   }, []);
 
+  const handleArticletoRemote = useCallback(
+    (data: ArticleSaveResponse["data"]) => {
+      const newCurrentArticle = {
+        title: data.content.name.replace(".json", ""),
+        sha: data.content.sha,
+        remote: true,
+      };
+      let isLocalToRemote = false;
+      // let newRemoteArticles = [...remoteArticles];
+      const newlocalArticles = localArticles.map((article) => {
+        if (
+          `${article.title}.json` === data.content.name ||
+          article.sha === data.content.sha
+        ) {
+          // newRemoteArticles.push(newCurrentArticle);
+          isLocalToRemote = true;
+          return newCurrentArticle;
+        }
+        return article;
+      });
+      // 保存当前article
+      setCurrentArticle(newCurrentArticle);
+      localStorage.setItem(
+        CURRENT_ARTICLE_KEY,
+        JSON.stringify(newCurrentArticle)
+      );
+
+      if (isLocalToRemote) {
+        setLocalArticles(newlocalArticles);
+        localStorage.setItem(
+          ARTICLE_LIST_KEY,
+          JSON.stringify(newlocalArticles)
+        );
+      }
+      alert("已保存至草稿箱");
+    },
+    [localArticles]
+  );
+
+  const handleArticleChange = useCallback(
+    ({
+      newCurrentArticle,
+      newContent,
+    }: {
+      newCurrentArticle: Article;
+      newContent?: string;
+    }) => {
+      const { title: newTitle } = newCurrentArticle;
+      let newlocalArticles = [...localArticles];
+      newlocalArticles = newlocalArticles.map((article) => {
+        if (
+          article.title === currentArticle?.title ||
+          (article.sha && article.sha === currentArticle?.sha)
+        ) {
+          return { ...article, title: newTitle, remote: false };
+        }
+        return article;
+      });
+
+      if (newContent) setContent(newContent);
+      localStorage.setItem(
+        `${NEW_ARTICLE_KEY}_${newTitle}`,
+        newContent ?? content ?? ""
+      );
+      setCurrentArticle(newCurrentArticle);
+      setLocalArticles(newlocalArticles);
+      localStorage.setItem(ARTICLE_LIST_KEY, JSON.stringify(newlocalArticles));
+      localStorage.setItem(
+        CURRENT_ARTICLE_KEY,
+        JSON.stringify(newCurrentArticle)
+      );
+    },
+    [content, currentArticle, localArticles]
+  );
+
+  const handleContentChange = useCallback(
+    (value: Descendant[]) => {
+      const isAstChange = editor.operations.some(
+        (op) => "set_selection" !== op.type
+      );
+      if (isAstChange) {
+        // Save the value to Local Storage.
+        const content = JSON.stringify(value);
+        const newCurrentArticle = {
+          ...currentArticle,
+          remote: false,
+          title: currentArticle?.title ?? "",
+        };
+        handleArticleChange({ newCurrentArticle, newContent: content });
+      }
+    },
+    [currentArticle, editor.operations, handleArticleChange]
+  );
+
   const handleTitleChange = useCallback(
     (
       event: React.FormEvent<HTMLInputElement> & { target: HTMLInputElement }
     ) => {
-      let newlocalArticles = [...localArticles];
+      const newlocalArticles = [...localArticles];
       if (
         event.target.value &&
         newlocalArticles.some(({ title }) => title === event.target.value)
@@ -91,42 +184,17 @@ const RichEditor = (props: Props) => {
         event.target.value += `(1)`;
         return;
       }
-      const newTitle = event.target.value;
       const oldTitle = currentArticle?.title;
-      newlocalArticles = newlocalArticles.map((article) => {
-        if (article.title === oldTitle) {
-          return { ...article, title: newTitle };
-        }
-        return article;
-      });
       localStorage.removeItem(`${NEW_ARTICLE_KEY}_${oldTitle}`);
-      console.log(content, "content", newlocalArticles);
-
-      console.log(
-        content,
-        "handleTitleChange -contentcontentcontentcontent",
-        newlocalArticles
-      );
-
-      if (content) {
-        localStorage.setItem(`${NEW_ARTICLE_KEY}_${newTitle}`, content);
-      }
       const newCurrentArticle = {
-        title: newTitle,
-        remote: !!currentArticle?.remote,
+        title: event.target.value,
+        sha: currentArticle?.sha,
+        remote: false,
       };
-      // store CURRENT_ARTICLE_KEY
-      localStorage.setItem(
-        CURRENT_ARTICLE_KEY,
-        JSON.stringify(newCurrentArticle)
-      );
-      setCurrentArticle(newCurrentArticle);
-      // store ARTICLE_LIST_KEY
-      localStorage.setItem(ARTICLE_LIST_KEY, JSON.stringify(newlocalArticles));
-      setLocalArticles(newlocalArticles);
+      handleArticleChange({ newCurrentArticle });
     },
 
-    [localArticles, content, currentArticle]
+    [localArticles, currentArticle, handleArticleChange]
   );
 
   const handleSave = useCallback(() => {
@@ -137,6 +205,7 @@ const RichEditor = (props: Props) => {
         .request("PUT /repos/{owner}/{repo}/contents/{path}", {
           owner,
           repo: `${owner}.github.io`,
+          sha: currentArticle.sha,
           path: `public/jsonStore/ttt/${currentArticle.title}.json`,
           message: ` create or update draft article ${currentArticle.title}`,
           committer: {
@@ -146,8 +215,9 @@ const RichEditor = (props: Props) => {
           content: btoa(content),
           headers: DEFAULT_HEADER,
         })
-        .then((res: unknown) => {
-          console.log(res);
+        .then((res: ArticleSaveResponse) => {
+          console.log(res, "tetttttt");
+          handleArticletoRemote(res.data);
         })
         .catch((error: Error) => {
           console.log(error, "error");
@@ -157,13 +227,34 @@ const RichEditor = (props: Props) => {
             alert(error.message);
           }
         });
+    } else if (!octokit) {
+      const result = confirm("未登录,是否登录");
+      if (result) {
+        login();
+        setStashSave(true);
+      }
     }
-  }, [content, octokit, userInfo, currentArticle?.title]);
+  }, [
+    octokit,
+    content,
+    currentArticle,
+    userInfo,
+    handleArticletoRemote,
+    login,
+  ]);
 
   const handleSubmit = useCallback(() => {
     // const nodes = JSON.parse(content!) as Node[];
     // console.log(nodes.map((node) => serialize(node)));
   }, [content]);
+
+  useEffect(() => {
+    if (stashSave && userInfo.login) {
+      console.log(content, "************");
+      handleSave();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stashSave, userInfo.login]);
 
   useEffect(() => {
     if (typeof setLinkBntAction === "function") {
@@ -201,7 +292,7 @@ const RichEditor = (props: Props) => {
   }, [props.content, orginTitle]);
 
   useEffect(() => {
-    let localArticles: Article[] = [{ title: "标题" }];
+    let localArticles: Article[] = [{ title: "标题", remote: false }];
     let title = localArticles[0].title;
     let newCurrentArticle = { title: "标题", remote: false };
     if (!props.title) {
@@ -209,9 +300,7 @@ const RichEditor = (props: Props) => {
         localStorage.getItem(CURRENT_ARTICLE_KEY) ?? "";
       try {
         if (currentArticleJSONStr) {
-          const currentArticle = JSON.parse(
-            currentArticleJSONStr
-          ) as CurrentArticle;
+          const currentArticle = JSON.parse(currentArticleJSONStr) as Article;
           if (currentArticle.title) {
             title = currentArticle.title;
             newCurrentArticle = currentArticle;
@@ -271,20 +360,7 @@ const RichEditor = (props: Props) => {
       <Slate
         editor={editor}
         initialValue={initialValue}
-        onChange={(value) => {
-          const isAstChange = editor.operations.some(
-            (op) => "set_selection" !== op.type
-          );
-          if (isAstChange) {
-            // Save the value to Local Storage.
-            const content = JSON.stringify(value);
-            localStorage.setItem(
-              `${NEW_ARTICLE_KEY}_${currentArticle?.title}`,
-              content
-            );
-            setContent(content);
-          }
-        }}
+        onChange={handleContentChange}
       >
         <div>
           <button

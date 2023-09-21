@@ -62,7 +62,6 @@ function Page() {
       setStatus(LOGIN_TEXT_LOADING);
       getAccessToken(code, state)
         .then(async ({ data }: { data: AccessToken }) => {
-
           if (data?.token) {
             setCookie(COOKIE_KEY_CODE, code, {
               expires,
@@ -70,8 +69,11 @@ function Page() {
             localStorage.setItem(COOKIE_KEY_AUTH, JSON.stringify(data.authkey));
             setToken(data.token);
             setStatus(LOGIN_TEXT_LOGINED);
-            window.opener[`${state}`](data.token);
+            const callback = window.opener[`${state}`];
             window.opener = undefined;
+            setTimeout(() => {
+              callback(data.token);
+            }, 1000);
           }
         })
         .catch((error: Error) => {

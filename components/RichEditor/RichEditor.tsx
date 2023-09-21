@@ -26,6 +26,8 @@ type Props = {
   title?: string;
 };
 
+const rowHeight = 30;
+
 const serialize = (node: Node) => {
   if (Text.isText(node)) {
     let string = escapeHtml(node.text);
@@ -385,12 +387,6 @@ const RichEditor = (props: Props) => {
   return (
     <div className="editor">
       <div className="header">
-        <input
-          className="title"
-          onInput={handleTitleChange}
-          suppressContentEditableWarning
-          value={currentArticle?.title}
-        />
         <div
           className="draft-box"
           onClick={() => setDraftOpen((draftOpen) => !draftOpen)}
@@ -401,17 +397,43 @@ const RichEditor = (props: Props) => {
           </div>
         </div>
         <div
-          className={["draft-article-box", !draftOpen ? "draft-article-box-hidden" : ""].join(
-            " "
-          )}
+          className={[
+            "draft-article-box",
+            !draftOpen ? "draft-article-box-hidden" : "",
+          ].join(" ")}
+          style={{
+            height: draftOpen
+              ? rowHeight * ((localArticles.length || 0) + 1)
+              : 0,
+          }}
         >
+          <div className="draft-article-row" style={{ height: rowHeight }}>
+            <div>title</div>
+            <div>isRemote</div>
+            <div>createAt</div>
+            <div>updateAt</div>
+            <div>delete</div>
+          </div>
           {localArticles.map(({ title, remote }) => (
-            <div key={title}>
+            <div
+              key={title}
+              style={{ height: rowHeight }}
+              className="draft-article-row"
+            >
               <div>{title}</div>
               <div>{remote ? "remote" : "local"}</div>
+              <div>createAt</div>
+              <div>updateAt</div>
+              <div>delete</div>
             </div>
           ))}
         </div>
+        <input
+          className="title"
+          onInput={handleTitleChange}
+          suppressContentEditableWarning
+          value={currentArticle?.title}
+        />
       </div>
       <Slate
         editor={editor}

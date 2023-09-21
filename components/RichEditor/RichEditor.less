@@ -20,6 +20,7 @@
   align-items: center;
   gap: 6px;
   height: 100%;
+  cursor: pointer;
 }
 .expand-icon {
   flex: auto;
@@ -37,17 +38,22 @@
 .draft-article-box {
   position: absolute;
   top: 100%;
-  height: calc(100%);
-  width: 100% !important;
+  width: 100%;
+  left: 0;
   background-color: chocolate;
   z-index: 6;
   transition: all 0.5s ease-in-out;
   overflow: hidden;
+  padding: 0 10px;
 }
 .draft-article-box.draft-article-box-hidden {
-  height: 0;
-
   transition: all 0.5s ease-in-out;
+}
+
+.draft-article-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .title {

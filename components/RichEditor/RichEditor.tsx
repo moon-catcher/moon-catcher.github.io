@@ -7,7 +7,7 @@ import {
   RenderElementProps,
   RenderLeafProps,
 } from "slate-react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, memo } from "react";
 import { createEditor, Transforms, Element, Editor, Node, Text } from "slate";
 import type { BaseEditor, Descendant } from "slate";
 import escapeHtml from "escape-html";
@@ -22,9 +22,15 @@ import { usePageContext } from "../../renderer/usePageContext";
 import { useAuth } from "@providers/AuthProvider";
 import { DEFAULT_HEADER } from "@constant/auth";
 import { Article, ArticleSaveResponse } from "@type/article";
+import dayjs from "dayjs";
 type Props = {
   title?: string;
 };
+// localStorage.setItem = function (key: string, value: string) {
+//   console.log(this);
+//   console.log(key, value);
+//   localStorage.setItem(key, value);
+// };
 
 const rowHeight = 30;
 
@@ -52,7 +58,7 @@ const serialize = (node: Node) => {
       return children;
   }
 };
-const RichEditor = (props: Props) => {
+const RichEditor = memo(function RichEditor(props: Props) {
   const [editor] = useState(() => withReact(createEditor()));
   const [bold, setIsBold] = useState(false);
   const [content, setContent] = useState("");
@@ -80,6 +86,64 @@ const RichEditor = (props: Props) => {
     return <Leaf {...props} />;
   }, []);
 
+  const handleLocalStorage = useCallback(
+    ({
+      title,
+      content,
+      currentArticle,
+      localArticles,
+    }: {
+      title?: string;
+      content?: string;
+      currentArticle?: Article;
+      localArticles?: Article[];
+    }) => {
+      if (content && title) {
+        setContent(content);
+        if (currentArticle?.warning) {
+          localStorage.setItem(
+            `${NEW_ARTICLE_KEY}_${currentArticle.warning}`,
+            content
+          );
+        } else {
+          localStorage.setItem(`${NEW_ARTICLE_KEY}_${title}`, content);
+        }
+      }
+      if (currentArticle) {
+        setCurrentArticle(currentArticle);
+        localStorage.setItem(
+          CURRENT_ARTICLE_KEY,
+          JSON.stringify(currentArticle)
+        );
+      }
+      if (localArticles) {
+        setLocalArticles(localArticles);
+        localStorage.setItem(ARTICLE_LIST_KEY, JSON.stringify(localArticles));
+      }
+    },
+    []
+  );
+
+  const handleArticleCreate = useCallback(() => {
+    let title = "标题";
+    while (localArticles.some((item) => item.title === title)) {
+      title += "(1)";
+    }
+    const newCurrentArticle = { title, remote: false };
+    const content = JSON.stringify(DEFAULT_INITIALVALUE);
+    setLocalArticles((localArticles) => [...localArticles, newCurrentArticle]);
+    setInitialValue(null);
+    handleLocalStorage({
+      localArticles: [...localArticles, newCurrentArticle],
+      currentArticle: newCurrentArticle,
+      title,
+      content,
+    });
+    setTimeout(() => {
+      setInitialValue(DEFAULT_INITIALVALUE);
+    }, 1);
+  }, [handleLocalStorage, localArticles]);
+
   const handleArticletoRemote = useCallback(
     (data: ArticleSaveResponse["data"]) => {
       const newCurrentArticle = {
@@ -101,22 +165,44 @@ const RichEditor = (props: Props) => {
         return article;
       });
       // 保存当前article
-      setCurrentArticle(newCurrentArticle);
-      localStorage.setItem(
-        CURRENT_ARTICLE_KEY,
-        JSON.stringify(newCurrentArticle)
-      );
+      handleLocalStorage({ currentArticle: newCurrentArticle });
 
       if (isLocalToRemote) {
-        setLocalArticles(newlocalArticles);
-        localStorage.setItem(
-          ARTICLE_LIST_KEY,
-          JSON.stringify(newlocalArticles)
-        );
+        handleLocalStorage({ localArticles: newlocalArticles });
       }
       alert("已保存至草稿箱");
     },
-    [localArticles]
+    [handleLocalStorage, localArticles]
+  );
+
+  const handleSelectArticle = useCallback(
+    (article: Article) => {
+      setInitialValue(null);
+
+      console.log(article, "article.warning");
+
+      const currentContext = localStorage.getItem(
+        article?.warning
+          ? `${NEW_ARTICLE_KEY}_${article.warning}`
+          : `${NEW_ARTICLE_KEY}_${article.title}`
+      );
+      let initValue = DEFAULT_INITIALVALUE;
+      console.log(
+        currentContext,
+        "currentContext",
+        article?.warning
+          ? `${NEW_ARTICLE_KEY}_${article.warning}`
+          : `${NEW_ARTICLE_KEY}_${article.title}`
+      );
+
+      if (currentContext) initValue = JSON.parse(currentContext);
+      // 需要将设置值放在get storage后边，不然有影响
+      handleLocalStorage({ currentArticle: article });
+      setTimeout(() => {
+        setInitialValue(initValue);
+      }, 1);
+    },
+    [handleLocalStorage]
   );
 
   const handleArticleChange = useCallback(
@@ -128,35 +214,55 @@ const RichEditor = (props: Props) => {
       newContent?: string;
     }) => {
       const { title: newTitle } = newCurrentArticle;
-      let newlocalArticles = [...localArticles];
+      console.log(newTitle, newContent, newCurrentArticle, "newTitlenewTitle");
+
+      let newlocalArticles = localArticles.length
+        ? [...localArticles]
+        : [newCurrentArticle];
+
+      const articleTitles: { [p: string]: number } = {};
       newlocalArticles = newlocalArticles.map((article) => {
+        let result = article;
         if (
-          article.title === currentArticle?.title ||
-          (article.sha && article.sha === currentArticle?.sha)
+          (article.title === currentArticle?.title ||
+            (article.sha && article.sha === currentArticle?.sha)) &&
+          article.warning === currentArticle.warning
         ) {
-          return { ...article, title: newTitle, remote: false };
+          result = newCurrentArticle;
+        }
+
+        // 统计冲突
+        if (!articleTitles[result.title]) articleTitles[result.title] = 0;
+        articleTitles[result.title] += 1;
+        return result;
+      });
+      newlocalArticles = newlocalArticles.map((article) => {
+        if (article.warning && articleTitles[article.title] === 1) {
+          const content = localStorage.getItem(
+            `${NEW_ARTICLE_KEY}_${article.warning}`
+          );
+          localStorage.setItem(
+            `${NEW_ARTICLE_KEY}_${article.title}`,
+            content ?? ""
+          );
+          return { ...article, warning: undefined };
         }
         return article;
       });
-
-      if (newContent) setContent(newContent);
-      localStorage.setItem(
-        `${NEW_ARTICLE_KEY}_${newTitle}`,
-        newContent ?? content ?? ""
-      );
-      setCurrentArticle(newCurrentArticle);
-      setLocalArticles(newlocalArticles);
-      localStorage.setItem(ARTICLE_LIST_KEY, JSON.stringify(newlocalArticles));
-      localStorage.setItem(
-        CURRENT_ARTICLE_KEY,
-        JSON.stringify(newCurrentArticle)
-      );
+      handleLocalStorage({
+        title: newTitle,
+        content: newContent,
+        localArticles: newlocalArticles,
+        currentArticle: newCurrentArticle,
+      });
     },
-    [content, currentArticle, localArticles]
+    [currentArticle, handleLocalStorage, localArticles]
   );
 
   const handleContentChange = useCallback(
     (value: Descendant[]) => {
+      console.log("handleContentChange???");
+
       const isAstChange = editor.operations.some(
         (op) => "set_selection" !== op.type
       );
@@ -179,22 +285,38 @@ const RichEditor = (props: Props) => {
       event: React.FormEvent<HTMLInputElement> & { target: HTMLInputElement }
     ) => {
       const newlocalArticles = [...localArticles];
-      if (
-        event.target.value &&
-        newlocalArticles.some(({ title }) => title === event.target.value)
-      ) {
-        alert("标题不可重复,已重命名");
-        event.target.value += `(1)`;
-        return;
-      }
-      const oldTitle = currentArticle?.title;
-      localStorage.removeItem(`${NEW_ARTICLE_KEY}_${oldTitle}`);
-      const newCurrentArticle = {
+      const newCurrentArticle: Article = {
         title: event.target.value,
         sha: currentArticle?.sha,
         remote: false,
       };
-      handleArticleChange({ newCurrentArticle });
+      if (
+        event.target.value &&
+        newlocalArticles.some(({ title }) => title === event.target.value)
+      ) {
+        newCurrentArticle.warning = dayjs().format() + "标题重复";
+      }
+      const oldTitle = currentArticle?.title;
+
+      // 1.去除上个名字的存储位置
+      const currentContext = localStorage.getItem(
+        currentArticle?.warning
+          ? `${NEW_ARTICLE_KEY}_${currentArticle.warning}`
+          : `${NEW_ARTICLE_KEY}_${oldTitle}`
+      );
+
+      // 2.移除上一个存储位置
+      localStorage.removeItem(
+        currentArticle?.warning
+          ? `${NEW_ARTICLE_KEY}_${currentArticle?.warning}`
+          : `${NEW_ARTICLE_KEY}_${oldTitle}`
+      );
+
+      // 存到新位置
+      handleArticleChange({
+        newCurrentArticle,
+        newContent: currentContext ?? "",
+      });
     },
 
     [localArticles, currentArticle, handleArticleChange]
@@ -231,6 +353,10 @@ const RichEditor = (props: Props) => {
   );
 
   const handleSave = useCallback(() => {
+    if (currentArticle?.warning) {
+      alert("标题重复！请修改");
+      return;
+    }
     if (content && octokit && currentArticle?.title) {
       const { login: owner, name, email } = userInfo;
       octokit
@@ -288,9 +414,13 @@ const RichEditor = (props: Props) => {
   ]);
 
   const handleSubmit = useCallback(() => {
+    if (currentArticle?.warning) {
+      alert("标题重复！请修改");
+      return;
+    }
     const nodes = JSON.parse(content!) as Node[];
     console.log(nodes.map((node) => serialize(node)));
-  }, [content]);
+  }, [content, currentArticle]);
 
   useEffect(() => {
     if (stashSave && userInfo.login) {
@@ -308,30 +438,8 @@ const RichEditor = (props: Props) => {
   }, [handleSave, handleSubmit, setLinkBntAction]);
 
   useEffect(() => {
-    let content;
-    if (orginTitle) {
-      content = localStorage.getItem(`${NEW_ARTICLE_KEY}_${orginTitle}`) ?? "";
-      let initialValue = DEFAULT_INITIALVALUE;
-      try {
-        if (content) {
-          initialValue = JSON.parse(content);
-        } else {
-          content = JSON.stringify(DEFAULT_INITIALVALUE);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-      console.log(content, "contentcontentcontentcontent");
-
-      setInitialValue(initialValue);
-      setContent(content);
-    }
-  }, [orginTitle]);
-
-  useEffect(() => {
-    let localArticles: Article[] = [{ title: "标题", remote: false }];
-    let title = localArticles[0].title;
-    let newCurrentArticle = { title: "标题", remote: false };
+    let title = "标题";
+    let newCurrentArticle: Article = { title: "标题", remote: false };
     if (!props.title) {
       const currentArticleJSONStr =
         localStorage.getItem(CURRENT_ARTICLE_KEY) ?? "";
@@ -353,18 +461,41 @@ const RichEditor = (props: Props) => {
     try {
       if (localArticlesJSONStr) {
         const tempArr = JSON.parse(localArticlesJSONStr) as Article[];
+        console.log(tempArr, "tempArr");
+
         if (tempArr.length) {
-          localArticles = tempArr;
+          handleLocalStorage({ localArticles: tempArr });
         }
       }
     } catch (error) {
       console.log(error);
     }
-    localStorage.setItem(ARTICLE_LIST_KEY, JSON.stringify(localArticles));
     setOrginTitle(title);
-    setLocalArticles(localArticles);
     setCurrentArticle(newCurrentArticle);
-  }, [props.title]);
+
+    let content;
+    if (title) {
+      content = localStorage.getItem(
+        newCurrentArticle?.warning
+          ? `${NEW_ARTICLE_KEY}_${newCurrentArticle.warning}`
+          : `${NEW_ARTICLE_KEY}_${newCurrentArticle?.title}`
+      );
+      let initialValue = DEFAULT_INITIALVALUE;
+      if (content) {
+        try {
+          initialValue = JSON.parse(content);
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        content = JSON.stringify(DEFAULT_INITIALVALUE);
+      }
+      console.log(content, "contentcontentcontentcontent");
+
+      setInitialValue(initialValue);
+      setContent(content);
+    }
+  }, [handleLocalStorage, props.title]);
 
   useEffect(() => {
     if (editor) {
@@ -376,17 +507,43 @@ const RichEditor = (props: Props) => {
 
   useEffect(() => {
     if (editor && initialValue) {
-      Transforms.select(editor, { offset: 0, path: [0, 0] });
+      const lastIndex = initialValue.length - 1;
+      const lastChildren = (initialValue[lastIndex] as CustomElement).children;
+      const nextLastChildren = lastChildren[lastChildren.length - 1];
+      editor.select({
+        offset: nextLastChildren.text.length,
+        path: [lastIndex, lastChildren.length - 1],
+      });
     }
   }, [editor, initialValue]);
 
-  if (!initialValue) {
-    return <h2 className="loading">loading...</h2>;
-  }
+  // click outside
+  // useEffect(() => {
+  //   document.addEventListener("click", (event) => {
+  //     if (
+  //       event.target &&
+  //       !document
+  //         .querySelector(".draft-article-box")
+  //         ?.contains(event.target as globalThis.Node) &&
+  //       !document
+  //         .querySelector(".draft-box")
+  //         ?.contains(event.target as globalThis.Node)
+  //     )
+  //       setDraftOpen(false);
+  //   });
+  // }, []);
 
   return (
     <div className="editor">
       <div className="header">
+        <input
+          className="title"
+          onInput={handleTitleChange}
+          suppressContentEditableWarning
+          value={currentArticle?.title ?? ""}
+        />
+      </div>
+      <div className="article-actions">
         <div
           className="draft-box"
           onClick={() => setDraftOpen((draftOpen) => !draftOpen)}
@@ -396,107 +553,143 @@ const RichEditor = (props: Props) => {
             {">"}
           </div>
         </div>
-        <div
-          className={[
-            "draft-article-box",
-            !draftOpen ? "draft-article-box-hidden" : "",
-          ].join(" ")}
-          style={{
-            height: draftOpen
-              ? rowHeight * ((localArticles.length || 0) + 1)
-              : 0,
+        <span className="create-button" onClick={handleArticleCreate}>
+          新建
+        </span>
+        {currentArticle?.warning && (
+          <div className="titleCeffg-warning" title="标题重复，请修改">
+            ❗❗❗❗❗❗❗❗{currentArticle?.warning}❗❗❗❗❗❗❗❗❗
+          </div>
+        )}
+      </div>{" "}
+      <div
+        className={["draft-article-box"].join(" ")}
+        style={{
+          height: draftOpen ? rowHeight * ((localArticles.length || 1) + 1) : 0,
+        }}
+      >
+        <div className="draft-article-header" style={{ height: rowHeight }}>
+          <div>title</div>
+          <div>isRemote</div>
+          <div>createAt</div>
+          <div>updateAt</div>
+          <div>Actions</div>
+          <div></div>
+        </div>
+        {localArticles.length ? (
+          localArticles.map((article, index) => {
+            const { title, warning, remote } = article;
+            return (
+              <div
+                onClick={() => handleSelectArticle(article)}
+                key={title + index}
+                style={{ height: rowHeight }}
+                title={warning}
+                className={[
+                  "draft-article-row",
+                  currentArticle?.title === title &&
+                  currentArticle.warning === warning
+                    ? "current-article"
+                    : "",
+                  warning ? "draft-article-row-warning" : "",
+                ].join(" ")}
+              >
+                <div>
+                  {warning && <span>❗❗</span>}
+                  {title}
+                </div>
+                <div>{remote ? "remote" : "local"}</div>
+                <div>CreateAt</div>
+                <div>UpdateAt</div>
+                <div
+                  onClick={(event) => {
+                    event.stopPropagation();
+                  }}
+                >
+                  Delete
+                </div>
+                <div
+                  onClick={(event) => {
+                    event.stopPropagation();
+                  }}
+                >
+                  Sync
+                </div>
+              </div>
+            );
+          })
+        ) : (
+          <div>Empty</div>
+        )}
+      </div>
+      <div>
+        <button
+          onMouseDown={(event) => {
+            event.preventDefault();
+            setIsBold((bold) => !bold);
+          }}
+          style={{ fontWeight: bold ? "bold" : "normal" }}
+        >
+          Bold
+        </button>
+        <button
+          onMouseDown={(event) => {
+            event.preventDefault();
+            CustomEditor.toggleCodeBlock(editor);
           }}
         >
-          <div className="draft-article-row" style={{ height: rowHeight }}>
-            <div>title</div>
-            <div>isRemote</div>
-            <div>createAt</div>
-            <div>updateAt</div>
-            <div>delete</div>
-          </div>
-          {localArticles.map(({ title, remote }) => (
-            <div
-              key={title}
-              style={{ height: rowHeight }}
-              className="draft-article-row"
-            >
-              <div>{title}</div>
-              <div>{remote ? "remote" : "local"}</div>
-              <div>createAt</div>
-              <div>updateAt</div>
-              <div>delete</div>
-            </div>
-          ))}
-        </div>
-        <input
-          className="title"
-          onInput={handleTitleChange}
-          suppressContentEditableWarning
-          value={currentArticle?.title}
-        />
+          Code Block
+        </button>
       </div>
-      <Slate
-        editor={editor}
-        initialValue={initialValue}
-        onChange={handleContentChange}
-      >
-        <div>
-          <button
-            onMouseDown={(event) => {
-              event.preventDefault();
-              setIsBold((bold) => !bold);
+      {initialValue ? (
+        <Slate
+          editor={editor}
+          initialValue={initialValue}
+          onChange={handleContentChange}
+        >
+          <Editable
+            className="editable"
+            renderElement={renderElement}
+            renderLeaf={renderLeaf}
+            autoFocus
+            onSelect={() => {
+              setIsBold(CustomEditor.isBoldMarkActive(editor));
             }}
-            style={{ fontWeight: bold ? "bold" : "normal" }}
-          >
-            Bold
-          </button>
-          <button
-            onMouseDown={(event) => {
-              event.preventDefault();
-              CustomEditor.toggleCodeBlock(editor);
+            onKeyDown={(event) => {
+              if (event.key === "Tab") {
+                event.preventDefault();
+                editor.insertText("\t");
+              }
+              if (!event.ctrlKey) {
+                return;
+              }
+
+              switch (event.key) {
+                // When "`" is pressed, keep our existing code block logic.
+                case "`": {
+                  event.preventDefault();
+                  CustomEditor.toggleCodeBlock(editor);
+                  break;
+                }
+
+                // When "B" is pressed, bold the text in the selection.
+                case "b": {
+                  event.preventDefault();
+                  setIsBold((bold) => !bold);
+                  break;
+                }
+              }
             }}
-          >
-            Code Block
-          </button>
+          />
+        </Slate>
+      ) : (
+        <div className="editable loading">
+          <h2>loading...</h2>
         </div>
-        <Editable
-          className="editable"
-          renderElement={renderElement}
-          renderLeaf={renderLeaf}
-          autoFocus={true}
-          onSelect={() => {
-            setIsBold(CustomEditor.isBoldMarkActive(editor));
-          }}
-          onKeyDown={(event) => {
-            if (event.key === "Tab") {
-              event.preventDefault();
-              editor.insertText("\t");
-            }
-            if (!event.ctrlKey) {
-              return;
-            }
-
-            switch (event.key) {
-              // When "`" is pressed, keep our existing code block logic.
-              case "`": {
-                event.preventDefault();
-                CustomEditor.toggleCodeBlock(editor);
-                break;
-              }
-
-              // When "B" is pressed, bold the text in the selection.
-              case "b": {
-                event.preventDefault();
-                setIsBold((bold) => !bold);
-                break;
-              }
-            }
-          }}
-        />
-      </Slate>
+      )}
     </div>
   );
-};
+});
 
 type ElementProps = {
   attributes: object;

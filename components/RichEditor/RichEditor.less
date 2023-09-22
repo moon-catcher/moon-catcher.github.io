@@ -16,7 +16,7 @@
   white-space: nowrap;
   display: flex;
   background-color: chocolate;
-  padding: 5px 10px;
+  padding: 0 10px;
   align-items: center;
   gap: 6px;
   height: 100%;
@@ -36,24 +36,44 @@
   transform: rotate(-90deg);
 }
 .draft-article-box {
-  position: absolute;
+  // position: absolute;
   top: 100%;
   width: 100%;
-  left: 0;
+  // left: 0;
   background-color: chocolate;
   z-index: 6;
-  transition: all 0.5s ease-in-out;
+  transition: all 0.2s ease-in-out;
   overflow: hidden;
-  padding: 0 10px;
-}
-.draft-article-box.draft-article-box-hidden {
-  transition: all 0.5s ease-in-out;
 }
 
+.current-article {
+  background-color: pink;
+}
+.draft-article-row-warning {
+  background-color: red;
+}
+
+.draft-article-header,
 .draft-article-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 0 10px;
+}
+.draft-article-row {
+  cursor: pointer;
+}
+
+.create-button {
+  white-space: nowrap;
+  padding: 0 10px;
+  background-color: coral;
+  height: 100%;
+}
+.article-actions {
+  position: relative;
+  height: 25px;
+  display: flex;
 }
 
 .title {
@@ -65,11 +85,22 @@
   font-weight: bold;
   color: white;
 }
+
+.titleCeffg-warning {
+  text-align: center;
+  background-color: orange;
+  color: red;
+}
+
 .editable {
   flex: auto;
   border-radius: 4px;
-  padding: 0 10px;
+  padding: 0 5px;
   overflow: auto;
+}
+.editable.loading {
+  border: rgb(119, 119, 119) 1px solid;
+  opacity: 0.3;
 }
 .editable:focus {
   outline: rgb(119, 119, 119) 1px solid;

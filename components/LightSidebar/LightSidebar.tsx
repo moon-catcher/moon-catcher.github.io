@@ -14,6 +14,7 @@ import SearchButton from "@components/Buttons/SearchButton/SearchButton";
 import SaveButton from "@components/Buttons/SaveButton/SaveButton";
 import SubmitButton from "@components/Buttons/SubmitButton/SubmitButton";
 import { LinkButtonAtion, LinkButtonFunction } from "@type/linkButton";
+import WriteSettingButton from "@components/Buttons/WriteSettingButton/WriteSettingButton";
 
 export const LightSidebarContext = React.createContext(false);
 
@@ -101,6 +102,7 @@ const LightSidebar = forwardRef<
         <SearchButton onClick={handleSearch} />
         <SaveButton onClick={handleSave} />
         <SubmitButton onClick={handleSubmit} />
+        <WriteSettingButton/>
       </div>
       <div
         className={[

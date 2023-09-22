@@ -2,6 +2,7 @@ export type Article = {
   title: string;
   sha?: string;
   remote: boolean;
+  warning?: string;
 };
 
 export type ArticleSaveResponse = {

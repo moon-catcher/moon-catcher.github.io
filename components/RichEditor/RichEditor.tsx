@@ -24,6 +24,8 @@ import { DEFAULT_HEADER } from "@constant/auth";
 import { Article, ArticleSaveResponse } from "@type/article";
 type Props = {
   title?: string;
+  filePickerOpen?: boolean;
+  onFilePickerOpenChange?: () => void;
 };
 
 const rowHeight = 30;
@@ -388,13 +390,17 @@ const RichEditor = (props: Props) => {
     <div className="editor">
       <div className="header">
         <div
-          className="draft-box"
-          onClick={() => setDraftOpen((draftOpen) => !draftOpen)}
+          className={[
+            "file-list",
+            props.filePickerOpen ? "file-list-active" : "",
+          ].join(" ")}
+          onClick={props.onFilePickerOpenChange}
         >
-          <span>草稿箱</span>
+          {/* <span>草稿箱</span>
           <div className={["expand-icon", draftOpen ? "open" : ""].join(" ")}>
             {">"}
-          </div>
+          </div> */}
+          文件列表
         </div>
         <div
           className={[

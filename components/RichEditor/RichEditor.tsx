@@ -25,6 +25,8 @@ import { Article, ArticleSaveResponse } from "@type/article";
 import dayjs from "dayjs";
 type Props = {
   title?: string;
+  filePickerOpen?: boolean;
+  onFilePickerOpenChange?: () => void;
 };
 // localStorage.setItem = function (key: string, value: string) {
 //   console.log(this);
@@ -545,13 +547,17 @@ const RichEditor = memo(function RichEditor(props: Props) {
       </div>
       <div className="article-actions">
         <div
-          className="draft-box"
-          onClick={() => setDraftOpen((draftOpen) => !draftOpen)}
+          className={[
+            "file-list",
+            props.filePickerOpen ? "file-list-active" : "",
+          ].join(" ")}
+          onClick={props.onFilePickerOpenChange}
         >
-          <span>草稿箱</span>
+          {/* <span>草稿箱</span>
           <div className={["expand-icon", draftOpen ? "open" : ""].join(" ")}>
             {">"}
-          </div>
+          </div> */}
+          文件列表
         </div>
         <span className="create-button" onClick={handleArticleCreate}>
           新建

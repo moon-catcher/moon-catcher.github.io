@@ -1,0 +1,1 @@
+import{R as n,r,j as a}from"./chunk-9a4f56c2.js";const e=n.createContext(void 0);function x({pageContext:t,children:o}){return a.jsx(e.Provider,{value:t,children:o})}function u(){return r.useContext(e)}export{x as P,u};

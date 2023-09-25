@@ -567,66 +567,6 @@ const RichEditor = memo(function RichEditor(props: Props) {
             ❗❗❗❗❗❗❗❗{currentArticle?.warning}❗❗❗❗❗❗❗❗❗
           </div>
         )}
-      </div>{" "}
-      <div
-        className={["draft-article-box"].join(" ")}
-        style={{
-          height: draftOpen ? rowHeight * ((localArticles.length || 1) + 1) : 0,
-        }}
-      >
-        <div className="draft-article-header" style={{ height: rowHeight }}>
-          <div>title</div>
-          <div>isRemote</div>
-          <div>createAt</div>
-          <div>updateAt</div>
-          <div>Actions</div>
-          <div></div>
-        </div>
-        {localArticles.length ? (
-          localArticles.map((article, index) => {
-            const { title, warning, remote } = article;
-            return (
-              <div
-                onClick={() => handleSelectArticle(article)}
-                key={title + index}
-                style={{ height: rowHeight }}
-                title={warning}
-                className={[
-                  "draft-article-row",
-                  currentArticle?.title === title &&
-                  currentArticle.warning === warning
-                    ? "current-article"
-                    : "",
-                  warning ? "draft-article-row-warning" : "",
-                ].join(" ")}
-              >
-                <div>
-                  {warning && <span>❗❗</span>}
-                  {title}
-                </div>
-                <div>{remote ? "remote" : "local"}</div>
-                <div>CreateAt</div>
-                <div>UpdateAt</div>
-                <div
-                  onClick={(event) => {
-                    event.stopPropagation();
-                  }}
-                >
-                  Delete
-                </div>
-                <div
-                  onClick={(event) => {
-                    event.stopPropagation();
-                  }}
-                >
-                  Sync
-                </div>
-              </div>
-            );
-          })
-        ) : (
-          <div>Empty</div>
-        )}
       </div>
       <div>
         <button

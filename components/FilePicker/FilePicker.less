@@ -3,7 +3,19 @@
   flex-grow: 0;
   overflow: hidden;
   transition: all 0.2s ease-in-out;
+  width: 300px;
   .box {
-    width: 400px;
+    width: 300px;
+  }
+}
+.filepicker-show {
+  flex-basis: 300px;
+}
+.filepicker-hidden {
+  flex-basis: 0;
+}
+@media screen and (max-width: 1550px) {
+  .filepicker-show {
+    flex-basis: 0;
   }
 }

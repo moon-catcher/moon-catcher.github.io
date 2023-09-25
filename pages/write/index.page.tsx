@@ -59,7 +59,7 @@ function Page() {
         author: {userInfo.name ?? <span onClick={() => login()}>未登录</span>}
         {`  |       ${time}`}
       </div>
-      <FilePicker open={filePickerOpen} />
+      <FilePicker open={filePickerOpen} defaultDirectory="E:\myCode\OMS\docs\code"/>
       <RichEditor
         filePickerOpen={filePickerOpen}
         onFilePickerOpenChange={handleFilePickerOpenChange}

@@ -1,14 +1,14 @@
 export { onBeforeRender };
 
+import { Octokit } from "@octokit/action";
 import { DEFAULT_HEADER } from "@constant/auth";
-import { PageContextServer } from "../../renderer/types";
 
-async function onBeforeRender(pageContext: PageContextServer) {
-  const { octokit } = pageContext;
+async function onBeforeRender() {
+  let octokit;
   let data;
-  console.log(octokit, "******************");
-  if (octokit) {
 
+  if (import.meta.env.GITHUB_TOKEN) {
+    octokit = new Octokit();
     const res = await octokit.request(
       "GET /repos/{owner}/{repo}/contents/{path}",
       {
@@ -22,7 +22,7 @@ async function onBeforeRender(pageContext: PageContextServer) {
     );
     data = res.data;
   }
-
+  console.log(octokit, "******************");
   console.log(data, "77777777777");
   return {
     pageContext: {

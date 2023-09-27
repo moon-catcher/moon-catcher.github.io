@@ -7,7 +7,7 @@ export const passToClient = [
   "user",
 ];
 // export { onBeforeRender };
-import { Octokit } from "@octokit/action";
+// import { Octokit } from "@octokit/action";
 import ReactDOMServer from "react-dom/server";
 import logo from "/moon-catcher.png?url";
 import { PageShell } from "./PageShell";
@@ -18,18 +18,17 @@ import { AuthProvider } from "@providers/AuthProvider";
 
 async function render(pageContext: PageContextServer) {
   const { Page, pageProps } = pageContext;
-  let octokit;
-  if (import.meta.env.GITHUB_TOKEN) {
-    console.log(888);
+  //  if (import.meta.env.GITHUB_TOKEN) {
+  //   console.log(888);
 
-    console.log(
-      import.meta.env.GITHUB_TOKEN,
-      "GITHUB_AUTHOR",
-      import.meta.env.GITHUB_AUTHOR,
-      "GITHUB_REPOSITORY",
-      import.meta.env.GITHUB_REPOSITORY
-    );
-    octokit = new Octokit();
+  //   console.log(
+  //     import.meta.env.GITHUB_TOKEN,
+  //     "GITHUB_AUTHOR",
+  //     import.meta.env.GITHUB_AUTHOR,
+  //     "GITHUB_REPOSITORY",
+  //     import.meta.env.GITHUB_REPOSITORY
+  //   );
+   
     // const { data } = await octokit.request(
     //   "GET /repos/{owner}/{repo}/contents/{path}",
     //   {
@@ -45,17 +44,14 @@ async function render(pageContext: PageContextServer) {
     //   headers: DEFAULT_HEADER,
     // });
     // console.log(user, "888");
-  }
+  // }
   // This render() hook only supports SSR, see https://vite-plugin-ssr.com/render-modes for how to modify render() to support SPA
   if (!Page)
     throw new Error("My render() hook expects pageContext.Page to be defined");
-  let context = pageContext;
-  if (octokit) {
-    context = { ...pageContext, octokit };
-  }
+  
   const pageHtml = ReactDOMServer.renderToString(
     <AuthProvider>
-      <PageShell pageContext={context}>
+      <PageShell pageContext={pageContext}>
         <Page {...pageProps} />
       </PageShell>
     </AuthProvider>

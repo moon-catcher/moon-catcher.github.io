@@ -31,7 +31,6 @@ export type PageContextCustom = {
       background?: string;
     };
   };
-  octokit: Octokit;
 };
 
 type PageContextServer = PageContextBuiltInServer<Page> & PageContextCustom;

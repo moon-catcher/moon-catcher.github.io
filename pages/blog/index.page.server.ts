@@ -8,14 +8,15 @@ async function onBeforeRender() {
   let data;
 
   if (import.meta.env.GITHUB_TOKEN) {
+    const [owner, repo] = import.meta.env.GITHUB_REPOSITORY.split("/");
     octokit = new Octokit();
     const res = await octokit.request(
       "GET /repos/{owner}/{repo}/contents/{path}",
       {
         //"moon-catcher",
-        owner: import.meta.env.GITHUB_OWNER,
+        owner,
         // "moon-catcher.github.io"
-        repo: import.meta.env.GITHUB_REPOSITORY,
+        repo,
         path: import.meta.env.GITHUB_ARTICLES,
         headers: DEFAULT_HEADER,
       }

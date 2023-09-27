@@ -6,7 +6,9 @@ import { PageContextServer } from "../../renderer/types";
 async function onBeforeRender(pageContext: PageContextServer) {
   const { octokit } = pageContext;
   let data;
+  console.log(octokit, "******************");
   if (octokit) {
+
     const res = await octokit.request(
       "GET /repos/{owner}/{repo}/contents/{path}",
       {

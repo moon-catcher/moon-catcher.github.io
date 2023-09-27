@@ -29,8 +29,6 @@ function PageShell({
     sidebarRef.current?.functionMap.set(key, fc);
   }
 
-  console.log(import.meta.env.GITHUB_TOKEN);
-
   return (
     <React.StrictMode>
       <PageContextProvider pageContext={{ ...pageContext, setLinkBntAction }}>

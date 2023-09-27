@@ -23,6 +23,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_AUTHOR: ${{github.actor}}
+          GITHUB_OWNER: ${{github.repository_owner}}
+          GITHUB_REPOSITORY: ${{github.repository}}
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@4.1.4
         with:

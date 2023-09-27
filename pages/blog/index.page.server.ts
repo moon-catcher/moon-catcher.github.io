@@ -10,9 +10,11 @@ async function onBeforeRender(pageContext: PageContextServer) {
     const res = await octokit.request(
       "GET /repos/{owner}/{repo}/contents/{path}",
       {
-        owner: "moon-catcher",
-        repo: "moon-catcher.github.io",
-        path: "blog/articles",
+        //"moon-catcher",
+        owner: import.meta.env.GITHUB_OWNER,
+        // "moon-catcher.github.io"
+        repo: import.meta.env.GITHUB_REPOSITORY,
+        path: import.meta.env.GITHUB_ARTICLES,
         headers: DEFAULT_HEADER,
       }
     );

@@ -34,7 +34,7 @@ const config = defineConfig(({ mode }) => {
       }),
       mode === "dev" && visualizer(),
     ],
-    envPrefix: ["vite_"],
+    envPrefix: ["vite_", "GITHUB_"],
     resolve: {
       alias: {
         "@components": resolve("components"),

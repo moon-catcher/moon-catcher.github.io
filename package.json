@@ -17,6 +17,7 @@
     "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
+    "@octokit/action": "^6.0.6",
     "@types/compression": "^1.7.2",
     "@types/express": "^4.17.17",
     "@types/node": "^20.4.10",

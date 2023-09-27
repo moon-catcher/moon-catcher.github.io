@@ -15,24 +15,18 @@ import { escapeInject, dangerouslySkipEscape } from "vite-plugin-ssr/server";
 import type { PageContextServer } from "./types";
 import { Background } from "@components/Background";
 import { AuthProvider } from "@providers/AuthProvider";
-import { DEFAULT_HEADER } from "@constant/auth";
 
 async function render(pageContext: PageContextServer) {
   const { Page, pageProps } = pageContext;
   const octokit = new Octokit();
-  octokit
-    .request("GET /user", {
-      headers: DEFAULT_HEADER,
-    })
-    .then((res: { data: object }) => {
-      console.log(res.data);
-    });
+  const { data } = await octokit.request("GET /user");
+  console.log(data, "77777777777");
   // This render() hook only supports SSR, see https://vite-plugin-ssr.com/render-modes for how to modify render() to support SPA
   if (!Page)
     throw new Error("My render() hook expects pageContext.Page to be defined");
   const pageHtml = ReactDOMServer.renderToString(
     <AuthProvider>
-      <PageShell pageContext={pageContext}>
+      <PageShell pageContext={{ ...pageContext, octokit }}>
         <Page {...pageProps} />
       </PageShell>
     </AuthProvider>

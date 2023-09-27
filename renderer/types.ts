@@ -4,6 +4,7 @@ export type { PageContext };
 export type { PageProps };
 import { LinkButtonAtion, LinkButtonFunction } from "@type/linkButton";
 import { UserInfo } from "@type/user";
+import { Octokit } from "@octokit/action";
 
 import type {
   PageContextBuiltInServer,
@@ -30,6 +31,7 @@ export type PageContextCustom = {
       background?: string;
     };
   };
+  octokit: Octokit;
 };
 
 type PageContextServer = PageContextBuiltInServer<Page> & PageContextCustom;

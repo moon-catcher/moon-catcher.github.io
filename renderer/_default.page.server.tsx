@@ -19,32 +19,44 @@ import { DEFAULT_HEADER } from "@constant/auth";
 
 async function render(pageContext: PageContextServer) {
   const { Page, pageProps } = pageContext;
-  console.log(888);
+  let octokit;
+  if (import.meta.env.GITHUB_TOKEN) {
+    console.log(888);
 
-  console.log(
-    import.meta.env.GITHUB_TOKEN,
-    "GITHUB_AUTHOR",
-    import.meta.env.GITHUB_AUTHOR,
-    "GITHUB_REPOSITORY",
-    import.meta.env.GITHUB_REPOSITORY
-  );
-  const octokit = new Octokit();
-  const { data } = await octokit.request(
-    "GET /repos/{owner}/{repo}/contents/{path}",
-    {
-      owner: "moon-catcher",
-      repo: "moon-catcher.github.io",
-      path: "blog/articles",
+    console.log(
+      import.meta.env.GITHUB_TOKEN,
+      "GITHUB_AUTHOR",
+      import.meta.env.GITHUB_AUTHOR,
+      "GITHUB_REPOSITORY",
+      import.meta.env.GITHUB_REPOSITORY
+    );
+    octokit = new Octokit();
+    const { data } = await octokit.request(
+      "GET /repos/{owner}/{repo}/contents/{path}",
+      {
+        owner: "moon-catcher",
+        repo: "moon-catcher.github.io",
+        path: "blog/articles",
+        headers: DEFAULT_HEADER,
+      }
+    );
+    console.log(data, "77777777777");
+    const { data: user } = await octokit.request("GET /users/{user}", {
+      user: import.meta.env.GITHUB_AUTHOR,
       headers: DEFAULT_HEADER,
-    }
-  );
-  console.log(data, "77777777777");
+    });
+    console.log(user, "888");
+  }
   // This render() hook only supports SSR, see https://vite-plugin-ssr.com/render-modes for how to modify render() to support SPA
   if (!Page)
     throw new Error("My render() hook expects pageContext.Page to be defined");
+  let context = pageContext;
+  if (octokit) {
+    context = { ...pageContext, octokit };
+  }
   const pageHtml = ReactDOMServer.renderToString(
     <AuthProvider>
-      <PageShell pageContext={{ ...pageContext, octokit }}>
+      <PageShell pageContext={context}>
         <Page {...pageProps} />
       </PageShell>
     </AuthProvider>

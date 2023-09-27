@@ -15,7 +15,6 @@ import { escapeInject, dangerouslySkipEscape } from "vite-plugin-ssr/server";
 import type { PageContextServer } from "./types";
 import { Background } from "@components/Background";
 import { AuthProvider } from "@providers/AuthProvider";
-import { DEFAULT_HEADER } from "@constant/auth";
 
 async function render(pageContext: PageContextServer) {
   const { Page, pageProps } = pageContext;
@@ -31,21 +30,21 @@ async function render(pageContext: PageContextServer) {
       import.meta.env.GITHUB_REPOSITORY
     );
     octokit = new Octokit();
-    const { data } = await octokit.request(
-      "GET /repos/{owner}/{repo}/contents/{path}",
-      {
-        owner: "moon-catcher",
-        repo: "moon-catcher.github.io",
-        path: "blog/articles",
-        headers: DEFAULT_HEADER,
-      }
-    );
-    console.log(data, "77777777777");
-    const { data: user } = await octokit.request("GET /users/{user}", {
-      user: import.meta.env.GITHUB_AUTHOR,
-      headers: DEFAULT_HEADER,
-    });
-    console.log(user, "888");
+    // const { data } = await octokit.request(
+    //   "GET /repos/{owner}/{repo}/contents/{path}",
+    //   {
+    //     owner: "moon-catcher",
+    //     repo: "moon-catcher.github.io",
+    //     path: "blog/articles",
+    //     headers: DEFAULT_HEADER,
+    //   }
+    // );
+    // console.log(data, "77777777777");
+    // const { data: user } = await octokit.request("GET /users/{user}", {
+    //   user: import.meta.env.GITHUB_AUTHOR,
+    //   headers: DEFAULT_HEADER,
+    // });
+    // console.log(user, "888");
   }
   // This render() hook only supports SSR, see https://vite-plugin-ssr.com/render-modes for how to modify render() to support SPA
   if (!Page)

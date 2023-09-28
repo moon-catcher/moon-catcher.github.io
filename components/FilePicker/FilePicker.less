@@ -4,10 +4,67 @@
   overflow: hidden;
   transition: all 0.2s ease-in-out;
   width: 300px;
-  .box {
-    width: 300px;
+  display: flex;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 15px;
+  flex-direction: column;
+  .filepicker-box {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .checkbox-group {
+    display: flex;
+    font-family: Georgia, "Times New Roman", Times, serif;
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid chocolate;
+    box-sizing: border-box;
+    width: max-content;
+    color: chocolate;
+  }
+  .check-button {
+    width: 60px;
+
+    padding: 0 5px;
+    text-align: center;
+  }
+  .filepicker-footer {
+    display: flex;
+    font-size: 12px;
+    gap: 5px;
+    justify-content: end;
   }
 }
+.filepicker-draft-box {
+  flex: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#filepicker-published,
+#filepicker-remote-draft,
+#filepicker-local-draft {
+  display: none;
+}
+
+#filepicker-local-draft:checked + .check-button {
+  background-color: chocolate;
+  color: white;
+}
+
+#filepicker-remote-draft:checked + .check-button {
+  background-color: chocolate;
+  color: white;
+}
+
+#filepicker-published:checked + .check-button {
+  background-color: chocolate;
+  color: white;
+}
+
 .filepicker-show {
   flex-basis: 300px;
 }

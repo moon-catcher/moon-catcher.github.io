@@ -44,6 +44,7 @@ const config = defineConfig(({ mode }) => {
         "@constant": resolve("constant"),
         "@utils": resolve("utils"),
         "@providers": resolve("providers"),
+        "@worker": resolve("worker"),
       },
     },
   };

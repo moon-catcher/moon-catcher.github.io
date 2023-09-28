@@ -7,6 +7,10 @@ on:
     # We only run this GitHub action if there are changes in the `docs/` directory
     # paths:
     #   - docs/**
+    paths-ignore:
+      - 'README.md'
+      - 'backup/**'
+      - '**/*.draft.md'
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest

@@ -7,7 +7,7 @@ import {
   RenderElementProps,
   RenderLeafProps,
 } from "slate-react";
-import React, { useCallback, useEffect, useState, memo } from "react";
+import React, { useCallback, useEffect, useState, memo, useRef } from "react";
 import { createEditor, Transforms, Element, Editor, Node, Text } from "slate";
 import type { BaseEditor, Descendant } from "slate";
 import escapeHtml from "escape-html";
@@ -22,6 +22,7 @@ import { usePageContext } from "../../renderer/usePageContext";
 import { useAuth } from "@providers/AuthProvider";
 import { DEFAULT_HEADER } from "@constant/auth";
 import { Article, ArticleSaveResponse } from "@type/article";
+import DraftWorker from "@worker/DraftWorker.ts?worker";
 import dayjs from "dayjs";
 type Props = {
   title?: string;
@@ -71,6 +72,7 @@ const RichEditor = memo(function RichEditor(props: Props) {
   const [draftOpen, setDraftOpen] = useState(false);
   const [orginTitle, setOrginTitle] = useState("");
   const [initialValue, setInitialValue] = useState<Descendant[] | null>(null);
+  const [draftWorker, setDraftWorker] = useState<Worker | null>(null);
 
   const { setLinkBntAction } = usePageContext();
   const { octokit, userInfo, login } = useAuth();
@@ -355,6 +357,8 @@ const RichEditor = memo(function RichEditor(props: Props) {
   );
 
   const handleSave = useCallback(() => {
+    if (draftWorker) draftWorker.postMessage(content);
+    return;
     if (currentArticle?.warning) {
       alert("标题重复！请修改");
       return;
@@ -413,6 +417,7 @@ const RichEditor = memo(function RichEditor(props: Props) {
     handleArticletoRemote,
     handleDelelteRemoteArticle,
     login,
+    draftWorker,
   ]);
 
   const handleSubmit = useCallback(() => {
@@ -423,6 +428,17 @@ const RichEditor = memo(function RichEditor(props: Props) {
     const nodes = JSON.parse(content!) as Node[];
     console.log(nodes.map((node) => serialize(node)));
   }, [content, currentArticle]);
+
+  useEffect(() => {
+    const worker = new DraftWorker();
+    setDraftWorker(worker);
+    worker.onmessage = (ev: MessageEvent<any>) => {
+      alert(ev.data);
+    };
+    return () => {
+      worker.terminate();
+    };
+  }, []);
 
   useEffect(() => {
     if (stashSave && userInfo.login) {

@@ -17,7 +17,8 @@
       "@api/*": ["./api/*"],
       "@constant/*": ["./constant/*"],
       "@utils/*": ["./utils/*"],
-      "@providers/*": ["./providers/*"]
+      "@providers/*": ["./providers/*"],
+      "@worker/*": ["./worker/*"]
     }
   },
   "ts-node": {

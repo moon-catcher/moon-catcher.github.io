@@ -1,7 +1,7 @@
 import { RichEditor } from "@components/RichEditor";
 import "./index.less";
 import { useAuth } from "@providers/AuthProvider";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import dayjs from "dayjs";
 import FilePicker from "@components/FilePicker/FilePicker";
 
@@ -59,7 +59,10 @@ function Page() {
         author: {userInfo.name ?? <span onClick={() => login()}>未登录</span>}
         {`  |       ${time}`}
       </div>
-      <FilePicker open={filePickerOpen} defaultDirectory="E:\myCode\OMS\docs\code"/>
+      <FilePicker
+        open={filePickerOpen}
+        defaultDirectory="E:\myCode\Test\docs\code"
+      />
       <RichEditor
         filePickerOpen={filePickerOpen}
         onFilePickerOpenChange={handleFilePickerOpenChange}

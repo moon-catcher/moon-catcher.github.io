@@ -7,10 +7,17 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  transition: all 0.1s linear;
 }
 .collapse-box {
-  transition: all 0.1s linear;
   max-height: 100%;
-  transform: translateZ(0); 
+}
+
+.collapse-header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.collapse-child {
+  height: max-content;
 }

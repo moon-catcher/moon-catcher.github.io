@@ -1,6 +1,8 @@
 import {
+  FC,
   Reducer,
   memo,
+  useMemo,
   useCallback,
   useEffect,
   useReducer,
@@ -8,10 +10,11 @@ import {
 } from "react";
 import "./FilePicker.less";
 import Accordion from "@components/Accordion/Accordion";
+import { uniqueId } from "lodash";
 
 type Props = {
   open: boolean;
-  defaultDirectory?: string;
+  handleFileContentChange?: (value: string) => void;
 };
 
 const FilePicker = (props: Props) => {
@@ -24,32 +27,45 @@ const FilePicker = (props: Props) => {
     localDraft: true,
     published: false,
   });
-  const [tree, settree] = useState<object | undefined>();
   const [fileTree, dispatch] = useReducer(fileTreeReducer, {});
-  const showCode = async (item: any, index: number) => {
-    const file = await item.fileHandle.getFile();
+  const showFileContent = async (file: File) => {
     const text = await file.text();
     console.log(text);
+    props.handleFileContentChange?.(text);
   };
 
   async function handleDirectoryEntry(
     dirHandle: FileSystemDirectoryHandle,
-    out: { [prp: string]: object }
+    out: { [prp: string]: object } = {},
+    pid?: string
   ) {
-    console.log(dirHandle.values(), "dirHandle");
+    console.log(pid, "", "dirHandle");
 
     for await (const entry of dirHandle.values()) {
       console.log(entry, "entry");
 
       if (entry.kind === "file") {
         const file = await entry.getFile();
-        out[file.name] = file;
+        out[pid ? pid + file.name : file.name] = {
+          kind: "file",
+          file,
+          name: file.name,
+          handle: entry,
+          id: uniqueId("FilePicker_"),
+          pid,
+        };
       }
       if (entry.kind === "directory") {
         console.log(entry.name, "entry.name");
 
         // const newOut = (out[entry.name] = {});
-        out[entry.name] = {};
+        out[pid ? pid + entry.name : entry.name] = {
+          kind: "directory",
+          name: entry.name,
+          handle: entry,
+          id: uniqueId("FilePicker_"),
+          pid,
+        };
         // if(){}
         // await handleDirectoryEntry(entry, newOut);
       }
@@ -59,14 +75,15 @@ const FilePicker = (props: Props) => {
 
   const initDraftDirHandle = useCallback(async () => {
     setLocalLoading(() => true);
-    const root = await navigator.storage.getDirectory();
-    console.log(root, "root");
-    const draftDirHandle = await root.getDirectoryHandle("draft", {
-      create: true,
-    });
+    const draftDirHandle = await window.showDirectoryPicker({});
     setDraftDirHandle(draftDirHandle);
-    const out = await handleDirectoryEntry(draftDirHandle, {});
-    settree(out);
+    const out = await handleDirectoryEntry(draftDirHandle);
+    console.log(out, "outoutout");
+
+    dispatch({
+      type: "create",
+      preload: out,
+    });
     setLocalLoading(() => false);
   }, []);
 
@@ -74,9 +91,28 @@ const FilePicker = (props: Props) => {
     setShowTypes((old) => ({ ...old, [key]: checked }));
   }, []);
 
-  useEffect(() => {
-    initDraftDirHandle();
-  }, [initDraftDirHandle]);
+  // useEffect(() => {
+  //   if (draftDirHandle) {
+  //     setInterval(() => {
+  //       handleDirectoryEntry(draftDirHandle, {}).then((out) => {
+  //         settree(out);
+  //       });
+  //     }, 500);
+  //   }
+  // }, [draftDirHandle]);
+  const handleFileClick = async (item: FileTreeItem) => {
+    showFileContent(item.file!);
+  };
+
+  const handleDirectoryClick = async (item: FileTreeItem) => {
+    const state = await handleDirectoryEntry(
+      item.handle as FileSystemDirectoryHandle,
+      {},
+      item.id
+    );
+    console.log(state, "state");
+    dispatch({ type: "append", preload: state });
+  };
 
   return (
     <div
@@ -126,37 +162,83 @@ const FilePicker = (props: Props) => {
             </div>
           </div>
         </div>
+        {}
         <div className="filepicker-draft-box">
           <Accordion>
-            <Accordion.Collapse>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-              <div>9999</div>
-            </Accordion.Collapse>
-            <Accordion.Collapse>3</Accordion.Collapse>
+            {showTypes.remoteDraft && (
+              <Accordion.Collapse title={"在线草稿"}>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+              </Accordion.Collapse>
+            )}
+            {showTypes.localDraft && (
+              <Accordion.Collapse title={"本地草稿"}>
+                {draftDirHandle ? (
+                  <>
+                    <RowItems
+                      tree={fileTree}
+                      handleDirectoryClick={handleDirectoryClick}
+                      handleFileClick={handleFileClick}
+                    />
+                    {/* {Object.values(fileTree ?? {})
+                      .filter((item) => !item.pid)
+                      .map((item, index) => {
+                        const { kind, name, file } = item;
+                        if (file && kind === "file") {
+                          return (
+                            <div
+                              key={name + index}
+                              onClick={() => handleFileClick(item)}
+                            >
+                              {name}
+                            </div>
+                          );
+                        }
+                        return (
+                          <Accordion.Collapse
+                            key={name + index}
+                            title={
+                              <div
+                                onClick={() => {
+                                  console.log(fileTree, "fileTree");
+                                  handleDirectoryClick(item);
+                                }}
+                              >
+                                {" > "}
+                                {name}
+                              </div>
+                            }
+                          ></Accordion.Collapse>
+                        );
+                      })} */}
+                  </>
+                ) : (
+                  <button onClick={initDraftDirHandle}>打开文件夹</button>
+                )}
+              </Accordion.Collapse>
+            )}
+            {showTypes.published && (
+              <Accordion.Collapse title={"已发布"}>已发布</Accordion.Collapse>
+            )}
           </Accordion>
         </div>
       </div>
@@ -164,17 +246,98 @@ const FilePicker = (props: Props) => {
   );
 };
 
-type FileTreeState = { [d: string]: FileTreeState | File | undefined };
+type RowItemProps = {
+  tree: FileTreeState;
+  handleDirectoryClick: (item: FileTreeItem) => void;
+  handleFileClick: (item: FileTreeItem) => void;
+  pid?: string;
+};
+
+const RowItems = (props: RowItemProps) => {
+  const { tree, handleDirectoryClick, handleFileClick, pid } = props;
+
+  const rows = useMemo(() => {
+    return Object.values(tree ?? {}).filter((item) => !pid || pid === item.pid);
+  }, [pid, tree]);
+  console.log(rows, "tree", pid);
+  if (!rows.length) {
+    return <></>;
+  }
+
+  return (
+    <>
+      {rows.map((item, index) => {
+        const { kind, name, file } = item;
+        if (file && kind === "file") {
+          return (
+            <div key={name + index} onClick={() => handleFileClick(item)}>
+              {name}
+            </div>
+          );
+        }
+        return (
+          <Accordion.Collapse
+            key={name + index}
+            noAnimate
+            title={
+              <div
+                onClick={() => {
+                  console.log(tree, "fileTree");
+                  handleDirectoryClick(item);
+                }}
+              >
+                {" > "}
+                {name}
+              </div>
+            }
+          >
+            <RowItems
+              pid={item.id}
+              tree={tree}
+              handleDirectoryClick={handleDirectoryClick}
+              handleFileClick={handleFileClick}
+            />
+          </Accordion.Collapse>
+        );
+      })}
+    </>
+  );
+};
+
+type FileTreeItem = {
+  file?: File;
+  kind: string;
+  name: string;
+  id: string;
+  pid?: string;
+  handle: FileSystemDirectoryHandle | FileSystemFileHandle;
+};
+
+type FileTreeState = {
+  [f: string]: FileTreeItem;
+};
+
 type FilePickerAction = {
-  type: "expand" | " close" | "remove" | "move" | "create";
-  preload: unknown;
+  type: "expand" | " close" | "remove" | "move" | "create" | "append";
+  preload?: object;
 };
 
 const fileTreeReducer: Reducer<FileTreeState, FilePickerAction> = (
   treeState,
   action
 ) => {
-  return treeState;
+  let newState = treeState;
+  switch (action.type) {
+    case "append":
+      newState = { ...treeState, ...action.preload };
+      break;
+    case "create":
+      newState = { ...action.preload };
+      break;
+    default:
+      break;
+  }
+  return newState;
 };
 
 export default memo(FilePicker);

@@ -12,6 +12,8 @@ function Page() {
   const { userInfo, login } = useAuth();
   const [time, setTime] = useState(dayjs().format(TIME_FORMAT));
   const [filePickerOpen, setFilePickerOpen] = useState(true);
+  const [fileContent, setFileContent] = useState("");
+
   useEffect(() => {
     timer.current = setTimeout(() => {
       setTime(dayjs().format(TIME_FORMAT));
@@ -61,8 +63,9 @@ function Page() {
       </div>
       <FilePicker
         open={filePickerOpen}
-        defaultDirectory="E:\myCode\Test\docs\code"
+        handleFileContentChange={(value) => setFileContent(value)}
       />
+      {fileContent}
       <RichEditor
         filePickerOpen={filePickerOpen}
         onFilePickerOpenChange={handleFilePickerOpenChange}

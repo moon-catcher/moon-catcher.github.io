@@ -173,11 +173,8 @@ const Collapse = memo(function Collapse(props: Props) {
         ref={childrenBoxRef}
         style={{
           height: oepn ? childHeight : 0,
-          overflow:
-            collapseBoxOverflowHidden || childBoxHeight === childHeight || !oepn
-              ? "hidden"
-              : "auto",
-          transition: props.noTransition ? undefined : "height 0.1s linear",
+          overflow: collapseBoxOverflowHidden ? "hidden" : "auto",
+          transition: props.noTransition ? undefined : "height 0.05s linear",
         }}
       >
         <div className="collapse-child" ref={childrenRef}>

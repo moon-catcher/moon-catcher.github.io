@@ -64,6 +64,7 @@ function Page() {
       <FilePicker
         open={filePickerOpen}
         handleFileContentChange={setFileContent}
+        onFilePickerOpenChange={handleFilePickerOpenChange}
       />
       {fileContent}
       <RichEditor

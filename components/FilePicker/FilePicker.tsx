@@ -14,6 +14,7 @@ import { uniqueId } from "lodash";
 type Props = {
   open: boolean;
   handleFileContentChange?: (value: string) => void;
+  onFilePickerOpenChange?: () => void;
 };
 
 const FilePicker = (props: Props) => {
@@ -124,7 +125,9 @@ const FilePicker = (props: Props) => {
     >
       <div className="filepicker-box">
         <div className="filepicker-header">
-          <div className="filepicker-tab">Articles</div>
+          <div className="filepicker-tab" onClick={props.onFilePickerOpenChange}>
+            Articles
+          </div>
           <div className="filepicker-footer">
             <div className="checkbox-group">
               <input
@@ -168,6 +171,13 @@ const FilePicker = (props: Props) => {
           <Accordion>
             {showTypes.remoteDraft && (
               <Accordion.Collapse title={"在线草稿"}>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
+                <div>9999</div>
                 <div>9999</div>
                 <div>9999</div>
                 <div>9999</div>

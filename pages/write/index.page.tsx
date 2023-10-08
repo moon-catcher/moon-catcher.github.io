@@ -58,12 +58,12 @@ function Page() {
   return (
     <div className="write-page">
       <div className="author">
-        author: {userInfo.name ?? <span onClick={() => login()}>未登录</span>}
+        author: {userInfo.name ?? <span onClick={login}>未登录</span>}
         {`  |       ${time}`}
       </div>
       <FilePicker
         open={filePickerOpen}
-        handleFileContentChange={(value) => setFileContent(value)}
+        handleFileContentChange={setFileContent}
       />
       {fileContent}
       <RichEditor

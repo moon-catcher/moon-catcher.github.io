@@ -1,5 +1,4 @@
 import {
-  FC,
   Reducer,
   memo,
   useMemo,
@@ -72,6 +71,8 @@ const FilePicker = (props: Props) => {
     }
     return out;
   }
+
+  console.log("//////////////////");
 
   const initDraftDirHandle = useCallback(async () => {
     setLocalLoading(() => true);
@@ -253,11 +254,11 @@ type RowItemProps = {
   pid?: string;
 };
 
-const RowItems = (props: RowItemProps) => {
+const RowItems = memo(function RowItems(props: RowItemProps) {
   const { tree, handleDirectoryClick, handleFileClick, pid } = props;
 
   const rows = useMemo(() => {
-    return Object.values(tree ?? {}).filter((item) => !pid || pid === item.pid);
+    return Object.values(tree ?? {}).filter((item) => pid === item.pid);
   }, [pid, tree]);
   console.log(rows, "tree", pid);
   if (!rows.length) {
@@ -278,7 +279,8 @@ const RowItems = (props: RowItemProps) => {
         return (
           <Accordion.Collapse
             key={name + index}
-            noAnimate
+            noTransition
+            defaultClose
             title={
               <div
                 onClick={() => {
@@ -302,7 +304,7 @@ const RowItems = (props: RowItemProps) => {
       })}
     </>
   );
-};
+});
 
 type FileTreeItem = {
   file?: File;

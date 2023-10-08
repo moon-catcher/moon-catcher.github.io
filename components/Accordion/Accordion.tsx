@@ -1,5 +1,12 @@
 import { IMemoCompoent } from "@type/index";
-import React, { memo, useState, useRef, useEffect } from "react";
+import React, {
+  memo,
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+  useCallback,
+} from "react";
 import "./Accordion.less";
 import { OVERFLOWBAR_OPACITY } from "@constant/ui";
 
@@ -7,8 +14,13 @@ type Props = {
   children?: React.ReactNode;
   icon?: React.ReactNode;
   title?: React.ReactNode;
-  noAnimate?: boolean;
+  noTransition?: boolean;
+  defaultClose?: boolean;
 };
+
+type AccordionContext =
+  | [boolean, React.Dispatch<React.SetStateAction<boolean>>]
+  | undefined;
 
 const defaultProps: Props = {
   icon: ">>",
@@ -16,18 +28,69 @@ const defaultProps: Props = {
   title: "title",
 };
 
+const Context = React.createContext<AccordionContext>(
+  undefined as unknown as AccordionContext
+);
+
+const AccordionContextProvider = ({
+  accordionContext,
+  children,
+}: {
+  accordionContext: AccordionContext;
+  children: React.ReactNode;
+}) => {
+  return (
+    <Context.Provider value={accordionContext}>{children}</Context.Provider>
+  );
+};
+
+const useAccordionContext = () => {
+  const accordionContext = useContext(Context);
+  if (!accordionContext) {
+    throw new Error("AccordionContext Error");
+  }
+  return accordionContext;
+};
+
 const OriginAccordion = memo(function Accordion(props: Props) {
-  return <div className="accordion">{props.children}</div>;
+  const [collapseBoxOverflowHidden, setCollapseBoxOverflowHidden] =
+    useState(false);
+
+  // Children.map;
+  return (
+    <div className="accordion">
+      <AccordionContextProvider
+        accordionContext={[
+          collapseBoxOverflowHidden,
+          setCollapseBoxOverflowHidden,
+        ]}
+      >
+        {props.children}
+      </AccordionContextProvider>
+    </div>
+  );
 });
 
 const Collapse = memo(function Collapse(props: Props) {
-  const [oepn, setOpen] = useState(true);
+  const [oepn, setOpen] = useState(!props.defaultClose);
   const boxRef = useRef<HTMLDivElement | null>(null);
   const childrenRef = useRef<HTMLDivElement | null>(null);
+  const childrenBoxRef = useRef<HTMLDivElement | null>(null);
   const timeRef = useRef<NodeJS.Timeout | null>(null);
-  const [boxHeight, setBoxHeight] = useState<string | number>("unset");
+  const [childHeight, setChildHeight] = useState<string | number>("unset");
+  const [childBoxHeight, setChildBoxHeight] = useState<string | number>(
+    "unset"
+  );
+
   const [collapseBoxOverflowHidden, setCollapseBoxOverflowHidden] =
-    useState(false);
+    useAccordionContext();
+
+  const handleMouseLeave = useCallback((index: number) => {
+    timeRef.current = setTimeout(() => {
+      boxRef.current?.style.setProperty(OVERFLOWBAR_OPACITY, `${index * 0.1}`);
+      if (index) handleMouseLeave(index - 1);
+    }, 30);
+  }, []);
 
   useEffect(() => {
     function handleTransitionEnd(event: TransitionEvent) {
@@ -38,15 +101,42 @@ const Collapse = memo(function Collapse(props: Props) {
         setCollapseBoxOverflowHidden(false);
       }
     }
+    function handleMouseOutOver(event: MouseEvent) {
+      if (
+        !boxRef.current
+          ?.getElementsByClassName("collapse-box")[0]
+          .contains(event.target as HTMLDivElement) &&
+        !timeRef.current
+      ) {
+        handleMouseLeave(15);
+      }
+    }
     window.addEventListener("transitionend", handleTransitionEnd);
+    window.addEventListener("mouseover", handleMouseOutOver);
     return () => {
       window.removeEventListener("transitionend", handleTransitionEnd);
+      window.removeEventListener("mouseover", handleMouseOutOver);
     };
-  }, []);
+  }, [handleMouseLeave, setCollapseBoxOverflowHidden]);
 
   useEffect(() => {
+    function onBoxResize() {
+      if (childrenRef.current) {
+        setChildHeight(childrenRef.current.clientHeight);
+      }
+    }
+    function onChildBoxResize() {
+      if (childrenBoxRef.current) {
+        setChildBoxHeight(childrenBoxRef.current.offsetHeight);
+      }
+    }
     if (childrenRef.current) {
-      setBoxHeight(childrenRef.current.clientHeight);
+      const observer = new ResizeObserver(onBoxResize);
+      observer.observe(childrenRef.current);
+    }
+    if (childrenBoxRef.current) {
+      const observer = new ResizeObserver(onChildBoxResize);
+      observer.observe(childrenBoxRef.current);
     }
   }, [props.children]);
 
@@ -56,18 +146,11 @@ const Collapse = memo(function Collapse(props: Props) {
   };
 
   const handleMouseOver = () => {
-    boxRef.current?.style.setProperty(OVERFLOWBAR_OPACITY, "1");
-  };
-
-  const handleMouseLeave = (index: number) => {
     if (timeRef.current) {
       clearTimeout(timeRef.current);
       timeRef.current = null;
     }
-    timeRef.current = setTimeout(() => {
-      boxRef.current?.style.setProperty(OVERFLOWBAR_OPACITY, `${index * 0.1}`);
-      if (index) handleMouseLeave(index - 1);
-    }, 40);
+    boxRef.current?.style.setProperty(OVERFLOWBAR_OPACITY, "1.5");
   };
 
   useEffect(() => {}, []);
@@ -76,7 +159,9 @@ const Collapse = memo(function Collapse(props: Props) {
     <div
       ref={boxRef}
       className="collapse"
-      style={{ flexShrink: Number(boxHeight) < 150 ? 0 : "auto" }}
+      style={{
+        flexShrink: Number(childHeight) < 50 ? 0 : 1,
+      }}
     >
       <div onClick={handleHeaderClick} className="collapse-header">
         <div>{props.icon}</div>
@@ -85,11 +170,14 @@ const Collapse = memo(function Collapse(props: Props) {
       <div
         className="collapse-box"
         onMouseOver={handleMouseOver}
-        onMouseLeave={() => handleMouseLeave(15)}
+        ref={childrenBoxRef}
         style={{
-          height: oepn ? boxHeight : 0,
-          overflow: collapseBoxOverflowHidden ? "hidden" : "auto",
-          transition: props.noAnimate ? undefined : "all 0.1s linear",
+          height: oepn ? childHeight : 0,
+          overflow:
+            collapseBoxOverflowHidden || childBoxHeight === childHeight || !oepn
+              ? "hidden"
+              : "auto",
+          transition: props.noTransition ? undefined : "height 0.1s linear",
         }}
       >
         <div className="collapse-child" ref={childrenRef}>

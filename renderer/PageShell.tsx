@@ -30,18 +30,12 @@ function PageShell({
   }
 
   useEffect(() => {
+    alert("********");
     document.onclick = function () {
       if (document.fullscreenElement) {
         document.exitFullscreen();
       } else {
-        document.documentElement
-          .requestFullscreen()
-          .then((res) => {
-            alert(JSON.stringify(res));
-          })
-          .catch((err) => {
-            alert(JSON.stringify(err));
-          });
+        document.documentElement.requestFullscreen();
       }
     };
   }, []);

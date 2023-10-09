@@ -1,7 +1,10 @@
 /* This CSS is common to all pages */
 
+html { height: 100vh; }
+
 body {
   margin: 0;
+  height: 100%; 
   font-family: sans-serif;
   --custom-background: #0b0b2a;
 

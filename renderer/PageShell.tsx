@@ -1,4 +1,4 @@
-import React, {  useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { PageContextProvider } from "./usePageContext";
 import type { PageContext } from "./types";
 import "./PageShell.css";
@@ -28,6 +28,15 @@ function PageShell({
   ) {
     sidebarRef.current?.functionMap.set(key, fc);
   }
+
+  useEffect(() => {
+    const elem = document.documentElement;
+    console.log(elem, "elem");
+
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    }
+  }, []);
 
   return (
     <React.StrictMode>

@@ -30,12 +30,13 @@ function PageShell({
   }
 
   useEffect(() => {
-    const elem = document.documentElement;
-    console.log(elem, "elem");
-
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen();
-    }
+    document.ontouchmove = function () {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        document.documentElement.requestFullscreen();
+      }
+    };
   }, []);
 
   return (

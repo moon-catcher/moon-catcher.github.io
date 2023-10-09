@@ -30,8 +30,7 @@ function PageShell({
     sidebarRef.current?.functionMap.set(key, fc);
   }
 
-  useEffect(() => {
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <React.StrictMode>
@@ -55,6 +54,11 @@ function PageShell({
           <Link className="navitem" href="/draft">
             Draft
           </Link>
+          <button
+            onClick={() => document.querySelector("body")?.requestFullscreen()}
+          >
+            全屏
+          </button>
         </LightSidebar>
         <Background />
       </PageContextProvider>

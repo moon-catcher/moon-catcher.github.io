@@ -73,16 +73,15 @@ async function render(pageContext: PageContextServer) {
       <head>
         <meta charset="UTF-8" />
         <link rel="icon" href=${logo} />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="browsermode" content="application">
+        <meta name="full-screen" content="yes" />
+        <meta name="x5-fullscreen" content="true" />
+        <meta name="x5-page-mode" content="app" />
+        <meta name="360-fullscreen" content="true" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="${desc}" />
-        <!-- webApp全屏显示，IOS设备 -->
-        <meta name='apple-mobile-web-app-capable' content='yes' />
-        <!-- 通用的浏览器 -->
-        <meta name='full-screen' content='true' />
-        <!-- QQ浏览器（X5内核）独有的META -->
-        <meta name='x5-fullscreen' content='true' />
-        <!-- 360浏览器独有的 -->
-        <meta name='360-fullscreen' content='true' />
         <title>${title}</title>
       </head>
       <body>

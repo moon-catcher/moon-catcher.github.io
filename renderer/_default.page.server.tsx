@@ -80,7 +80,6 @@ async function render(pageContext: PageContextServer) {
         <meta name="x5-fullscreen" content="true" />
         <meta name="x5-page-mode" content="app" />
         <meta name="360-fullscreen" content="true" />
-        // <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
         <meta name="description" content="${desc}" />
         <title>${title}</title>

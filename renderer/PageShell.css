@@ -1,15 +1,22 @@
 /* This CSS is common to all pages */
 
-html { height: 100vh; }
+html {
+  height: 100%;
+}
 
 body {
   margin: 0;
-  height: 100%; 
+  height: 100%;
   font-family: sans-serif;
   --custom-background: #0b0b2a;
 
   background: var(--custom-background);
 }
+
+#react-root {
+  height: 100%;
+}
+
 * {
   box-sizing: border-box;
 }

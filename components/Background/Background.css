@@ -5,10 +5,10 @@
 }
 @keyframes shooting-str {
   40% {
-    transform: rotate(-30deg) translate(calc(-100vw - 100vh), 0);
+    transform: rotate(-30deg) translate(calc(-100vw - 100%), 0);
   }
   100% {
-    transform: rotate(-30deg) translate(calc(-100vw - 100vh), 0);
+    transform: rotate(-30deg) translate(calc(-100vw - 100%), 0);
   }
 }
 @keyframes twinkle {
@@ -20,7 +20,7 @@
   z-index: -1;
   pointer-events: none;
   background-color: #113755;
-  height: 100vh;
+  height: 100%;
   width: 100vw;
   position: absolute;
   transform: translate(-50%, -50%);

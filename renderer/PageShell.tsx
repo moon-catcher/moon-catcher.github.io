@@ -30,8 +30,6 @@ function PageShell({
     sidebarRef.current?.functionMap.set(key, fc);
   }
 
-  useEffect(() => {}, []);
-
   return (
     <React.StrictMode>
       <PageContextProvider pageContext={{ ...pageContext, setLinkBntAction }}>

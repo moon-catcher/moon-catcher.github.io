@@ -56,7 +56,7 @@ function Page() {
         onTouchMove={handleTouchMove}
         onTouchStart={handleTouchStart}
         style={{
-          height: `calc(100vh - ${
+          height: `calc(100% - ${
             showAuthorDetail ? "174px" : "60px"
           } - 40px) `,
         }}

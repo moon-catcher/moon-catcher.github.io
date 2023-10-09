@@ -58,7 +58,7 @@ function Page() {
         style={{
           height: `calc(100% - ${
             showAuthorDetail ? "174px" : "60px"
-          } - 40px) `,
+          }) `,
         }}
       >
         <div className="article-box">

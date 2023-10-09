@@ -1529,6 +1529,14 @@ braces@^3.0.2, braces@~3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
+brim@^1.0.13:
+  version "1.0.13"
+  resolved "https://mirrors.tencent.com/npm/brim/-/brim-1.0.13.tgz#728f3d31c087038639feae86afc1c3dfbaa0d888"
+  integrity sha512-4IMkxkOT2ZN2OqhKd+OCVmwcjVh6Pt495R9PYz/xHsXspx5B7RHGS/pelgCkDQ89fRMf/GYNnfPaehZeAd3sVw==
+  dependencies:
+    scream "^2.0.7"
+    sister "^3.0.0"
+
 browserslist@^4.21.9:
   version "4.21.10"
   resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.21.10.tgz#dbbac576628c13d3b2231332cb2ec5a46e015bb0"
@@ -2385,7 +2393,7 @@ fs.realpath@^1.0.0:
   resolved "https://registry.yarnpkg.com/fs.realpath/-/fs.realpath-1.0.0.tgz#1504ad2523158caa40db4a2787cb01411994ea4f"
   integrity sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==
 
-fscreen@^1.0.2, fscreen@^1.1.0:
+fscreen@^1.1.0:
   version "1.2.0"
   resolved "https://mirrors.tencent.com/npm/fscreen/-/fscreen-1.2.0.tgz#1a8c88e06bc16a07b473ad96196fb06d6657f59e"
   integrity sha512-hlq4+BU0hlPmwsFjwGGzZ+OZ9N/wq9Ljg/sq3pX+2CD7hrJsX9tJgWWK/wiNTFM212CLHWhicOoqwXyZGGetJg==
@@ -3333,6 +3341,13 @@ optionator@^0.9.3:
     prelude-ls "^1.2.1"
     type-check "^0.4.0"
 
+orientationchangeend@^1.1.2:
+  version "1.1.2"
+  resolved "https://mirrors.tencent.com/npm/orientationchangeend/-/orientationchangeend-1.1.2.tgz#8b103cc440dff1d7ccb552d06318ef1817ea6b1c"
+  integrity sha512-jg1sO8M1fmmnsmIskt8KdNc1FyaVTXx+lD0b9L69Hqia3jZ2eE0PjQkqT88fz7WuyHm2FZ8Fo7q2ACT6fQbEnA==
+  dependencies:
+    sister "^3.0.0"
+
 p-limit@^3.0.2:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/p-limit/-/p-limit-3.1.0.tgz#e1daccbe78d0d1388ca18c64fea38e3e57e3706b"
@@ -3424,6 +3439,11 @@ pify@^4.0.1:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==
+
+platform@^1.3.0:
+  version "1.3.6"
+  resolved "https://mirrors.tencent.com/npm/platform/-/platform-1.3.6.tgz#48b4ce983164b209c2d45a107adb31f473a6e7a7"
+  integrity sha512-fnWVljUchTro6RiCFvCXBbNhJc2NijN7oIQxbwsyL0buWJPG85v81ehlHI9fXrJsMNgTofEoWIQeClKpgxFLrg==
 
 postcss@^8.4.27:
   version "8.4.29"
@@ -3517,13 +3537,6 @@ react-dom@^18.2.0:
   dependencies:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
-
-react-full-screen@^1.1.1:
-  version "1.1.1"
-  resolved "https://mirrors.tencent.com/npm/react-full-screen/-/react-full-screen-1.1.1.tgz#b707d56891015a71c503a65dbab3086d75be97d7"
-  integrity sha512-xoEgkoTiN0dw9cjYYGViiMCBYbkS97BYb4bHPhQVWXj1UnOs8PZ1rPzpX+2HMhuvQV1jA5AF9GaRbO3fA5aZtg==
-  dependencies:
-    fscreen "^1.0.2"
 
 react-is@^16.13.1:
   version "16.13.1"
@@ -3689,6 +3702,15 @@ scheduler@^0.23.0:
   dependencies:
     loose-envify "^1.1.0"
 
+scream@^2.0.7:
+  version "2.11.1"
+  resolved "https://mirrors.tencent.com/npm/scream/-/scream-2.11.1.tgz#6f9b098df38ed8499ac426f458b270b32f0be1af"
+  integrity sha512-4o6FWL71BMF3EwxvV31VNOcdO4TTZsLD6EH++M8tjo/2pXRFFsBCyGqZTmgI7L59+dujq9rMc+BjaKrPyv6LqQ==
+  dependencies:
+    orientationchangeend "^1.1.2"
+    platform "^1.3.0"
+    sister "^3.0.0"
+
 scroll-into-view-if-needed@^2.2.20:
   version "2.2.31"
   resolved "https://registry.yarnpkg.com/scroll-into-view-if-needed/-/scroll-into-view-if-needed-2.2.31.tgz#d3c482959dc483e37962d1521254e3295d0d1587"
@@ -3776,6 +3798,11 @@ sirv@^2.0.2, sirv@^2.0.3:
     "@polka/url" "^1.0.0-next.20"
     mrmime "^1.0.0"
     totalist "^3.0.0"
+
+sister@^3.0.0:
+  version "3.0.2"
+  resolved "https://mirrors.tencent.com/npm/sister/-/sister-3.0.2.tgz#bb3e39f07b1f75bbe1945f29a27ff1e5a2f26be4"
+  integrity sha512-p19rtTs+NksBRKW9qn0UhZ8/TUI9BPw9lmtHny+Y3TinWlOa9jWh9xB0AtPSdmOy49NJJJSSe0Ey4C7h0TrcYA==
 
 slash@^3.0.0:
   version "3.0.0"

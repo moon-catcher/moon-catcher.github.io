@@ -7,6 +7,8 @@ import { Layout } from "@components/Layout";
 import { Content } from "@components/Content";
 import { LightSidebar } from "@components/LightSidebar";
 import { LinkButtonAtion, LinkButtonFunction } from "@type/linkButton";
+import { FullScreen, useFullScreenHandle } from "react-full-screen";
+import { Background } from "@components/Background";
 
 export { PageShell };
 
@@ -22,6 +24,8 @@ function PageShell({
     functionMap: Map<LinkButtonAtion, LinkButtonFunction>;
   } | null>(null);
 
+  const handle = useFullScreenHandle();
+
   function setLinkBntAction<T>(
     key: LinkButtonAtion,
     fc: LinkButtonFunction<T>
@@ -29,41 +33,44 @@ function PageShell({
     sidebarRef.current?.functionMap.set(key, fc);
   }
 
-  useEffect(() => {
-    alert("********");
-    document.onclick = function () {
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
-      } else {
-        document.documentElement.requestFullscreen();
-      }
-    };
-  }, []);
+  // useEffect(() => {
+  //   document.onclick = function () {
+  //     if (document.fullscreenElement) {
+  //       document.exitFullscreen();
+  //     } else {
+  //       document.documentElement.requestFullscreen();
+  //     }
+  //   };
+  // }, []);
 
   return (
     <React.StrictMode>
-      <PageContextProvider pageContext={{ ...pageContext, setLinkBntAction }}>
-        <Layout>
-          <Content>{children}</Content>
-        </Layout>
-        <LightSidebar ref={sidebarRef}>
-          <Link className="navitem" href="/">
-            Home
-          </Link>
-          <Link className="navitem" href="/blog">
-            Blog
-          </Link>
-          <Link className="navitem" href="/about">
-            About
-          </Link>
-          <Link className="navitem" href="/write">
-            Write
-          </Link>
-          <Link className="navitem" href="/draft">
-            Draft
-          </Link>
-        </LightSidebar>
-      </PageContextProvider>
+      <FullScreen handle={handle}>
+        <PageContextProvider pageContext={{ ...pageContext, setLinkBntAction }}>
+          <Layout>
+            <Content>{children}</Content>
+          </Layout>
+          <LightSidebar ref={sidebarRef}>
+            <Link className="navitem" href="/">
+              Home
+            </Link>
+            <Link className="navitem" href="/blog">
+              Blog
+            </Link>
+            <Link className="navitem" href="/about">
+              About
+            </Link>
+            <Link className="navitem" href="/write">
+              Write
+            </Link>
+            <Link className="navitem" href="/draft">
+              Draft
+            </Link>
+            <button onClick={handle.enter}>Enter fullscreen</button>
+          </LightSidebar>
+          <Background />
+        </PageContextProvider>
+      </FullScreen>
     </React.StrictMode>
   );
 }

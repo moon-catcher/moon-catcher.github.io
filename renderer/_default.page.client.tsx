@@ -3,7 +3,6 @@ export { render };
 import { hydrateRoot } from "react-dom/client";
 import { PageShell } from "./PageShell";
 import type { PageContextClient } from "./types";
-import { Background } from "@components/Background";
 import { AuthProvider } from "@providers/AuthProvider";
 
 // This render() hook only supports SSR, see https://vite-plugin-ssr.com/render-modes for how to modify render() to support SPA
@@ -14,9 +13,7 @@ async function render(pageContext: PageContextClient) {
       "Client-side render() hook expects pageContext.Page to be defined"
     );
   const root = document.getElementById("react-root");
-  const background = document.getElementById("background");
-  if (!root || !background)
-    throw new Error("DOM element #react-root not found");
+  if (!root) throw new Error("DOM element #react-root not found");
   hydrateRoot(
     root,
     <AuthProvider>
@@ -25,7 +22,6 @@ async function render(pageContext: PageContextClient) {
       </PageShell>
     </AuthProvider>
   );
-  hydrateRoot(background, <Background />);
 }
 
 /* To enable Client-side Routing:

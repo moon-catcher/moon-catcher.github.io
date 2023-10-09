@@ -5,6 +5,7 @@ export const passToClient = [
   "urlPathname",
   "setLinkBntAction",
   "user",
+  "handle",
 ];
 // export { onBeforeRender };
 // import { Octokit } from "@octokit/action";
@@ -13,7 +14,6 @@ import logo from "/moon-catcher.png?url";
 import { PageShell } from "./PageShell";
 import { escapeInject, dangerouslySkipEscape } from "vite-plugin-ssr/server";
 import type { PageContextServer } from "./types";
-import { Background } from "@components/Background";
 import { AuthProvider } from "@providers/AuthProvider";
 
 async function render(pageContext: PageContextServer) {
@@ -48,6 +48,7 @@ async function render(pageContext: PageContextServer) {
   // This render() hook only supports SSR, see https://vite-plugin-ssr.com/render-modes for how to modify render() to support SPA
   if (!Page)
     throw new Error("My render() hook expects pageContext.Page to be defined");
+  // eslint-disable-next-line react-hooks/rules-of-hooks
 
   const pageHtml = ReactDOMServer.renderToString(
     <AuthProvider>
@@ -63,10 +64,6 @@ async function render(pageContext: PageContextServer) {
     (documentProps && documentProps.title) || import.meta.env.vite_title;
   const desc =
     (documentProps && documentProps.description) || import.meta.env.vite_desc;
-
-  const background =
-    (documentProps && documentProps.background) ||
-    ReactDOMServer.renderToString(<Background />);
 
   const documentHtml = escapeInject`<!DOCTYPE html>
     <html lang="en">
@@ -86,7 +83,6 @@ async function render(pageContext: PageContextServer) {
       </head>
       <body>
         <div id="react-root">${dangerouslySkipEscape(pageHtml)}</div>
-        <div id="background">${dangerouslySkipEscape(background)}</div>
       </body>
     </html>`;
 

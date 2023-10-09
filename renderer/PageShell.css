@@ -22,6 +22,7 @@ a {
   color: rgba(255, 255, 255, 0.644);
   width: 100%;
   text-align: center;
+  backdrop-filter: blur(3px) brightness(86%);
 }
 .navitem.is-active {
   background-color: #eeeeee81;

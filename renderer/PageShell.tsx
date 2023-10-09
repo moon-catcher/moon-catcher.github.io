@@ -7,10 +7,28 @@ import { Layout } from "@components/Layout";
 import { Content } from "@components/Content";
 import { LightSidebar } from "@components/LightSidebar";
 import { LinkButtonAtion, LinkButtonFunction } from "@type/linkButton";
-import { FullScreen, useFullScreenHandle } from "react-full-screen";
 import { Background } from "@components/Background";
+import { MobileFullscreen, type IMaskProps } from "react-mobile-fullscreen";
 
 export { PageShell };
+
+const Mask = (props: IMaskProps) => {
+  return (
+    <div
+      style={{
+        background: props.fullscreenType === "native" ? "blue" : "green",
+        width: "100%",
+        height: "100%",
+      }}
+    >
+      {props.fullscreenType === "native"
+        ? "Click Me!"
+        : props.fullscreenType === "minimal-ui"
+        ? "Swipe Up!"
+        : "Mask won't be rendered"}
+    </div>
+  );
+};
 
 function PageShell({
   children,
@@ -23,8 +41,6 @@ function PageShell({
   const sidebarRef = useRef<{
     functionMap: Map<LinkButtonAtion, LinkButtonFunction>;
   } | null>(null);
-
-  const handle = useFullScreenHandle();
 
   function setLinkBntAction<T>(
     key: LinkButtonAtion,
@@ -45,7 +61,7 @@ function PageShell({
 
   return (
     <React.StrictMode>
-      <FullScreen handle={handle}>
+      <MobileFullscreen mask={Mask}>
         <PageContextProvider pageContext={{ ...pageContext, setLinkBntAction }}>
           <Layout>
             <Content>{children}</Content>
@@ -66,11 +82,10 @@ function PageShell({
             <Link className="navitem" href="/draft">
               Draft
             </Link>
-            <button onClick={handle.enter}>Enter fullscreen</button>
           </LightSidebar>
           <Background />
         </PageContextProvider>
-      </FullScreen>
+      </MobileFullscreen>
     </React.StrictMode>
   );
 }

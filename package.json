@@ -41,7 +41,7 @@
     "prettier": "^2.8.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-full-screen": "^1.1.1",
+    "react-mobile-fullscreen": "^1.0.1",
     "sass": "^1.66.1",
     "sirv": "^2.0.3",
     "slate": "^0.94.1",

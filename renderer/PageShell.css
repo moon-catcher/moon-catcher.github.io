@@ -1,7 +1,7 @@
 /* This CSS is common to all pages */
 
 html {
-  height: 100vh;
+  height: calc(100vh + 1px);
 }
 
 body {

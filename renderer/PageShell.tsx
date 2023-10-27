@@ -32,16 +32,16 @@ function PageShell({
   }
 
   useEffect(() => {
-    function isMobile() {
-      const flag =
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
-        );
-      return flag;
-    }
-    document.getElementsByTagName("html")[0].style.height = isMobile()
-      ? "calc(100vh + 1px)"
-      : "100vh";
+    // function isMobile() {
+    //   const flag =
+    //     /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    //       navigator.userAgent
+    //     );
+    //   return flag;
+    // }
+    // document.getElementsByTagName("html")[0].style.height = isMobile()
+    //   ? "calc(100vh + 1px)"
+    //   : "100vh";
 
     window.scrollTo(0, 1);
   }, []);

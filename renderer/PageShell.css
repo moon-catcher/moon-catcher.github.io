@@ -1,7 +1,10 @@
 /* This CSS is common to all pages */
 
-html {
-  height: calc(100vh + 1px);
+
+@media screen and (max-width: 500px) {
+  html {
+    height: calc(100vh + 1px);
+  }
 }
 
 body {

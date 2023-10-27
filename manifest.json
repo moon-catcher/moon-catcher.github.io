@@ -5,6 +5,12 @@
       "_chunk-9a4f56c2.js"
     ]
   },
+  "_chunk-23847d0a.js": {
+    "file": "assets/chunks/chunk-23847d0a.js",
+    "imports": [
+      "_chunk-9a4f56c2.js"
+    ]
+  },
   "_chunk-3dd8c495.js": {
     "file": "assets/chunks/chunk-3dd8c495.js",
     "imports": [
@@ -13,12 +19,6 @@
   },
   "_chunk-790e5bc1.js": {
     "file": "assets/chunks/chunk-790e5bc1.js"
-  },
-  "_chunk-9903c753.js": {
-    "file": "assets/chunks/chunk-9903c753.js",
-    "imports": [
-      "_chunk-9a4f56c2.js"
-    ]
   },
   "_chunk-9a4f56c2.js": {
     "file": "assets/chunks/chunk-9a4f56c2.js"
@@ -43,7 +43,7 @@
       "pages/blog/index.page.server.ts?extractAssets&lang.ts",
       "renderer/_default.page.server.tsx?extractAssets&lang.tsx"
     ],
-    "file": "assets/entries/entry-client-routing.66f4c9e9.js",
+    "file": "assets/entries/entry-client-routing.06967e38.js",
     "imports": [
       "_chunk-790e5bc1.js"
     ],
@@ -63,7 +63,7 @@
       "pages/blog/index.page.server.ts?extractAssets&lang.ts",
       "renderer/_default.page.server.tsx?extractAssets&lang.tsx"
     ],
-    "file": "assets/entries/entry-server-routing.a74c33bd.js",
+    "file": "assets/entries/entry-server-routing.ee784a55.js",
     "imports": [
       "_chunk-790e5bc1.js"
     ],
@@ -87,10 +87,10 @@
     "src": "pages/about/index.page.tsx"
   },
   "pages/auth/index.page.tsx": {
-    "file": "assets/entries/pages_auth_index.page.9434e8bf.js",
+    "file": "assets/entries/pages_auth_index.page.6c177a1f.js",
     "imports": [
       "_chunk-9a4f56c2.js",
-      "_chunk-9903c753.js",
+      "_chunk-23847d0a.js",
       "_chunk-d209e026.js",
       "_chunk-10a2ec28.js"
     ],
@@ -112,10 +112,10 @@
     "css": [
       "assets/static/index.page.43b8b557.css"
     ],
-    "file": "assets/entries/pages_blog_index.page.48797a84.js",
+    "file": "assets/entries/pages_blog_index.page.cc020be0.js",
     "imports": [
       "_chunk-9a4f56c2.js",
-      "_chunk-9903c753.js",
+      "_chunk-23847d0a.js",
       "_chunk-10a2ec28.js"
     ],
     "isDynamicEntry": true,
@@ -146,10 +146,10 @@
     "css": [
       "assets/static/index.page.a2fab28d.css"
     ],
-    "file": "assets/entries/pages_write-setting_index.page.2095565a.js",
+    "file": "assets/entries/pages_write-setting_index.page.119a8c3a.js",
     "imports": [
       "_chunk-9a4f56c2.js",
-      "_chunk-9903c753.js"
+      "_chunk-23847d0a.js"
     ],
     "isDynamicEntry": true,
     "isEntry": true,
@@ -163,10 +163,10 @@
     "css": [
       "assets/static/index.page.2f36787a.css"
     ],
-    "file": "assets/entries/pages_write_index.page.cc347d31.js",
+    "file": "assets/entries/pages_write_index.page.51809ff0.js",
     "imports": [
       "_chunk-9a4f56c2.js",
-      "_chunk-9903c753.js",
+      "_chunk-23847d0a.js",
       "_chunk-3dd8c495.js",
       "_chunk-10a2ec28.js"
     ],
@@ -175,14 +175,14 @@
     "src": "pages/write/index.page.tsx"
   },
   "renderer/_default.page.client.tsx": {
-    "file": "assets/entries/renderer_default.page.client.a4e072e7.js",
+    "file": "assets/entries/renderer_default.page.client.91391a26.js",
     "imports": [
       "_chunk-9a4f56c2.js",
       "_chunk-3dd8c495.js",
       "_chunk-10a2ec28.js",
       "renderer/_default.page.server.tsx?extractAssets&lang.tsx",
       "_chunk-d209e026.js",
-      "_chunk-9903c753.js"
+      "_chunk-23847d0a.js"
     ],
     "isDynamicEntry": true,
     "isEntry": true,

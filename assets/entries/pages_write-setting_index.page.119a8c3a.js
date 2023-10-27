@@ -1,0 +1,1 @@
+import{r as s,j as r}from"../chunks/chunk-9a4f56c2.js";import{u as e}from"../chunks/chunk-23847d0a.js";function o(){return s.useRef(null),e(),r.jsxs("div",{className:"write-setting-page",children:[r.jsx("div",{style:{cursor:"pointer"},onClick:()=>{history.back()},children:"返回"}),"设置"]})}export{o as Page};

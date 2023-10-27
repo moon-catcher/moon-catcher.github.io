@@ -8,6 +8,7 @@ import { Content } from "@components/Content";
 import { LightSidebar } from "@components/LightSidebar";
 import { LinkButtonAtion, LinkButtonFunction } from "@type/linkButton";
 import { Background } from "@components/Background";
+import { useEffect } from "react";
 
 export { PageShell };
 
@@ -29,6 +30,21 @@ function PageShell({
   ) {
     sidebarRef.current?.functionMap.set(key, fc);
   }
+
+  useEffect(() => {
+    function isMobile() {
+      const flag =
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        );
+      return flag;
+    }
+    document.getElementsByTagName("html")[0].style.height = isMobile()
+      ? "calc(100vh + 1px)"
+      : "100vh";
+
+    window.scrollTo(0, 1);
+  }, []);
 
   return (
     <React.StrictMode>

@@ -21,6 +21,7 @@
       "@worker/*": ["./worker/*"]
     }
   },
+  "include": ["./components"],
   "ts-node": {
     "transpileOnly": true,
     "esm": true,

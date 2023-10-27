@@ -16,6 +16,9 @@
     opacity: 1;
   }
 }
+.background {
+  height: 100vh;
+}
 .container {
   z-index: -1;
   pointer-events: none;

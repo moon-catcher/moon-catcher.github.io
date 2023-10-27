@@ -3,7 +3,7 @@
 
 @media screen and (max-width: 500px) {
   html {
-    height: calc(100vh + 1px);
+    height: 110vh;
   }
 }
 

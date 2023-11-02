@@ -69,16 +69,9 @@ async function render(pageContext: PageContextServer) {
     <html lang="en">
       <head>
         <meta charset="UTF-8" />
-        <link rel="icon" href=${logo} />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="browsermode" content="application">
-        <meta name="full-screen" content="yes" />
-        <meta name="x5-fullscreen" content="true" />
-        <meta name="x5-page-mode" content="app" />
-        <meta name="360-fullscreen" content="true" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
         <meta name="description" content="${desc}" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href=${logo} />
         <title>${title}</title>
       </head>
       <body>

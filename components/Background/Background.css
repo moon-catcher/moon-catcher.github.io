@@ -5,10 +5,10 @@
 }
 @keyframes shooting-str {
   40% {
-    transform: rotate(-30deg) translate(calc(-100vw - 100%), 0);
+    transform: rotate(-30deg) translate(calc(-100vw - 1000%), 0);
   }
   100% {
-    transform: rotate(-30deg) translate(calc(-100vw - 100%), 0);
+    transform: rotate(-30deg) translate(calc(-100vw - 1000%), 0);
   }
 }
 @keyframes twinkle {
@@ -72,9 +72,9 @@
   height: 3.2em;
   width: 3.2em;
   background-color: #ffffff;
-  position: absolute;
+  position: fixed;
   left: 4.5em;
-  top: 4.5em;
+  top: 3.5em;
   border-radius: 50%;
   box-shadow: 0 0 0 0.62em rgb(32 105 149 / 60%),
     0 0 0 1.25em rgb(32 105 149 / 50%), 0 0 0 1.9em rgb(32 105 149 / 40%);

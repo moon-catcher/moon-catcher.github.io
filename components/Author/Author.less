@@ -1,15 +1,16 @@
 .author {
   white-space: nowrap;
-  width: 100%;
+  width: 100vw;
   display: flex;
   align-items: center;
-  padding: 20px;
-  position: relative;
-  z-index: 3;
-  padding-top: 48px;
+  padding: 30px;
+  position: sticky;
+  z-index: 6;
   padding-left: 38px;
-  transition: all 0.3s ease-out;
-  justify-content: space-between;
+  transition: all 0.3s ease-out, width none;
+  top: 0;
+  backdrop-filter: blur(3px) brightness(60%);
+  color: #acacac;
   div {
     transition: all 0.2s linear;
   }
@@ -60,11 +61,12 @@
   flex-wrap: wrap;
   /* column-gap: 3vw; */
   align-items: center;
-  flex-shrink: 1;
+  flex-shrink: 0;
   row-gap: 0.5vw;
   justify-content: space-between;
   div {
     width: 50%;
+    flex-shrink: 0;
   }
 }
 

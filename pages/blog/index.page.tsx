@@ -47,6 +47,18 @@ function Page() {
     }
   }, [setLinkBntAction, handleSearch]);
 
+  useEffect(() => {
+    document.addEventListener("wheel", (event) => {
+      const { wheelDeltaY } = event as unknown as { wheelDeltaY: number };
+      console.log(wheelDeltaY, "event");
+      if (wheelDeltaY < 0) {
+        setShowAuthorDetail(false);
+      } else {
+        setShowAuthorDetail(true);
+      }
+    });
+  }, []);
+
   return (
     <>
       <Author showDetail={showAuthorDetail} />
@@ -56,9 +68,7 @@ function Page() {
         onTouchMove={handleTouchMove}
         onTouchStart={handleTouchStart}
         style={{
-          height: `calc(100% - ${
-            showAuthorDetail ? "174px" : "60px"
-          }) `,
+          height: `calc(100% - ${showAuthorDetail ? "174px" : "60px"}) `,
         }}
       >
         <div className="article-box">

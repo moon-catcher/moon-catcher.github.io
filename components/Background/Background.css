@@ -67,7 +67,7 @@
   transform: rotate(5deg);
 }
 .moon {
-  z-index: 2;
+  z-index: 1;
   pointer-events: auto;
   height: 3.2em;
   width: 3.2em;

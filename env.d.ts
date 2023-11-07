@@ -28,13 +28,3 @@ declare interface FileSystemFileHandle {
 declare interface FileSystemDirectoryHandle {
   values: () => (FileSystemDirectoryHandle | FileSystemFileHandle)[];
 }
-
-declare interface Window {
-  showDirectoryPicker: (
-    directoryPickerOption
-  ) => Promise<FileSystemDirectoryHandle> | never;
-  [prop: string]: ((token: string) => void) | undefined;
-}
-declare module "escape-html" {
-  export = (string: string) => string;
-}

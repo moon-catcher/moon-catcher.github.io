@@ -71,17 +71,15 @@ function Page() {
           onFilePickerOpenChange={handleFilePickerOpenChange}
         />
         <button onClick={handleFilePickerOpenChange}>展开</button>
-        <div className="header-title">
-          <div className="author">
-            author: {userInfo.name ?? <span onClick={login}>未登录</span>}
-            {`  |       ${time}`}
-          </div>
-          <input
-            className="title"
-            onInput={onInput}
-            suppressContentEditableWarning
-            value={title ?? ""}
-          />
+        <input
+          className="header-title"
+          onInput={onInput}
+          suppressContentEditableWarning
+          value={title ?? ""}
+        />
+        <div className="author">
+          author: {userInfo.name ?? <span onClick={login}>未登录</span>}
+          {`  |       ${time}`}
         </div>
       </div>
 

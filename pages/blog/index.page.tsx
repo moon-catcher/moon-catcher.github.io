@@ -20,25 +20,28 @@ function Page() {
 
   const { setLinkBntAction } = usePageContext();
 
-  const handleWheel = (
-    event: React.UIEvent<HTMLDivElement> & { deltaY: number }
-  ) => {
-    setShowAuthorDetail(event.deltaY < 0);
-  };
-
   const handleTouchMove = useCallback(
-    (event: React.TouchEvent<HTMLDivElement>) => {
+    (event: TouchEvent) => {
       console.log(event);
       setShowAuthorDetail(event.touches[0].clientY > touchStart);
     },
     [touchStart]
   );
-  const handleTouchStart = (event: React.TouchEvent<HTMLDivElement>) => {
+  const handleTouchStart = (event: TouchEvent) => {
     setTouchStart(event.touches[0].clientY);
   };
 
   const handleSearch = useCallback((searchValue: string) => {
     console.log("search", searchValue, "searchValue");
+  }, []);
+
+  const handleWeel = useCallback((event: unknown) => {
+    const { wheelDeltaY } = event as { wheelDeltaY: number };
+    if (wheelDeltaY < 0) {
+      setShowAuthorDetail(false);
+    } else {
+      setShowAuthorDetail(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -48,15 +51,9 @@ function Page() {
   }, [setLinkBntAction, handleSearch]);
 
   useEffect(() => {
-    document.addEventListener("wheel", (event) => {
-      const { wheelDeltaY } = event as unknown as { wheelDeltaY: number };
-      console.log(wheelDeltaY, "event");
-      if (wheelDeltaY < 0) {
-        setShowAuthorDetail(false);
-      } else {
-        setShowAuthorDetail(true);
-      }
-    });
+    document.addEventListener("wheel", handleWeel);
+    document.addEventListener("touchmove", handleTouchMove);
+    document.addEventListener("touchstart", handleTouchStart);
   }, []);
 
   return (
@@ -64,9 +61,6 @@ function Page() {
       <Author showDetail={showAuthorDetail} />
       <div
         className="article-list"
-        onWheel={handleWheel}
-        onTouchMove={handleTouchMove}
-        onTouchStart={handleTouchStart}
         style={{
           height: `calc(100% - ${showAuthorDetail ? "174px" : "60px"}) `,
         }}

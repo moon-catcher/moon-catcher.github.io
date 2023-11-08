@@ -10,7 +10,7 @@ function Page() {
   const timer = useRef<NodeJS.Timeout | null>(null);
   const { userInfo, login } = useAuth();
   const [time, setTime] = useState(dayjs().format(TIME_FORMAT));
-  const [filePickerOpen, setFilePickerOpen] = useState(true);
+  const [filePickerOpen, setFilePickerOpen] = useState(false);
   const [fileContent, setFileContent] = useState("testteststestetest");
   const [title, setTitle] = useState("");
 

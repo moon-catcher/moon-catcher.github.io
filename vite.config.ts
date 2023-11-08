@@ -5,6 +5,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import mkcert from "vite-plugin-mkcert";
 import { resolve } from "path";
 import vitePluginImp from "vite-plugin-imp";
+import { VitePWA } from "vite-plugin-pwa";
 
 const config = defineConfig(({ mode }) => {
   return {
@@ -21,6 +22,7 @@ const config = defineConfig(({ mode }) => {
     plugins: [
       react(),
       mkcert(),
+      VitePWA({ registerType: "autoUpdate" }),
       ssr({ prerender: true }),
       vitePluginImp({
         exclude: ["antd"],

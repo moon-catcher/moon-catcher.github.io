@@ -55,6 +55,7 @@
     "escape-html": "^1.0.3",
     "less": "^4.2.0",
     "rollup-plugin-visualizer": "^5.9.2",
-    "vite-plugin-imp": "^2.4.0"
+    "vite-plugin-imp": "^2.4.0",
+    "vite-plugin-pwa": "^0.16.7"
   }
 }

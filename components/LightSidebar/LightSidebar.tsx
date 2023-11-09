@@ -96,13 +96,36 @@ const LightSidebar = forwardRef<
     <div className="lightSidebar">
       <div
         className="active-links"
-        style={{ right: sidebarType === 0 || showMenu ? "calc(103%)" : 65 }}
+        style={{ right: sidebarType === 0 || showMenu ? "calc(105%)" : 25 }}
       >
         <WriteButton />
         <SearchButton onClick={handleSearch} />
         <SaveButton onClick={handleSave} />
         <SubmitButton onClick={handleSubmit} />
-        <WriteSettingButton/>
+        <WriteSettingButton />
+        <div
+          className={[
+            "show-right-sidebar",
+            sidebarType !== 0 ? "" : "button-hidden",
+          ].join(" ")}
+        >
+          <input id="toggle" type="checkbox" onChange={handleMenuCheck}></input>
+          <label
+            htmlFor="toggle"
+            className="hamburger"
+            style={
+              showMenu
+                ? {
+                    bottom: -37,
+                  }
+                : { top: 0 }
+            }
+          >
+            <div className="top-bun"></div>
+            <div className="meat"></div>
+            <div className="bottom-bun"></div>
+          </label>
+        </div>
       </div>
       <div
         className={[
@@ -117,29 +140,6 @@ const LightSidebar = forwardRef<
         <LightSidebarContext.Provider value={showMenu}>
           {children}
         </LightSidebarContext.Provider>
-      </div>
-      <div
-        className={[
-          "show-right-sidebar",
-          sidebarType !== 0 ? "" : "button-hidden",
-        ].join(" ")}
-      >
-        <input id="toggle" type="checkbox" onChange={handleMenuCheck}></input>
-        <label
-          htmlFor="toggle"
-          className="hamburger"
-          style={
-            showMenu
-              ? {
-                  bottom: -45,
-                }
-              : { top: 0 }
-          }
-        >
-          <div className="top-bun"></div>
-          <div className="meat"></div>
-          <div className="bottom-bun"></div>
-        </label>
       </div>
     </div>
   );

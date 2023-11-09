@@ -49,7 +49,9 @@
     "typescript": "^5.1.6",
     "vite": "^4.4.9",
     "vite-plugin-mkcert": "^1.16.0",
-    "vite-plugin-ssr": "^0.4.140"
+    "vite-plugin-ssr": "^0.4.140",
+    "@uiw/react-md-editor": "^3.25.2",
+    "markdown-navbar": "^1.4.3"
   },
   "devDependencies": {
     "escape-html": "^1.0.3",

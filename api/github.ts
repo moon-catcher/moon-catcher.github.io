@@ -1,5 +1,6 @@
-import { AccessToken } from "@/types";
+import { AccessToken } from "@type/user";
 import apiClient from "./apiClient";
+import { Octokit } from "octokit";
 
 /**
  * client_id=230d10a766b329d1d0ce
@@ -25,4 +26,18 @@ export const putCookie = async (
     { cookies: rest, expires, httpOnly },
     { withCredentials: true }
   );
+};
+
+export const apiGetRepoPathFiles = async (
+  octokit: Octokit,
+  options: { repo?: string; owner: string; path?: string }
+) => {
+  return await octokit.request("GET /repos/{owner}/{repo}/contents/{path}", {
+    owner: options.owner,
+    repo: options.repo ?? `${options.owner}.github.io`,
+    path: options.path ?? "blog",
+    headers: {
+      "X-GitHub-Api-Version": "2022-11-28",
+    },
+  });
 };

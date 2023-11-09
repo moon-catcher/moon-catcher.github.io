@@ -66,7 +66,7 @@ async function render(pageContext: PageContextServer) {
     (documentProps && documentProps.description) || import.meta.env.vite_desc;
 
   const documentHtml = escapeInject`<!DOCTYPE html>
-    <html lang="en">
+    <html lang="en" data-color-mode="dark">
       <head>
         <meta charset="UTF-8" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

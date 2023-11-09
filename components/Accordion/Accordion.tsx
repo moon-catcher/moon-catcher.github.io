@@ -16,6 +16,7 @@ type Props = {
   title?: React.ReactNode;
   noTransition?: boolean;
   defaultClose?: boolean;
+  onClick?: (event?: unknown) => void;
 };
 
 type AccordionContext =
@@ -140,9 +141,10 @@ const Collapse = memo(function Collapse(props: Props) {
     }
   }, [props.children]);
 
-  const handleHeaderClick = () => {
+  const handleHeaderClick = (event: unknown) => {
     setCollapseBoxOverflowHidden(true);
     setOpen((open) => !open);
+    props.onClick?.(event);
   };
 
   const handleMouseOver = () => {

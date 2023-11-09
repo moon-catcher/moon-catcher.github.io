@@ -1,9 +1,11 @@
 /* This CSS is common to all pages */
 
-
 @media screen and (max-width: 500px) {
   html {
     height: 110vh;
+  }
+  .layout {
+    max-width: 100vw !important;
   }
 }
 

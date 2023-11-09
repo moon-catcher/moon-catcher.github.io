@@ -1,7 +1,7 @@
 .lightSidebar {
   position: fixed;
   right: -12px;
-  top: 4px;
+  bottom: 4px;
   z-index: 6;
   backdrop-filter: blur(3px) brightness(86%);
 }
@@ -11,6 +11,15 @@
   justify-content: flex-start;
   position: absolute;
   transition: all 0.2s linear;
+  bottom: 10px;
+  align-items: center;
+  & > div {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 .right-sidebar {
@@ -37,9 +46,8 @@
   Hamburger
 **/
 .hamburger {
-  position: absolute;
-  right: 23px;
-  bottom: -45px;
+  top: -2px;
+  position: relative;
 }
 
 .hamburger div {
@@ -57,9 +65,13 @@
   display: none;
 }
 
+#toggle:checked + .hamburger {
+  position: unset !important;
+}
+
 #toggle:checked + .hamburger .top-bun {
   transform: rotate(-45deg);
-  // margin-top: 25px;
+  margin-top: 15px;
 }
 #toggle:checked + .hamburger .bottom-bun {
   opacity: 0;
@@ -78,10 +90,10 @@
 .button-hidden {
   opacity: 0;
   pointer-events: none;
+  display: none !important;
 }
 @media only screen and (max-width: 1180px) {
   .right-sidebar:not(.force-show) {
-    height: 0;
     width: 0;
     border-radius: 100%;
     border: none;
